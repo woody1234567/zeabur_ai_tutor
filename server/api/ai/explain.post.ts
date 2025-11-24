@@ -51,6 +51,15 @@ export default defineEventHandler(async (event) => {
     Please explain why the student's answer is ${
       userAnswer === p.correctAnswer ? "correct" : "incorrect"
     } and provide a clear, step-by-step explanation of the solution. 
+    
+    IMPORTANT FORMATTING INSTRUCTIONS:
+    - Use standard Markdown for text formatting (bold, lists, etc.).
+    - Use LaTeX for ALL mathematical formulas, equations, and symbols.
+    - Enclose block math in double dollar signs: $$ ... $$
+    - Enclose inline math in single dollar signs: $ ... $
+    - Do NOT use code blocks for math.
+    - Example: "The area of a circle is given by $A = \pi r^2$."
+    
     Be encouraging and friendly. Keep it concise but thorough.
   `;
 
