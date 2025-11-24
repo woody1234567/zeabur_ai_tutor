@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "../../db"; // Adjust path if needed, ~ alias works in Nuxt
+import { db } from "../../db";
 import * as schema from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -11,5 +12,22 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  // Add other providers here
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          await db
+            .update(schema.user)
+            .set({ lastLogin: new Date() })
+            .where(eq(schema.user.id, session.userId));
+        },
+      },
+    },
+  },
 });
