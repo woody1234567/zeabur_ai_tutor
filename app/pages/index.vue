@@ -10,7 +10,9 @@
           excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a
           id nisi.
         </p>
-        <button to="/auth" class="btn btn-primary">Get Started</button>
+        <button class="btn btn-primary">
+          <nuxt-link to="/auth">Get Started</nuxt-link>
+        </button>
       </div>
     </div>
   </div>

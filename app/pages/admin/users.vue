@@ -3,7 +3,7 @@ import { createAuthClient } from "better-auth/client";
 import { adminClient } from "better-auth/client/plugins";
 
 definePageMeta({
-  middleware: "auth",
+  layout: "admin",
 });
 
 const client = createAuthClient({

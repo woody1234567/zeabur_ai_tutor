@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// definePageMeta({
-//   middleware: "auth",
-// });
+definePageMeta({
+  layout: "teacher",
+});
 </script>
 
 <template>

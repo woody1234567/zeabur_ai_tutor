@@ -4,7 +4,7 @@ import { signIn } from "../../lib/auth-client";
 const handleGoogleLogin = async () => {
   await signIn.social({
     provider: "google",
-    callbackURL: "/",
+    callbackURL: "/login-success",
   });
 };
 </script>
