@@ -4,11 +4,13 @@ export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").notNull(),
+  emailVerified: boolean("email_verified"),
   image: text("image"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
   lastLogin: timestamp("last_login"),
+  role: text("role"),
+  banned: boolean("banned"),
 });
 
 export const session = pgTable("session", {

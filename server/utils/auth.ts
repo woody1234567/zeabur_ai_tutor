@@ -4,6 +4,8 @@ import { db } from "../../db";
 import * as schema from "../../db/schema";
 import { eq } from "drizzle-orm";
 
+import { admin } from "better-auth/plugins";
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -30,4 +32,6 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [admin()],
+  debug: true,
 });
