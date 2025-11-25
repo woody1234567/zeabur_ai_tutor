@@ -11,7 +11,7 @@ const handleLogout = async () => {
   <div class="min-h-screen bg-base-200">
     <div class="navbar bg-base-100 shadow-md">
       <div class="flex-1">
-        <NuxtLink to="/" class="btn btn-ghost text-xl"
+        <NuxtLink to="/admin" class="btn btn-ghost text-xl"
           >AI Tutor - Admin</NuxtLink
         >
       </div>
