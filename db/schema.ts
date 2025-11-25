@@ -70,6 +70,19 @@ export const problems = pgTable("problems", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const classrooms = pgTable("classrooms", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  description: text("description"),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const submissions = pgTable("submissions", {
   id: text("id")
     .primaryKey()
