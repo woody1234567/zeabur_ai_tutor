@@ -63,6 +63,12 @@ const deleteProblem = async (id: string) => {
           </div>
 
           <div class="card-actions justify-end mt-auto">
+            <NuxtLink
+              :to="`/teacher/problems/${problem.id}/edit`"
+              class="btn btn-sm btn-outline"
+            >
+              Edit
+            </NuxtLink>
             <button
               @click="deleteProblem(problem.id)"
               class="btn btn-error btn-sm btn-outline"
