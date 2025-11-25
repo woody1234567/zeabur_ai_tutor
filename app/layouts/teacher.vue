@@ -28,6 +28,11 @@ const handleLogout = async () => {
             >
           </li>
           <li>
+            <NuxtLink class="btn btn-ghost" to="/teacher/classrooms"
+              >Manage Classrooms</NuxtLink
+            >
+          </li>
+          <li>
             <button @click="handleLogout" class="btn btn-secondary">
               Logout
             </button>
