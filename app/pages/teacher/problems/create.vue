@@ -28,7 +28,33 @@ const handleImageUpload = (event: Event) => {
   }
 };
 
+const validateForm = () => {
+  if (!title.value.trim()) {
+    alert("Please enter a title");
+    return false;
+  }
+  if (!content.value.trim()) {
+    alert("Please enter problem content");
+    return false;
+  }
+  if (choices.value.length < 2) {
+    alert("Please add at least 2 choices");
+    return false;
+  }
+  if (choices.value.some((c) => !c.text.trim())) {
+    alert("Please fill in all choice texts");
+    return false;
+  }
+  if (!correctAnswer.value) {
+    alert("Please select a correct answer");
+    return false;
+  }
+  return true;
+};
+
 const submitProblem = async () => {
+  if (!validateForm()) return;
+
   try {
     isUploading.value = true;
     let imageUrl = "";
