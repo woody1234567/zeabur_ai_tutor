@@ -65,6 +65,7 @@ export const problems = pgTable("problems", {
   difficulty: text("difficulty"),
   source: text("source"), // Added per user request
   imageUrl: text("image_url"),
+  hashtags: jsonb("hashtags").$type<string[]>().default([]), // Added hashtags column
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

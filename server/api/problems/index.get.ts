@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
       title: problems.title,
       difficulty: problems.difficulty,
       source: problems.source,
+      hashtags: problems.hashtags,
     })
     .from(problems);
 

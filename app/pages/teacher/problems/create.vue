@@ -28,6 +28,21 @@ const handleImageUpload = (event: Event) => {
   }
 };
 
+const hashtags = ref<string[]>([]);
+const newHashtag = ref("");
+
+const addHashtag = () => {
+  const tag = newHashtag.value.trim();
+  if (tag && !hashtags.value.includes(tag)) {
+    hashtags.value.push(tag);
+    newHashtag.value = "";
+  }
+};
+
+const removeHashtag = (index: number) => {
+  hashtags.value.splice(index, 1);
+};
+
 const validateForm = () => {
   if (!title.value.trim()) {
     alert("Please enter a title");
@@ -86,6 +101,7 @@ const submitProblem = async () => {
         difficulty: difficulty.value,
         source: source.value,
         imageUrl,
+        hashtags: hashtags.value,
       },
     });
 
@@ -190,6 +206,38 @@ const submitProblem = async () => {
         <div class="form-control">
           <label class="label">Source</label>
           <input v-model="source" type="text" class="input input-bordered" />
+        </div>
+      </div>
+
+      <div class="form-control">
+        <label class="label">Hashtags</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            v-model="newHashtag"
+            @keydown.enter.prevent="addHashtag"
+            type="text"
+            class="input input-bordered flex-1"
+            placeholder="Type a tag and press Enter"
+          />
+          <button type="button" @click="addHashtag" class="btn btn-secondary">
+            Add
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <div
+            v-for="(tag, index) in hashtags"
+            :key="index"
+            class="badge badge-lg badge-primary gap-2"
+          >
+            {{ tag }}
+            <button
+              type="button"
+              @click="removeHashtag(index)"
+              class="btn btn-xs btn-circle btn-ghost"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       </div>
 

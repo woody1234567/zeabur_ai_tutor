@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
     difficulty,
     source,
     imageUrl,
+    hashtags,
   } = body;
 
   if (!title || !content || !choices || !correctAnswer) {
@@ -39,6 +40,7 @@ export default defineEventHandler(async (event) => {
       difficulty,
       source,
       imageUrl,
+      hashtags,
     })
     .returning();
 

@@ -49,6 +49,13 @@ const deleteProblem = async (id: string) => {
             >
               {{ problem.difficulty }}
             </div>
+            <div
+              v-for="tag in problem.hashtags"
+              :key="tag"
+              class="badge badge-secondary badge-outline"
+            >
+              #{{ tag }}
+            </div>
           </h2>
 
           <div v-if="problem.source" class="text-sm text-gray-500 mb-4">

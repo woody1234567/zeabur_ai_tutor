@@ -32,6 +32,13 @@ const { data: problems } = await useFetch("/api/problems");
             <div v-if="problem.source" class="badge badge-ghost">
               {{ problem.source }}
             </div>
+            <div
+              v-for="tag in problem.hashtags"
+              :key="tag"
+              class="badge badge-secondary badge-outline"
+            >
+              #{{ tag }}
+            </div>
           </div>
           <div class="card-actions justify-end mt-4">
             <NuxtLink
