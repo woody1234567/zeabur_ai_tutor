@@ -17,11 +17,11 @@ const handleLogout = async () => {
       </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-          <!-- <li>
+          <li>
             <NuxtLink class="btn btn-ghost" to="/teacher/problems"
               >Manage Problems</NuxtLink
             >
-          </li> -->
+          </li>
           <li>
             <NuxtLink class="btn btn-ghost" to="/teacher/problems/create"
               >Create Problem</NuxtLink

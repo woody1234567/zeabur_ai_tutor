@@ -3,12 +3,31 @@ definePageMeta({
   layout: "student",
 });
 
-const { data: problems } = await useFetch("/api/problems");
+const searchParams = ref({
+  title: "",
+  source: "",
+  hashtag: "",
+});
+
+const { data: problems, refresh } = await useFetch("/api/problems", {
+  query: searchParams,
+});
+
+const handleSearch = (params: {
+  title: string;
+  source: string;
+  hashtag: string;
+}) => {
+  searchParams.value = params;
+  refresh();
+};
 </script>
 
 <template>
-  <div class="container mx-auto max-w-4xl">
-    <h1 class="text-3xl font-bold mb-8">Practice Problems</h1>
+  <div class="container mx-auto p-4 max-w-7xl">
+    <h1 class="text-3xl font-bold mb-8">Student Dashboard</h1>
+
+    <ProblemSearch @search="handleSearch" />
 
     <div v-if="problems" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div
@@ -18,13 +37,13 @@ const { data: problems } = await useFetch("/api/problems");
       >
         <div class="card-body">
           <h2 class="card-title text-lg">{{ problem.title }}</h2>
-          <div class="flex gap-2 mt-2">
+          <div class="flex gap-2 mt-2 flex-wrap">
             <div
               class="badge"
               :class="{
-                'badge-success': problem.difficulty === 'Easy',
-                'badge-warning': problem.difficulty === 'Medium',
-                'badge-error': problem.difficulty === 'Hard',
+                'badge-success': problem.difficulty === 'easy',
+                'badge-warning': problem.difficulty === 'medium',
+                'badge-error': problem.difficulty === 'hard',
               }"
             >
               {{ problem.difficulty }}
@@ -54,6 +73,13 @@ const { data: problems } = await useFetch("/api/problems");
 
     <div v-else class="text-center py-10">
       <span class="loading loading-spinner loading-lg"></span>
+    </div>
+
+    <div
+      v-if="problems && problems.length === 0"
+      class="text-center py-10 text-base-content/70"
+    >
+      No problems found matching your criteria.
     </div>
   </div>
 </template>
