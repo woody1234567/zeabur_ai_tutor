@@ -13,6 +13,11 @@ const {
   error,
 } = await useFetch(`/api/teacher/classrooms/${classroomId}`);
 
+// Fetch homeworks
+const { data: homeworks } = await useFetch(
+  `/api/teacher/classrooms/${classroomId}/homeworks`
+);
+
 // Fetch all students for the modal
 const { data: allStudents } = await useFetch("/api/teacher/students");
 
@@ -162,6 +167,53 @@ const availableStudents = computed(() => {
 
           <div v-else class="text-center py-10 opacity-50">
             <p>No students enrolled yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Homeworks List -->
+      <div class="card bg-base-100 shadow-xl border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Homeworks</h2>
+
+          <div v-if="homeworks && homeworks.length > 0" class="overflow-x-auto">
+            <table class="table w-full">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Subject</th>
+                  <th>Deadline</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="hw in homeworks" :key="hw.id">
+                  <td class="font-bold">{{ hw.title || "Untitled" }}</td>
+                  <td>{{ hw.subject || "-" }}</td>
+                  <td>
+                    <span
+                      :class="{
+                        'text-error': new Date(hw.deadline) < new Date(),
+                      }"
+                    >
+                      {{
+                        hw.deadline
+                          ? new Date(hw.deadline).toLocaleString()
+                          : "No deadline"
+                      }}
+                    </span>
+                  </td>
+                  <td>{{ new Date(hw.createdAt).toLocaleDateString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div v-else class="text-center py-10 opacity-50">
+            <p>No homeworks assigned to this classroom yet.</p>
+            <NuxtLink to="/teacher/problems" class="btn btn-link btn-sm mt-2">
+              Go to Problems to create HW
+            </NuxtLink>
           </div>
         </div>
       </div>
