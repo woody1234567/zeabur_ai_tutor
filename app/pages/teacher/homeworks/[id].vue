@@ -188,6 +188,14 @@ const formatDate = (dateString: string | null) => {
               <div class="prose max-w-none pt-4">
                 <MarkdownRenderer :content="problem.content" />
               </div>
+              <div class="mt-4 flex justify-end">
+                <NuxtLink
+                  :to="`/teacher/problems/${problem.id}/edit`"
+                  class="btn btn-sm btn-outline btn-primary"
+                >
+                  Edit Problem
+                </NuxtLink>
+              </div>
             </div>
           </div>
         </div>

@@ -184,6 +184,7 @@ const availableStudents = computed(() => {
                   <th>Subject</th>
                   <th>Deadline</th>
                   <th>Created At</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -204,6 +205,14 @@ const availableStudents = computed(() => {
                     </span>
                   </td>
                   <td>{{ new Date(hw.createdAt).toLocaleDateString() }}</td>
+                  <td>
+                    <NuxtLink
+                      :to="`/teacher/homeworks/${hw.id}`"
+                      class="btn btn-sm btn-primary"
+                    >
+                      View HW
+                    </NuxtLink>
+                  </td>
                 </tr>
               </tbody>
             </table>
