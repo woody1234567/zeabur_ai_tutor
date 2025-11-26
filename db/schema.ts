@@ -110,3 +110,34 @@ export const submissions = pgTable("submissions", {
   isCorrect: boolean("is_correct").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const homeworks = pgTable("homeworks", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  classroomId: text("classroom_id")
+    .notNull()
+    .references(() => classrooms.id),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  subject: text("subject"),
+  title: text("title"),
+  deadline: timestamp("deadline"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const homeworkProblems = pgTable("homework_problems", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  homeworkId: text("homework_id")
+    .notNull()
+    .references(() => homeworks.id),
+  problemId: text("problem_id")
+    .notNull()
+    .references(() => problems.id),
+  order: text("order"), // Using text for simplicity, or integer if preferred. Let's stick to integer if possible, but text is fine for simple ordering or we can use serial. Wait, user asked for "problems_HW records which problems are assigned to which homework".
+  // Let's use integer for order if we want to order them.
+});
