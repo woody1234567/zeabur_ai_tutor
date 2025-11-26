@@ -70,7 +70,11 @@ const formatDate = (dateString: string | null) => {
           </div>
 
           <div class="card-actions justify-end mt-6">
-            <button class="btn btn-primary btn-sm">View Details</button>
+            <NuxtLink
+              :to="`/teacher/homeworks/${hw.id}`"
+              class="btn btn-primary btn-sm"
+              >View Details</NuxtLink
+            >
           </div>
         </div>
       </div>
