@@ -99,19 +99,20 @@ const createHomework = async () => {
 </script>
 
 <template>
-  <div class="drawer drawer-end">
-    <input
-      id="hw-drawer"
-      type="checkbox"
-      class="drawer-toggle"
-      v-model="isHwDrawerOpen"
-    />
-    <div class="drawer-content flex flex-col h-full">
-      <div class="container mx-auto p-4 max-w-7xl">
+  <div class="flex h-[calc(100vh-64px)]">
+    <!-- Main Content Area -->
+    <div class="flex-1 overflow-y-auto p-4">
+      <div class="container mx-auto max-w-7xl">
         <div class="flex justify-between items-center mb-8">
           <h1 class="text-3xl font-bold">Teacher Dashboard</h1>
           <div class="flex gap-2">
-            <button @click="toggleHwDrawer" class="btn btn-secondary">
+            <button
+              @click="toggleHwDrawer"
+              class="btn"
+              :class="
+                isHwDrawerOpen ? 'btn-secondary' : 'btn-outline btn-secondary'
+              "
+            >
               {{ isHwDrawerOpen ? "Close HW Form" : "Create HW" }}
             </button>
             <NuxtLink to="/teacher/problems/create" class="btn btn-primary">
@@ -194,90 +195,94 @@ const createHomework = async () => {
         </div>
       </div>
     </div>
-    <div class="drawer-side z-50">
-      <label
-        for="hw-drawer"
-        aria-label="close sidebar"
-        class="drawer-overlay"
-      ></label>
-      <div class="menu p-4 w-96 min-h-full bg-base-200 text-base-content">
+
+    <!-- Sidebar for HW Creation -->
+    <div
+      v-if="isHwDrawerOpen"
+      class="w-96 bg-base-200 border-l border-base-300 overflow-y-auto p-4 transition-all duration-300 ease-in-out"
+    >
+      <div class="sticky top-0 bg-base-200 pt-2 pb-4 z-10">
         <h2 class="text-2xl font-bold mb-4">Create Homework</h2>
-        <div class="form-control w-full max-w-xs mb-4">
-          <label class="label">
-            <span class="label-text">Classroom</span>
-          </label>
-          <select
-            v-model="hwForm.classroomId"
-            class="select select-bordered w-full max-w-xs"
-          >
-            <option disabled value="">Select a classroom</option>
-            <option
-              v-for="classroom in classrooms"
-              :key="classroom.id"
-              :value="classroom.id"
-            >
-              {{ classroom.name }}
-            </option>
-          </select>
-        </div>
-        <div class="form-control w-full max-w-xs mb-4">
-          <label class="label">
-            <span class="label-text">Subject</span>
-          </label>
-          <input
-            v-model="hwForm.subject"
-            type="text"
-            placeholder="e.g. Math"
-            class="input input-bordered w-full max-w-xs"
-          />
-        </div>
-        <div class="form-control w-full max-w-xs mb-4">
-          <label class="label">
-            <span class="label-text">Title</span>
-          </label>
-          <input
-            v-model="hwForm.title"
-            type="text"
-            placeholder="Homework Title"
-            class="input input-bordered w-full max-w-xs"
-          />
-        </div>
-        <div class="form-control w-full max-w-xs mb-4">
-          <label class="label">
-            <span class="label-text">Deadline</span>
-          </label>
-          <input
-            v-model="hwForm.deadline"
-            type="datetime-local"
-            class="input input-bordered w-full max-w-xs"
-          />
-        </div>
+      </div>
 
-        <div class="divider">Selected Problems</div>
-        <div class="flex flex-col gap-2 mb-4">
-          <div
-            v-for="(problem, index) in selectedProblems"
-            :key="problem.id"
-            class="flex justify-between items-center bg-base-100 p-2 rounded shadow"
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text">Classroom</span>
+        </label>
+        <select
+          v-model="hwForm.classroomId"
+          class="select select-bordered w-full"
+        >
+          <option disabled value="">Select a classroom</option>
+          <option
+            v-for="classroom in classrooms"
+            :key="classroom.id"
+            :value="classroom.id"
           >
-            <span class="truncate w-48"
-              >{{ index + 1 }}. {{ problem.title }}</span
-            >
-            <button
-              @click="removeFromHw(problem.id)"
-              class="btn btn-ghost btn-xs text-error"
-            >
-              ✕
-            </button>
-          </div>
-          <div
-            v-if="selectedProblems.length === 0"
-            class="text-center text-sm opacity-70"
-          >
-            No problems selected.
-          </div>
-        </div>
+            {{ classroom.name }}
+          </option>
+        </select>
+      </div>
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text">Subject</span>
+        </label>
+        <input
+          v-model="hwForm.subject"
+          type="text"
+          placeholder="e.g. Math"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text">Title</span>
+        </label>
+        <input
+          v-model="hwForm.title"
+          type="text"
+          placeholder="Homework Title"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text">Deadline</span>
+        </label>
+        <input
+          v-model="hwForm.deadline"
+          type="datetime-local"
+          class="input input-bordered w-full"
+        />
+      </div>
 
+      <div class="divider">Selected Problems</div>
+      <div class="flex flex-col gap-2 mb-4">
+        <div
+          v-for="(problem, index) in selectedProblems"
+          :key="problem.id"
+          class="flex justify-between items-center bg-base-100 p-2 rounded shadow"
+        >
+          <span class="truncate flex-1 mr-2 text-sm"
+            >{{ index + 1 }}. {{ problem.title }}</span
+          >
+          <button
+            @click="removeFromHw(problem.id)"
+            class="btn btn-ghost btn-xs text-error"
+          >
+            ✕
+          </button>
+        </div>
+        <div
+          v-if="selectedProblems.length === 0"
+          class="text-center text-sm opacity-70 py-4"
+        >
+          No problems selected. <br />
+          <span class="text-xs">Click "Add to HW" on the left.</span>
+        </div>
+      </div>
+
+      <div class="sticky bottom-0 bg-base-200 pt-4 pb-2">
         <button
           @click="createHomework"
           class="btn btn-primary w-full"
