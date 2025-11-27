@@ -99,7 +99,7 @@ const renderedContent = computed(() => {
   @apply text-base leading-relaxed;
 }
 .markdown-body p {
-  @apply mb-4;
+  @apply mb-0;
 }
 .markdown-body ul {
   @apply list-disc pl-5 mb-4;

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { homeworks, problems } from "~~/db/schema";
+import HomeworkHeader from "~/components/student/HomeworkHeader.vue";
+import ProblemCard from "~/components/student/ProblemCard.vue";
 
 definePageMeta({
   layout: "student",
@@ -43,10 +45,6 @@ const currentProblem = computed(() => {
 const isLastProblem = computed(() => {
   if (!data.value || !data.value.problems) return false;
   return currentProblemIndex.value === data.value.problems.length - 1;
-});
-
-const isFirstProblem = computed(() => {
-  return currentProblemIndex.value === 0;
 });
 
 const allProblemsSubmitted = computed(() => {
@@ -174,172 +172,82 @@ const finishHomework = async () => {
     </div>
 
     <!-- Problem View -->
-    <div v-else-if="currentProblem" class="space-y-6">
-      <!-- Header with Progress -->
-      <div class="flex flex-col gap-4">
-        <div class="flex justify-between items-center">
-          <div class="text-sm breadcrumbs">
-            <ul>
-              <li><NuxtLink to="/student/homeworks">Homeworks</NuxtLink></li>
-              <li>{{ data?.homework.title }}</li>
-            </ul>
-          </div>
-          <div class="badge badge-lg">
-            Question {{ currentProblemIndex + 1 }} / {{ data?.problems.length }}
-          </div>
-        </div>
+    <div v-else-if="currentProblem && data" class="space-y-6">
+      <HomeworkHeader
+        :title="data.homework.title"
+        :current-index="currentProblemIndex"
+        :problems="data.problems"
+        mode="take"
+        @jump="jumpToProblem"
+      />
 
-        <!-- Progress Bar / Indicators -->
-        <div class="flex gap-2 flex-wrap justify-center">
-          <button
-            v-for="(problem, index) in data?.problems"
-            :key="problem.id"
-            @click="jumpToProblem(index)"
-            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors border-2"
+      <ProblemCard
+        :problem="currentProblem"
+        :current-index="currentProblemIndex"
+        :total-problems="data.problems.length"
+        @prev="prevProblem"
+        @next="nextProblem"
+      >
+        <!-- Choices -->
+        <div class="form-control space-y-3">
+          <label
+            v-for="(text, key) in currentProblem.choices"
+            :key="key"
+            class="label cursor-pointer border rounded-lg p-4 hover:bg-base-200 transition-colors"
             :class="{
-              'bg-success text-success-content border-success':
-                problem.submissionStatus?.submitted,
-              'bg-base-200 text-base-content border-base-300':
-                !problem.submissionStatus?.submitted,
-              'border-primary ring-2 ring-primary ring-offset-2':
-                currentProblemIndex === index,
+              'border-primary bg-primary/10': selectedAnswer === key,
             }"
           >
-            {{ index + 1 }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Problem Card -->
-      <div class="card bg-base-100 shadow-xl relative">
-        <!-- Navigation Buttons on Card -->
-        <div class="absolute top-4 left-4 z-10">
-          <button
-            v-if="!isFirstProblem"
-            @click="prevProblem"
-            class="btn btn-circle btn-sm btn-ghost"
-            title="Previous Problem"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="absolute top-4 right-4 z-10">
-          <button
-            v-if="!isLastProblem"
-            @click="nextProblem"
-            class="btn btn-circle btn-sm btn-ghost"
-            title="Next Problem"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div class="card-body pt-12">
-          <h2 class="card-title text-2xl justify-center">
-            {{ currentProblem.title }}
-          </h2>
-          <MarkdownRenderer
-            :content="currentProblem.content"
-            class="py-4 text-lg"
-          />
-
-          <!-- Image -->
-          <div v-if="currentProblem.imageUrl" class="my-4 flex justify-center">
-            <img
-              :src="currentProblem.imageUrl"
-              alt="Problem Image"
-              class="max-h-96 rounded-lg shadow-md object-contain"
+            <span class="label-text text-base flex-1 flex items-start">
+              <span class="font-bold mr-2 mt-1">{{ key }}.</span>
+              <MarkdownRenderer :content="text" />
+            </span>
+            <input
+              type="radio"
+              name="choices"
+              class="radio radio-primary"
+              :value="key"
+              v-model="selectedAnswer"
             />
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- Choices -->
-          <div class="form-control space-y-3">
-            <label
-              v-for="(text, key) in currentProblem.choices"
-              :key="key"
-              class="label cursor-pointer border rounded-lg p-4 hover:bg-base-200 transition-colors"
-              :class="{
-                'border-primary bg-primary/10': selectedAnswer === key,
-              }"
-            >
-              <span class="label-text text-base flex-1">
-                <span class="font-bold mr-2">{{ key }}.</span> {{ text }}
-              </span>
-              <input
-                type="radio"
-                name="choices"
-                class="radio radio-primary"
-                :value="key"
-                v-model="selectedAnswer"
-              />
-            </label>
-          </div>
-
-          <!-- Actions -->
-          <div class="card-actions justify-center mt-8">
-            <div
-              v-if="currentProblem.submissionStatus?.submitted"
-              class="alert alert-success w-full max-w-md mb-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Answer Submitted (You can update it)</span>
-            </div>
-
-            <button
-              class="btn btn-primary btn-wide"
-              @click="submitAnswer"
-              :disabled="selectedAnswer === null || isSubmitting"
-            >
-              <span v-if="isSubmitting" class="loading loading-spinner"></span>
-              {{
-                currentProblem.submissionStatus?.submitted
-                  ? "Update Answer"
-                  : "Submit Answer"
-              }}
-            </button>
-          </div>
+          </label>
         </div>
-      </div>
+
+        <!-- Actions -->
+        <div class="card-actions justify-center mt-8">
+          <div
+            v-if="currentProblem.submissionStatus?.submitted"
+            class="alert alert-success w-full max-w-md mb-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Answer Submitted (You can update it)</span>
+          </div>
+
+          <button
+            class="btn btn-primary btn-wide"
+            @click="submitAnswer"
+            :disabled="selectedAnswer === null || isSubmitting"
+          >
+            <span v-if="isSubmitting" class="loading loading-spinner"></span>
+            {{
+              currentProblem.submissionStatus?.submitted
+                ? "Update Answer"
+                : "Submit Answer"
+            }}
+          </button>
+        </div>
+      </ProblemCard>
 
       <!-- Finish Button Section -->
       <div v-if="isLastProblem" class="flex justify-center mt-8">
