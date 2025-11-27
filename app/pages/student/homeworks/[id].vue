@@ -10,11 +10,16 @@ const homeworkId = route.params.id as string;
 
 type HomeworkDetail = {
   homework: typeof homeworks.$inferSelect;
-  problems: (typeof problems.$inferSelect)[];
+  problems: (typeof problems.$inferSelect & {
+    submissionStatus: {
+      submitted: boolean;
+      correct: boolean;
+    } | null;
+  })[];
 };
 
 // Fetch homework data
-const { data, status, error } = await useFetch<HomeworkDetail>(
+const { data, status, error, refresh } = await useFetch<HomeworkDetail>(
   `/api/student/homeworks/${homeworkId}`
 );
 
@@ -39,6 +44,15 @@ const isLastProblem = computed(() => {
   return currentProblemIndex.value === data.value.problems.length - 1;
 });
 
+const isFirstProblem = computed(() => {
+  return currentProblemIndex.value === 0;
+});
+
+const allProblemsSubmitted = computed(() => {
+  if (!data.value || !data.value.problems) return false;
+  return data.value.problems.every((p) => p.submissionStatus?.submitted);
+});
+
 // Reset state when changing problems
 watch(currentProblemIndex, () => {
   selectedAnswer.value = null;
@@ -59,9 +73,17 @@ const submitAnswer = async () => {
       body: {
         problemId: currentProblem.value.id,
         userAnswer: selectedAnswer.value,
+        homeworkId: homeworkId,
       },
     });
-    submissionResult.value = result;
+
+    // Refresh data to ensure we have the latest status from server
+    await refresh();
+
+    // Move to next problem if not last
+    if (!isLastProblem.value) {
+      nextProblem();
+    }
   } catch (e) {
     console.error("Submission failed", e);
   } finally {
@@ -76,13 +98,24 @@ const nextProblem = () => {
   }
 };
 
+const prevProblem = () => {
+  if (currentProblemIndex.value > 0) {
+    currentProblemIndex.value--;
+  }
+};
+
+const jumpToProblem = (index: number) => {
+  currentProblemIndex.value = index;
+};
+
 const finishHomework = async () => {
+  if (!allProblemsSubmitted.value) return;
   await navigateTo("/student/homeworks");
 };
 </script>
 
 <template>
-  <div class="container mx-auto max-w-3xl pb-20 p-4">
+  <div class="container mx-auto max-w-4xl pb-20 p-4">
     <!-- Loading State -->
     <div v-if="status === 'pending'" class="flex justify-center py-20">
       <span class="loading loading-spinner loading-lg"></span>
@@ -124,23 +157,95 @@ const finishHomework = async () => {
 
     <!-- Problem View -->
     <div v-else-if="currentProblem" class="space-y-6">
-      <!-- Header -->
-      <div class="flex justify-between items-center">
-        <div class="text-sm breadcrumbs">
-          <ul>
-            <li><NuxtLink to="/student/homeworks">Homeworks</NuxtLink></li>
-            <li>{{ data?.homework.title }}</li>
-          </ul>
+      <!-- Header with Progress -->
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-center">
+          <div class="text-sm breadcrumbs">
+            <ul>
+              <li><NuxtLink to="/student/homeworks">Homeworks</NuxtLink></li>
+              <li>{{ data?.homework.title }}</li>
+            </ul>
+          </div>
+          <div class="badge badge-lg">
+            Question {{ currentProblemIndex + 1 }} / {{ data?.problems.length }}
+          </div>
         </div>
-        <div class="badge badge-lg">
-          Question {{ currentProblemIndex + 1 }} / {{ data?.problems.length }}
+
+        <!-- Progress Bar / Indicators -->
+        <div class="flex gap-2 flex-wrap justify-center">
+          <button
+            v-for="(problem, index) in data?.problems"
+            :key="problem.id"
+            @click="jumpToProblem(index)"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors border-2"
+            :class="{
+              'bg-success text-success-content border-success':
+                problem.submissionStatus?.submitted,
+              'bg-base-200 text-base-content border-base-300':
+                !problem.submissionStatus?.submitted,
+              'border-primary ring-2 ring-primary ring-offset-2':
+                currentProblemIndex === index,
+            }"
+          >
+            {{ index + 1 }}
+          </button>
         </div>
       </div>
 
       <!-- Problem Card -->
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">{{ currentProblem.title }}</h2>
+      <div class="card bg-base-100 shadow-xl relative">
+        <!-- Navigation Buttons on Card -->
+        <div class="absolute top-4 left-4 z-10">
+          <button
+            v-if="!isFirstProblem"
+            @click="prevProblem"
+            class="btn btn-circle btn-sm btn-ghost"
+            title="Previous Problem"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="absolute top-4 right-4 z-10">
+          <button
+            v-if="!isLastProblem"
+            @click="nextProblem"
+            class="btn btn-circle btn-sm btn-ghost"
+            title="Next Problem"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="card-body pt-12">
+          <h2 class="card-title text-2xl justify-center">
+            {{ currentProblem.title }}
+          </h2>
           <MarkdownRenderer
             :content="currentProblem.content"
             class="py-4 text-lg"
@@ -165,12 +270,8 @@ const finishHomework = async () => {
               class="label cursor-pointer border rounded-lg p-4 hover:bg-base-200 transition-colors"
               :class="{
                 'border-primary bg-primary/10': selectedAnswer === key,
-                'border-success bg-success/10':
-                  submissionResult && key === submissionResult.correctAnswer,
-                'border-error bg-error/10':
-                  submissionResult &&
-                  !submissionResult.correct &&
-                  key === selectedAnswer,
+                'opacity-50 cursor-not-allowed':
+                  currentProblem.submissionStatus?.submitted,
               }"
             >
               <span class="label-text text-base flex-1">
@@ -182,77 +283,58 @@ const finishHomework = async () => {
                 class="radio radio-primary"
                 :value="key"
                 v-model="selectedAnswer"
-                :disabled="!!submissionResult"
+                :disabled="!!currentProblem.submissionStatus?.submitted"
               />
             </label>
           </div>
 
           <!-- Actions -->
-          <div class="card-actions justify-end mt-6 flex gap-2">
-            <!-- Submit Answer Button -->
+          <div class="card-actions justify-center mt-8">
+            <div
+              v-if="currentProblem.submissionStatus?.submitted"
+              class="alert alert-success w-full max-w-md"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Answer Submitted</span>
+            </div>
+
             <button
-              v-if="!submissionResult"
-              class="btn btn-primary"
+              v-else
+              class="btn btn-primary btn-wide"
               @click="submitAnswer"
               :disabled="selectedAnswer === null || isSubmitting"
             >
               <span v-if="isSubmitting" class="loading loading-spinner"></span>
               Submit Answer
             </button>
-
-            <!-- Next / Finish Buttons (Only show after submission) -->
-            <template v-else>
-              <button
-                v-if="!isLastProblem"
-                class="btn btn-outline"
-                @click="nextProblem"
-              >
-                Next Question
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-              <button v-else class="btn btn-success" @click="finishHomework">
-                Finish Homework
-              </button>
-            </template>
-          </div>
-
-          <!-- Result Feedback -->
-          <div v-if="submissionResult" class="mt-4 animate-fade-in">
-            <div
-              class="alert"
-              :class="
-                submissionResult.correct ? 'alert-success' : 'alert-error'
-              "
-            >
-              <span>{{
-                submissionResult.correct
-                  ? "Correct!"
-                  : "Incorrect. The correct answer is " +
-                    submissionResult.correctAnswer
-              }}</span>
-            </div>
-            <div
-              v-if="submissionResult.explanation"
-              class="mt-4 p-4 bg-base-200 rounded-lg"
-            >
-              <h3 class="font-bold mb-2">Explanation:</h3>
-              <MarkdownRenderer :content="submissionResult.explanation" />
-            </div>
           </div>
         </div>
+      </div>
+
+      <!-- Finish Button Section -->
+      <div v-if="isLastProblem" class="flex justify-center mt-8">
+        <button
+          class="btn btn-success btn-lg"
+          @click="finishHomework"
+          :disabled="!allProblemsSubmitted"
+        >
+          Finish Homework
+          <span v-if="!allProblemsSubmitted" class="text-xs ml-2"
+            >(Complete all questions first)</span
+          >
+        </button>
       </div>
     </div>
   </div>

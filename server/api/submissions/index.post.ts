@@ -1,5 +1,10 @@
 import { db } from "../../../db";
-import { problems, submissions } from "../../../db/schema";
+import {
+  problems,
+  submissions,
+  homeworks,
+  hwRecords,
+} from "../../../db/schema";
 import { auth } from "../../../server/utils/auth";
 import { eq } from "drizzle-orm";
 
@@ -16,7 +21,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event);
-  const { problemId, userAnswer } = body;
+  const { problemId, userAnswer, homeworkId } = body;
 
   if (!problemId || userAnswer === undefined || userAnswer === null) {
     throw createError({
@@ -48,6 +53,52 @@ export default defineEventHandler(async (event) => {
     userAnswer: userAnswer,
     isCorrect: isCorrect,
   });
+
+  // If homeworkId is provided, record it in hwRecords
+  if (homeworkId) {
+    // Fetch homework to get classroomId
+    const homework = await db.query.homeworks.findFirst({
+      where: (homeworks, { eq }) => eq(homeworks.id, homeworkId),
+    });
+
+    if (homework) {
+      // Check if a record already exists for this problem in this homework for this user
+      // Actually, user might resubmit. Let's just insert a new record or update existing?
+      // The requirement says "record student completion status".
+      // Usually we want the *latest* status or *best* status.
+      // Let's check if there's an existing record.
+      const existingRecord = await db.query.hwRecords.findFirst({
+        where: (hwRecords, { eq, and }) =>
+          and(
+            eq(hwRecords.homeworkId, homeworkId),
+            eq(hwRecords.userId, session.user.id),
+            eq(hwRecords.problemId, problemId)
+          ),
+      });
+
+      if (existingRecord) {
+        // Update existing record
+        await db
+          .update(hwRecords)
+          .set({
+            correctness: isCorrect,
+            submitted: true,
+            updatedAt: new Date(),
+          })
+          .where(eq(hwRecords.id, existingRecord.id));
+      } else {
+        // Insert new record
+        await db.insert(hwRecords).values({
+          homeworkId: homeworkId,
+          classroomId: homework.classroomId,
+          userId: session.user.id,
+          problemId: problemId,
+          correctness: isCorrect,
+          submitted: true,
+        });
+      }
+    }
+  }
 
   return {
     correct: isCorrect,

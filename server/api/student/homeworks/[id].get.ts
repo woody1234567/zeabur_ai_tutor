@@ -1,8 +1,8 @@
-import { eq, asc } from "drizzle-orm";
-import { homeworks, homeworkProblems, problems } from "~~/db/schema";
+import { eq, asc, and } from "drizzle-orm";
+import { homeworks, homeworkProblems, problems, hwRecords } from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
-  await requireAuthSession(event);
+  const session = await requireAuthSession(event);
   const homeworkId = getRouterParam(event, "id");
 
   if (!homeworkId) {
@@ -63,8 +63,33 @@ export default defineEventHandler(async (event) => {
     // We can try to order by it.
     .orderBy(asc(homeworkProblems.order));
 
+  // 3. Fetch homework records for the current user
+  const records = await useDrizzle()
+    .select()
+    .from(hwRecords)
+    .where(
+      and(
+        eq(hwRecords.homeworkId, homeworkId),
+        eq(hwRecords.userId, session.user.id)
+      )
+    );
+
+  // Map records to problems
+  const problemsWithStatus = problemList.map((problem) => {
+    const record = records.find((r) => r.problemId === problem.id);
+    return {
+      ...problem,
+      submissionStatus: record
+        ? {
+            submitted: record.submitted,
+            correct: record.correctness,
+          }
+        : null,
+    };
+  });
+
   return {
     homework,
-    problems: problemList,
+    problems: problemsWithStatus,
   };
 });
