@@ -7,7 +7,7 @@ definePageMeta({
 
 type HomeworkGroup = {
   classroom: typeof classrooms.$inferSelect;
-  homeworks: (typeof homeworks.$inferSelect)[];
+  homeworks: (typeof homeworks.$inferSelect & { isCompleted: boolean })[];
 };
 
 const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
@@ -83,12 +83,22 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
                     }}
                   </span>
                 </p>
-                <NuxtLink
-                  :to="`/student/homeworks/${hw.id}`"
-                  class="btn btn-sm btn-primary"
-                >
-                  View HW
-                </NuxtLink>
+                <div class="card-actions justify-end mt-4">
+                  <NuxtLink
+                    v-if="hw.isCompleted"
+                    :to="`/student/homeworks/review/${hw.id}`"
+                    class="btn btn-sm btn-secondary"
+                  >
+                    Review HW
+                  </NuxtLink>
+                  <NuxtLink
+                    v-else
+                    :to="`/student/homeworks/${hw.id}`"
+                    class="btn btn-sm btn-primary"
+                  >
+                    {{ hw.isCompleted ? "Completed" : "Start HW" }}
+                  </NuxtLink>
+                </div>
                 <!-- Future enhancement: Add link to homework details/submission page -->
                 <!-- <div class="card-actions justify-end mt-4">
                   <NuxtLink :to="`/student/homeworks/${hw.id}`" class="btn btn-primary btn-sm">View</NuxtLink>

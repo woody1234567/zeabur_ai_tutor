@@ -164,3 +164,19 @@ export const hwRecords = pgTable("hw_records", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const homeworkCompletions = pgTable("homework_completions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  homeworkId: text("homework_id")
+    .notNull()
+    .references(() => homeworks.id),
+  classroomId: text("classroom_id")
+    .notNull()
+    .references(() => classrooms.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  completedAt: timestamp("completed_at").defaultNow().notNull(),
+});

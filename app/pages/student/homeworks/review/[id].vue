@@ -8,9 +8,11 @@ definePageMeta({
 const route = useRoute();
 const homeworkId = route.params.id as string;
 
-type HomeworkDetail = {
+type HomeworkReviewDetail = {
   homework: typeof homeworks.$inferSelect;
   problems: (typeof problems.$inferSelect & {
+    correctAnswer: string;
+    explanation: string | null;
     submissionStatus: {
       submitted: boolean;
       correct: boolean;
@@ -19,21 +21,15 @@ type HomeworkDetail = {
   })[];
 };
 
-// Fetch homework data
-const { data, status, error, refresh } = await useFetch<HomeworkDetail>(
-  `/api/student/homeworks/${homeworkId}`
+// Fetch homework review data
+const { data, status, error } = await useFetch<HomeworkReviewDetail>(
+  `/api/student/homeworks/${homeworkId}/review`
 );
 
 // State
-const started = ref(false);
 const currentProblemIndex = ref(0);
-const selectedAnswer = ref<string | null>(null);
-const isSubmitting = ref(false);
-const submissionResult = ref<{
-  correct: boolean;
-  explanation: string | null;
-  correctAnswer: string;
-} | null>(null);
+const isExplaining = ref(false);
+const aiExplanation = ref<string | null>(null);
 
 const currentProblem = computed(() => {
   if (!data.value || !data.value.problems) return null;
@@ -49,56 +45,10 @@ const isFirstProblem = computed(() => {
   return currentProblemIndex.value === 0;
 });
 
-const allProblemsSubmitted = computed(() => {
-  if (!data.value || !data.value.problems) return false;
-  return data.value.problems.every((p) => p.submissionStatus?.submitted);
+// Reset AI explanation when changing problems
+watch(currentProblemIndex, () => {
+  aiExplanation.value = null;
 });
-
-// Reset state when changing problems
-watch(
-  currentProblemIndex,
-  () => {
-    if (currentProblem.value?.submissionStatus?.userAnswer) {
-      selectedAnswer.value = currentProblem.value.submissionStatus.userAnswer;
-    } else {
-      selectedAnswer.value = null;
-    }
-    submissionResult.value = null;
-  },
-  { immediate: true }
-);
-
-const startHomework = () => {
-  started.value = true;
-};
-
-const submitAnswer = async () => {
-  if (selectedAnswer.value === null || !currentProblem.value) return;
-
-  isSubmitting.value = true;
-  try {
-    const result = await $fetch("/api/submissions", {
-      method: "POST",
-      body: {
-        problemId: currentProblem.value.id,
-        userAnswer: selectedAnswer.value,
-        homeworkId: homeworkId,
-      },
-    });
-
-    // Refresh data to ensure we have the latest status from server
-    await refresh();
-
-    // Move to next problem if not last
-    if (!isLastProblem.value) {
-      nextProblem();
-    }
-  } catch (e) {
-    console.error("Submission failed", e);
-  } finally {
-    isSubmitting.value = false;
-  }
-};
 
 const nextProblem = () => {
   if (!data.value || !data.value.problems) return;
@@ -117,17 +67,28 @@ const jumpToProblem = (index: number) => {
   currentProblemIndex.value = index;
 };
 
-const finishHomework = async () => {
-  if (!allProblemsSubmitted.value) return;
+// Ask AI
+const askAI = async () => {
+  if (
+    !currentProblem.value ||
+    !currentProblem.value.submissionStatus?.userAnswer
+  )
+    return;
 
+  isExplaining.value = true;
   try {
-    await $fetch(`/api/student/homeworks/${homeworkId}/complete`, {
+    const result = await $fetch("/api/ai/explain", {
       method: "POST",
+      body: {
+        problemId: currentProblem.value.id,
+        userAnswer: currentProblem.value.submissionStatus.userAnswer,
+      },
     });
-    await navigateTo("/student/homeworks");
+    aiExplanation.value = result.explanation;
   } catch (e) {
-    console.error("Failed to complete homework", e);
-    alert("Failed to complete homework. Please try again.");
+    console.error("AI explanation failed", e);
+  } finally {
+    isExplaining.value = false;
   }
 };
 </script>
@@ -141,39 +102,11 @@ const finishHomework = async () => {
 
     <!-- Error State -->
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading homework: {{ error.message }}</span>
+      <span>Error loading homework review: {{ error.message }}</span>
+      <NuxtLink to="/student/homeworks" class="btn btn-sm">Go Back</NuxtLink>
     </div>
 
-    <!-- Start Screen -->
-    <div v-else-if="!started && data" class="card bg-base-100 shadow-xl mt-10">
-      <div class="card-body text-center">
-        <h1 class="text-4xl font-bold mb-4">{{ data.homework.title }}</h1>
-        <p class="text-xl mb-6">Subject: {{ data.homework.subject }}</p>
-        <div class="stats shadow mb-8">
-          <div class="stat">
-            <div class="stat-title">Questions</div>
-            <div class="stat-value">{{ data.problems.length }}</div>
-          </div>
-          <div class="stat">
-            <div class="stat-title">Deadline</div>
-            <div class="stat-value text-lg">
-              {{
-                data.homework.deadline
-                  ? new Date(data.homework.deadline).toLocaleDateString()
-                  : "None"
-              }}
-            </div>
-          </div>
-        </div>
-        <div class="card-actions justify-center">
-          <button @click="startHomework" class="btn btn-primary btn-lg">
-            Start Homework
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Problem View -->
+    <!-- Review View -->
     <div v-else-if="currentProblem" class="space-y-6">
       <!-- Header with Progress -->
       <div class="flex flex-col gap-4">
@@ -181,7 +114,7 @@ const finishHomework = async () => {
           <div class="text-sm breadcrumbs">
             <ul>
               <li><NuxtLink to="/student/homeworks">Homeworks</NuxtLink></li>
-              <li>{{ data?.homework.title }}</li>
+              <li>{{ data?.homework.title }} (Review)</li>
             </ul>
           </div>
           <div class="badge badge-lg">
@@ -198,10 +131,10 @@ const finishHomework = async () => {
             class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors border-2"
             :class="{
               'bg-success text-success-content border-success':
-                problem.submissionStatus?.submitted,
-              'bg-base-200 text-base-content border-base-300':
-                !problem.submissionStatus?.submitted,
-              'border-primary ring-2 ring-primary ring-offset-2':
+                problem.submissionStatus?.correct,
+              'bg-error text-error-content border-error':
+                !problem.submissionStatus?.correct,
+              'ring-2 ring-primary ring-offset-2':
                 currentProblemIndex === index,
             }"
           >
@@ -282,34 +215,48 @@ const finishHomework = async () => {
 
           <!-- Choices -->
           <div class="form-control space-y-3">
-            <label
+            <div
               v-for="(text, key) in currentProblem.choices"
               :key="key"
-              class="label cursor-pointer border rounded-lg p-4 hover:bg-base-200 transition-colors"
+              class="flex items-center p-4 border rounded-lg transition-colors"
               :class="{
-                'border-primary bg-primary/10': selectedAnswer === key,
+                'border-success bg-success/10':
+                  key === currentProblem.correctAnswer,
+                'border-error bg-error/10':
+                  key === currentProblem.submissionStatus?.userAnswer &&
+                  key !== currentProblem.correctAnswer,
+                'opacity-50':
+                  key !== currentProblem.correctAnswer &&
+                  key !== currentProblem.submissionStatus?.userAnswer,
               }"
             >
-              <span class="label-text text-base flex-1">
-                <span class="font-bold mr-2">{{ key }}.</span> {{ text }}
-              </span>
-              <input
-                type="radio"
-                name="choices"
-                class="radio radio-primary"
-                :value="key"
-                v-model="selectedAnswer"
-              />
-            </label>
+              <span class="font-bold mr-2">{{ key }}.</span>
+              <span class="flex-1">{{ text }}</span>
+              <span
+                v-if="key === currentProblem.correctAnswer"
+                class="badge badge-success ml-2"
+                >Correct</span
+              >
+              <span
+                v-if="key === currentProblem.submissionStatus?.userAnswer"
+                class="badge badge-info ml-2"
+                >Your Answer</span
+              >
+            </div>
           </div>
 
-          <!-- Actions -->
-          <div class="card-actions justify-center mt-8">
+          <!-- Explanation Section -->
+          <div class="mt-8 space-y-6">
             <div
-              v-if="currentProblem.submissionStatus?.submitted"
-              class="alert alert-success w-full max-w-md mb-4"
+              class="alert"
+              :class="
+                currentProblem.submissionStatus?.correct
+                  ? 'alert-success'
+                  : 'alert-error'
+              "
             >
               <svg
+                v-if="currentProblem.submissionStatus?.correct"
                 xmlns="http://www.w3.org/2000/svg"
                 class="stroke-current shrink-0 h-6 w-6"
                 fill="none"
@@ -322,54 +269,89 @@ const finishHomework = async () => {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span>Answer Submitted (You can update it)</span>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{{
+                currentProblem.submissionStatus?.correct
+                  ? "Correct! Great job."
+                  : "Incorrect."
+              }}</span>
             </div>
 
-            <button
-              class="btn btn-primary btn-wide"
-              @click="submitAnswer"
-              :disabled="selectedAnswer === null || isSubmitting"
-            >
-              <span v-if="isSubmitting" class="loading loading-spinner"></span>
-              {{
-                currentProblem.submissionStatus?.submitted
-                  ? "Update Answer"
-                  : "Submit Answer"
-              }}
-            </button>
+            <!-- Official Explanation -->
+            <div class="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" checked />
+              <div class="collapse-title text-xl font-medium">
+                Official Solution
+              </div>
+              <div class="collapse-content">
+                <MarkdownRenderer
+                  :content="
+                    currentProblem.explanation || 'No explanation provided.'
+                  "
+                />
+              </div>
+            </div>
+
+            <!-- AI Tutor Section -->
+            <div class="card bg-base-200 border-2 border-primary/20">
+              <div class="card-body">
+                <h3 class="card-title flex items-center gap-2">
+                  <span class="text-2xl">🤖</span> AI Tutor
+                </h3>
+                <p class="text-sm opacity-70">
+                  Still confused? Ask the AI for a personalized explanation.
+                </p>
+
+                <div v-if="aiExplanation" class="mt-4 prose">
+                  <div class="chat chat-start">
+                    <div class="chat-image avatar">
+                      <div
+                        class="w-10 rounded-full bg-primary text-primary-content grid place-items-center"
+                      >
+                        <span>AI</span>
+                      </div>
+                    </div>
+                    <div class="chat-bubble chat-bubble-primary">
+                      <MarkdownRenderer :content="aiExplanation" />
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="card-actions mt-4">
+                  <button
+                    class="btn btn-outline btn-primary w-full"
+                    @click="askAI"
+                    :disabled="isExplaining"
+                  >
+                    <span
+                      v-if="isExplaining"
+                      class="loading loading-dots"
+                    ></span>
+                    <span v-else>Explain this to me</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- Finish Button Section -->
-      <div v-if="isLastProblem" class="flex justify-center mt-8">
-        <button
-          class="btn btn-success btn-lg"
-          @click="finishHomework"
-          :disabled="!allProblemsSubmitted"
-        >
-          Finish Homework
-          <span v-if="!allProblemsSubmitted" class="text-xs ml-2"
-            >(Complete all questions first)</span
-          >
-        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Add any specific styles if needed */
 </style>

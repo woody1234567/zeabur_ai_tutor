@@ -1,5 +1,10 @@
 import { eq, inArray } from "drizzle-orm";
-import { classrooms, classroomStudents, homeworks } from "~~/db/schema";
+import {
+  classrooms,
+  classroomStudents,
+  homeworks,
+  homeworkCompletions,
+} from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -39,11 +44,20 @@ export default defineEventHandler(async (event) => {
     .from(classrooms)
     .where(inArray(classrooms.id, classroomIds));
 
-  // 4. Group homeworks by classroom
+  // 4. Fetch completions
+  const completions = await useDrizzle()
+    .select()
+    .from(homeworkCompletions)
+    .where(eq(homeworkCompletions.userId, studentId));
+
+  // 5. Group homeworks by classroom
   const result = classroomDetails.map((classroom) => {
-    const classroomHomeworks = allHomeworks.filter(
-      (hw) => hw.classroomId === classroom.id
-    );
+    const classroomHomeworks = allHomeworks
+      .filter((hw) => hw.classroomId === classroom.id)
+      .map((hw) => ({
+        ...hw,
+        isCompleted: completions.some((c) => c.homeworkId === hw.id),
+      }));
     return {
       classroom,
       homeworks: classroomHomeworks,
