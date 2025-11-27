@@ -2,7 +2,9 @@ import { createAuthClient } from "better-auth/vue";
 import { adminClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:3000", // Adjust if deploying
+  baseURL: import.meta.env.PROD
+    ? "https://ai-tutor-new-seven.vercel.app"
+    : "http://localhost:3000",
   plugins: [adminClient()],
 });
 
