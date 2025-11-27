@@ -83,6 +83,7 @@ export default defineEventHandler(async (event) => {
         ? {
             submitted: record.submitted,
             correct: record.correctness,
+            userAnswer: record.userAnswer,
           }
         : null,
     };

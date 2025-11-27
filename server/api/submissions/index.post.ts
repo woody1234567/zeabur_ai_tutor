@@ -83,6 +83,7 @@ export default defineEventHandler(async (event) => {
           .set({
             correctness: isCorrect,
             submitted: true,
+            userAnswer: userAnswer,
             updatedAt: new Date(),
           })
           .where(eq(hwRecords.id, existingRecord.id));
@@ -95,6 +96,7 @@ export default defineEventHandler(async (event) => {
           problemId: problemId,
           correctness: isCorrect,
           submitted: true,
+          userAnswer: userAnswer,
         });
       }
     }

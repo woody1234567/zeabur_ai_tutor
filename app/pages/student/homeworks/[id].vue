@@ -14,6 +14,7 @@ type HomeworkDetail = {
     submissionStatus: {
       submitted: boolean;
       correct: boolean;
+      userAnswer?: string;
     } | null;
   })[];
 };
@@ -54,10 +55,18 @@ const allProblemsSubmitted = computed(() => {
 });
 
 // Reset state when changing problems
-watch(currentProblemIndex, () => {
-  selectedAnswer.value = null;
-  submissionResult.value = null;
-});
+watch(
+  currentProblemIndex,
+  () => {
+    if (currentProblem.value?.submissionStatus?.userAnswer) {
+      selectedAnswer.value = currentProblem.value.submissionStatus.userAnswer;
+    } else {
+      selectedAnswer.value = null;
+    }
+    submissionResult.value = null;
+  },
+  { immediate: true }
+);
 
 const startHomework = () => {
   started.value = true;
@@ -270,8 +279,6 @@ const finishHomework = async () => {
               class="label cursor-pointer border rounded-lg p-4 hover:bg-base-200 transition-colors"
               :class="{
                 'border-primary bg-primary/10': selectedAnswer === key,
-                'opacity-50 cursor-not-allowed':
-                  currentProblem.submissionStatus?.submitted,
               }"
             >
               <span class="label-text text-base flex-1">
@@ -283,7 +290,6 @@ const finishHomework = async () => {
                 class="radio radio-primary"
                 :value="key"
                 v-model="selectedAnswer"
-                :disabled="!!currentProblem.submissionStatus?.submitted"
               />
             </label>
           </div>
@@ -292,7 +298,7 @@ const finishHomework = async () => {
           <div class="card-actions justify-center mt-8">
             <div
               v-if="currentProblem.submissionStatus?.submitted"
-              class="alert alert-success w-full max-w-md"
+              class="alert alert-success w-full max-w-md mb-4"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -307,17 +313,20 @@ const finishHomework = async () => {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span>Answer Submitted</span>
+              <span>Answer Submitted (You can update it)</span>
             </div>
 
             <button
-              v-else
               class="btn btn-primary btn-wide"
               @click="submitAnswer"
               :disabled="selectedAnswer === null || isSubmitting"
             >
               <span v-if="isSubmitting" class="loading loading-spinner"></span>
-              Submit Answer
+              {{
+                currentProblem.submissionStatus?.submitted
+                  ? "Update Answer"
+                  : "Submit Answer"
+              }}
             </button>
           </div>
         </div>

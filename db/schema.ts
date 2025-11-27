@@ -158,6 +158,7 @@ export const hwRecords = pgTable("hw_records", {
   problemId: text("problem_id")
     .notNull()
     .references(() => problems.id),
+  userAnswer: text("user_answer"),
   correctness: boolean("correctness").notNull(),
   submitted: boolean("submitted").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
