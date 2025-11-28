@@ -8,7 +8,49 @@ definePageMeta({
   layout: "student",
 });
 
-const { data: events } = await useFetch("/api/student/homework-calendar");
+const { data: events, refresh } = await useFetch(
+  "/api/student/homework-calendar"
+);
+
+const eventModal = ref<HTMLDialogElement | null>(null);
+const newEventTitle = ref("");
+const selectedDateInfo = ref<any>(null);
+
+const handleDateSelect = (selectInfo: any) => {
+  selectedDateInfo.value = selectInfo;
+  newEventTitle.value = "";
+  eventModal.value?.showModal();
+};
+
+const closeModal = () => {
+  eventModal.value?.close();
+  selectedDateInfo.value?.view.calendar.unselect();
+  selectedDateInfo.value = null;
+};
+
+const createEvent = async () => {
+  if (!newEventTitle.value || !selectedDateInfo.value) return;
+
+  const { startStr, endStr, allDay } = selectedDateInfo.value;
+
+  try {
+    await $fetch("/api/student/events", {
+      method: "POST",
+      body: {
+        title: newEventTitle.value,
+        start: startStr,
+        end: endStr,
+        allDay: allDay,
+      },
+    });
+
+    await refresh(); // Refresh events from server
+    closeModal();
+  } catch (error) {
+    console.error("Failed to create event", error);
+    alert("Failed to create event");
+  }
+};
 
 const calendarOptions = ref({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
@@ -18,12 +60,13 @@ const calendarOptions = ref({
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay",
   },
-  events: events.value || [],
+  events: events, // Pass the ref directly so it updates on refresh
   editable: false,
   selectable: true,
   selectMirror: true,
   dayMaxEvents: true,
   weekends: true,
+  select: handleDateSelect,
 });
 </script>
 
@@ -33,6 +76,36 @@ const calendarOptions = ref({
     <div class="bg-base-100 p-4 rounded-lg shadow">
       <FullCalendar :options="calendarOptions" class="fc-daisy" />
     </div>
+
+    <!-- Event Creation Modal -->
+    <dialog id="event_modal" class="modal" ref="eventModal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Create Personal Event</h3>
+        <div class="form-control w-full mt-4">
+          <label class="label">
+            <span class="label-text">Event Title</span>
+          </label>
+          <input
+            v-model="newEventTitle"
+            type="text"
+            placeholder="Study for math test"
+            class="input input-bordered w-full"
+            @keyup.enter="createEvent"
+          />
+        </div>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-ghost" @click="closeModal">Cancel</button>
+            <button class="btn btn-primary" @click.prevent="createEvent">
+              Create
+            </button>
+          </form>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button @click="closeModal">close</button>
+      </form>
+    </dialog>
   </div>
 </template>
 

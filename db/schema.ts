@@ -180,3 +180,18 @@ export const homeworkCompletions = pgTable("homework_completions", {
     .references(() => user.id),
   completedAt: timestamp("completed_at").defaultNow().notNull(),
 });
+
+export const personalEvents = pgTable("personal_events", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  title: text("title").notNull(),
+  start: timestamp("start").notNull(),
+  end: timestamp("end"),
+  allDay: boolean("all_day").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

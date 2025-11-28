@@ -1,13 +1,12 @@
 import { eq, inArray } from "drizzle-orm";
-import { db } from "../../../db";
-import { classroomStudents, homeworks } from "../../../db/schema";
+import { classroomStudents, homeworks, personalEvents } from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
   const userId = session.user.id;
 
   // 1. Get all classrooms the student is in
-  const studentClassrooms = await db
+  const studentClassrooms = await useDrizzle()
     .select({ classroomId: classroomStudents.classroomId })
     .from(classroomStudents)
     .where(eq(classroomStudents.studentId, userId));
@@ -19,20 +18,42 @@ export default defineEventHandler(async (event) => {
   const classroomIds = studentClassrooms.map((c) => c.classroomId);
 
   // 2. Get all homeworks for those classrooms
-  const homeworkList = await db
+  const homeworkList = await useDrizzle()
     .select()
     .from(homeworks)
     .where(inArray(homeworks.classroomId, classroomIds));
 
   // 3. Map to FullCalendar events
-  const events = homeworkList
-    .filter((hw) => hw.deadline) // Filter out homeworks without a deadline
+  const homeworkEvents = homeworkList
+    .filter((hw) => hw.deadline)
     .map((hw) => ({
       id: hw.id,
       title: `${hw.subject ? `[${hw.subject}] ` : ""}${hw.title}`,
-      start: hw.deadline as Date, // Assert as Date since we filtered
+      start: hw.deadline as Date,
       allDay: true,
+      color: "#3788d8", // Default blue for homework
+      extendedProps: {
+        type: "homework",
+      },
     }));
 
-  return events;
+  // 4. Get personal events
+  const personalEventsList = await useDrizzle()
+    .select()
+    .from(personalEvents)
+    .where(eq(personalEvents.userId, userId));
+
+  const personalCalendarEvents = personalEventsList.map((evt) => ({
+    id: evt.id,
+    title: evt.title,
+    start: evt.start,
+    end: evt.end,
+    allDay: evt.allDay ?? true,
+    color: "#10b981", // Green for personal events
+    extendedProps: {
+      type: "personal",
+    },
+  }));
+
+  return [...homeworkEvents, ...personalCalendarEvents];
 });
