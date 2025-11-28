@@ -3,7 +3,7 @@ import { adminClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
   baseURL: import.meta.env.PROD
-    ? "https://studywithwoody.site/"
+    ? "https://studywithwoody.site"
     : "http://localhost:3000",
   plugins: [adminClient()],
 });
