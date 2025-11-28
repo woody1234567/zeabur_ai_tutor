@@ -18,6 +18,7 @@ interface ProblemData {
 }
 
 import VisionTool from "./VisionTool.vue";
+import FormatTool from "./FormatTool.vue";
 
 const props = defineProps<{
   modelValue: ProblemData;
@@ -45,6 +46,10 @@ const handleTextExtracted = (text: string) => {
   const currentContent = props.modelValue.content;
   const newContent = currentContent ? `${currentContent}\n\n${text}` : text;
   updateField("content", newContent);
+};
+
+const handleContentFormatted = (formattedContent: string) => {
+  updateField("content", formattedContent);
 };
 
 const addChoice = () => {
@@ -226,6 +231,10 @@ const handleSubmit = () => {
     <div class="form-control">
       <label class="label mb-2">Content (Markdown supported)</label>
       <VisionTool @text-extracted="handleTextExtracted" />
+      <FormatTool
+        :current-content="modelValue.content"
+        @content-formatted="handleContentFormatted"
+      />
       <br />
       <textarea
         :value="modelValue.content"
