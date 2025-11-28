@@ -23,12 +23,12 @@ export const auth = betterAuth({
     line: {
       clientId: process.env.LINE_CLIENT_ID!,
       clientSecret: process.env.LINE_CLIENT_SECRET!,
+      email: true,
     },
   },
   accountLinking: {
     enabled: true,
     trustedProviders: ["google", "line"],
-    updateUserInfoOnLink: true,
   },
   databaseHooks: {
     session: {
