@@ -28,6 +28,7 @@ export const auth = betterAuth({
   accountLinking: {
     enabled: true,
     trustedProviders: ["google", "line"],
+    updateUserInfoOnLink: true,
   },
   databaseHooks: {
     session: {
