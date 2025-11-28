@@ -35,6 +35,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [admin()],
+  trustedOrigins: ["https://studywithwoody.site", "http://localhost:3000"],
   debug: true,
 });
 
