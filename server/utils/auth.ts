@@ -20,6 +20,14 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
+    line: {
+      clientId: process.env.LINE_CLIENT_ID!,
+      clientSecret: process.env.LINE_CLIENT_SECRET!,
+    },
+  },
+  accountLinking: {
+    enabled: true,
+    trustedProviders: ["google", "line"],
   },
   databaseHooks: {
     session: {
