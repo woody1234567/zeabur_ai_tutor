@@ -2,9 +2,11 @@ import { createAuthClient } from "better-auth/vue";
 import { adminClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.PROD
-    ? "https://studywithwoody.site"
-    : "http://localhost:3000",
+  // baseURL: import.meta.env.PROD
+  //   ? "https://studywithwoody.site"
+  //   : "http://localhost:3000",
+  baseURL:
+    (useRuntimeConfig().public.baseURL as string) || window.location.origin,
   plugins: [adminClient()],
 });
 

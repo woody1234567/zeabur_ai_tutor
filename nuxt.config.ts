@@ -4,6 +4,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss"],
   runtimeConfig: {
+    public: {
+      baseURL: process.env.NUXT_BASE_URL || "",
+    },
     databaseUrl: process.env.DATABASE_URL,
     authSecret: process.env.BETTER_AUTH_SECRET,
     betterAuthSecret: process.env.BETTER_AUTH_SECRET,
