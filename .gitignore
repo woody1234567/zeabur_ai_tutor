@@ -18,6 +18,10 @@ logs
 .fleet
 .idea
 
+#docker compose
+docker-compose.yml
+docker-compose.yaml
+
 # Local env files
 .env
 .env.*
