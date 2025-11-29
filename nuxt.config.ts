@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseURL: process.env.NUXT_BASE_URL || "",
+      betterAuthUrl: process.env.BETTER_AUTH_URL || "http://localhost:3000",
     },
     databaseUrl: process.env.DATABASE_URL,
     authSecret: process.env.BETTER_AUTH_SECRET,
