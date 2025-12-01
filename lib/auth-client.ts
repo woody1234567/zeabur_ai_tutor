@@ -8,7 +8,7 @@ const getBaseURL = () => {
   // Server-side logic (SSG, SSR)
   const env = process.env.VERCEL_ENV;
 
-  if (env === "production") return "https://preview.studywithwoody.site";
+  if (env === "production") return "https://studywithwoody.site";
   if (env === "preview") return "https://preview.studywithwoody.site";
 
   return "http://localhost:3000";
