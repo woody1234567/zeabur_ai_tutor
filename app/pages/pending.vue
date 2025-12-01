@@ -14,6 +14,16 @@ const handleLogout = async () => {
     },
   });
 };
+
+onMounted(async () => {
+  try {
+    await $fetch("/api/admin/notify-new-user", {
+      method: "POST",
+    });
+  } catch (error) {
+    console.error("Failed to send notification email", error);
+  }
+});
 </script>
 
 <template>

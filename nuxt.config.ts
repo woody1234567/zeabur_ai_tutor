@@ -1,4 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import dotenv from "dotenv";
+
+// Load .env first
+dotenv.config();
+// Load .env.local to override
+dotenv.config({ path: ".env.local", override: true });
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
