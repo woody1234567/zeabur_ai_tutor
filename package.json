@@ -5,9 +5,6 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "dev:db": "docker compose up",
-    "db:studio": "npx drizzle-kit studio",
-    "db:push": "npx drizzle-kit push",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
