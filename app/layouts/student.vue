@@ -45,7 +45,7 @@ const closeDrawer = () => {
         </div>
         <div class="flex-1 px-2 mx-2">
           <NuxtLink to="/student" class="btn btn-ghost text-xl"
-            >AI Tutor</NuxtLink
+            >AI Tutor - Student</NuxtLink
           >
         </div>
         <div class="flex-none hidden lg:block">
