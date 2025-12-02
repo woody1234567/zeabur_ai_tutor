@@ -58,9 +58,12 @@ const handleOptionsGenerated = (data: {
   correctAnswer: string;
   explanation: string;
 }) => {
-  updateField("choices", data.choices);
-  updateField("correctAnswer", data.correctAnswer);
-  updateField("explanation", data.explanation);
+  emit("update:modelValue", {
+    ...props.modelValue,
+    choices: data.choices,
+    correctAnswer: data.correctAnswer,
+    explanation: data.explanation,
+  });
 };
 
 const addChoice = () => {

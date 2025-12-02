@@ -7,13 +7,12 @@ const openai = new OpenAI({
 });
 
 const ResponseSchema = z.object({
-  choices: z.object({
-    A: z.string(),
-    B: z.string(),
-    C: z.string(),
-    D: z.string(),
-  }),
-  correct_ans: z.string(),
+  choices: z.array(
+    z.object({
+      text: z.string(),
+      isCorrect: z.boolean(),
+    })
+  ),
   explanation: z.string(),
 });
 
@@ -50,13 +49,12 @@ export default defineEventHandler(async (event) => {
     1. Return ONLY valid JSON.
     2. The JSON must match this structure:
        {
-         "choices": {
-           "A": "Option A text",
-           "B": "Option B text",
-           "C": "Option C text",
-           "D": "Option D text"
-         },
-         "correct_ans": "A or B or C or D",
+         "choices": [
+           { "text": "Option A text", "isCorrect": false },
+           { "text": "Option B text", "isCorrect": true },
+           { "text": "Option C text", "isCorrect": false },
+           { "text": "Option D text", "isCorrect": false }
+         ],
          "explanation": "Detailed explanation here..."
        }
     3. Ensure there is exactly one correct answer.
@@ -74,7 +72,7 @@ export default defineEventHandler(async (event) => {
     });
 
     const responseContent = completion.choices[0].message.content;
-
+    console.log(responseContent);
     if (!responseContent) {
       throw new Error("No content received from OpenAI");
     }

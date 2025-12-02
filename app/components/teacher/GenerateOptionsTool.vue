@@ -26,8 +26,7 @@ const generateOptions = async () => {
   try {
     isGenerating.value = true;
     const data = await $fetch<{
-      choices: Record<string, string>;
-      correct_ans: string;
+      choices: { text: string; isCorrect: boolean }[];
       explanation: string;
     }>("/api/teacher/generate-options", {
       method: "POST",
@@ -36,14 +35,16 @@ const generateOptions = async () => {
       },
     });
 
-    const newChoices = Object.entries(data.choices).map(([key, text]) => ({
-      text,
-      isCorrect: key === data.correct_ans,
-    }));
+    const newChoices = data.choices;
+    const correctChoiceIndex = newChoices.findIndex((c) => c.isCorrect);
+    const correctAnswer =
+      correctChoiceIndex !== -1
+        ? String.fromCharCode(65 + correctChoiceIndex)
+        : "";
 
     emit("options-generated", {
       choices: newChoices,
-      correctAnswer: data.correct_ans,
+      correctAnswer,
       explanation: data.explanation,
     });
   } catch (error: any) {
@@ -64,7 +65,7 @@ const generateOptions = async () => {
     >
       <span class="flex items-center gap-2">
         <span class="icon">💡</span>
-        AI Options Generator
+        AI Generator
       </span>
       <span class="text-sm opacity-70">{{ isOpen ? "Hide" : "Show" }}</span>
     </button>
