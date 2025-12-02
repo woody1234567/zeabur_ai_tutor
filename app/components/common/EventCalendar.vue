@@ -12,18 +12,71 @@ const selectedDateInfo = ref<any>(null);
 const isAllDay = ref(true);
 const startTime = ref("09:00");
 const endTime = ref("10:00");
+const editingEventId = ref<string | null>(null);
 
 const handleDateSelect = (selectInfo: any) => {
   selectedDateInfo.value = selectInfo;
   newEventTitle.value = "";
   isAllDay.value = selectInfo.allDay;
+  editingEventId.value = null; // Reset editing state
+
+  // Set default times if not all day
+  if (!selectInfo.allDay && selectInfo.startStr.includes("T")) {
+    const start = new Date(selectInfo.start);
+    const end = new Date(selectInfo.end);
+    startTime.value = start.toTimeString().slice(0, 5);
+    endTime.value = end.toTimeString().slice(0, 5);
+  } else {
+    startTime.value = "09:00";
+    endTime.value = "10:00";
+  }
+
+  eventModal.value?.showModal();
+};
+
+const handleEventClick = (clickInfo: any) => {
+  const { event } = clickInfo;
+
+  // Only allow editing personal events
+  if (event.extendedProps.type !== "personal") {
+    return;
+  }
+
+  editingEventId.value = event.id;
+  newEventTitle.value = event.title;
+  isAllDay.value = event.allDay;
+
+  // Set times
+  if (event.start) {
+    startTime.value = event.start.toTimeString().slice(0, 5);
+  }
+  if (event.end) {
+    endTime.value = event.end.toTimeString().slice(0, 5);
+  } else if (event.start) {
+    // If no end time, default to 1 hour after start
+    const end = new Date(event.start);
+    end.setHours(end.getHours() + 1);
+    endTime.value = end.toTimeString().slice(0, 5);
+  }
+
+  // Mock selectedDateInfo for save logic
+  selectedDateInfo.value = {
+    startStr: event.startStr,
+    endStr: event.endStr || event.startStr, // Fallback
+    view: clickInfo.view,
+  };
+
   eventModal.value?.showModal();
 };
 
 const closeModal = () => {
   eventModal.value?.close();
-  selectedDateInfo.value?.view.calendar.unselect();
+  if (selectedDateInfo.value?.view?.calendar) {
+    selectedDateInfo.value.view.calendar.unselect();
+  }
   selectedDateInfo.value = null;
+  editingEventId.value = null;
+  newEventTitle.value = "";
 };
 
 const handleDateClick = (info: any) => {
@@ -48,38 +101,86 @@ const handleDateClick = (info: any) => {
   handleDateSelect(selectInfo);
 };
 
-const createEvent = async () => {
+const saveEvent = async () => {
   if (!newEventTitle.value || !selectedDateInfo.value) return;
 
-  const { startStr, endStr } = selectedDateInfo.value;
-  let finalStart = startStr;
-  let finalEnd = endStr;
+  let finalStart, finalEnd;
 
-  if (!isAllDay.value) {
-    // If not all day, we need to combine the date with the selected time
-    // startStr from dayGrid selection is usually YYYY-MM-DD
-    // We need YYYY-MM-DDTHH:mm:ss
-    const datePart = startStr.split("T")[0]; // Ensure we have just the date
-    finalStart = `${datePart}T${startTime.value}:00`;
-    finalEnd = `${datePart}T${endTime.value}:00`;
+  if (editingEventId.value) {
+    // Logic for updating existing event
+    // We need to reconstruct the date from the original event or current selection
+    // But wait, if we are editing, we might not have changed the date, only the time or title.
+    // For simplicity, let's assume we are just updating title/time on the SAME day(s) unless we implement full date picker.
+    // Actually, FullCalendar's event object has the dates.
+
+    // If we are editing, selectedDateInfo.startStr might be the ISO string.
+    const baseDate = selectedDateInfo.value.startStr.split("T")[0];
+
+    if (isAllDay.value) {
+      finalStart = baseDate;
+      // For all day, end date is usually exclusive +1 day, but let's keep it simple for now or use what we have.
+      // If we switched from timed to all-day, we might need to adjust.
+      finalEnd = selectedDateInfo.value.endStr
+        ? selectedDateInfo.value.endStr.split("T")[0]
+        : baseDate;
+    } else {
+      finalStart = `${baseDate}T${startTime.value}:00`;
+      finalEnd = `${baseDate}T${endTime.value}:00`;
+    }
+  } else {
+    // Creating new event logic (existing)
+    const { startStr, endStr } = selectedDateInfo.value;
+    finalStart = startStr;
+    finalEnd = endStr;
+
+    if (!isAllDay.value) {
+      const datePart = startStr.split("T")[0];
+      finalStart = `${datePart}T${startTime.value}:00`;
+      finalEnd = `${datePart}T${endTime.value}:00`;
+    }
   }
 
   try {
+    const method = editingEventId.value ? "PUT" : "POST";
+    const body: any = {
+      title: newEventTitle.value,
+      start: finalStart,
+      end: finalEnd,
+      allDay: isAllDay.value,
+    };
+
+    if (editingEventId.value) {
+      body.id = editingEventId.value;
+    }
+
     await $fetch("/api/common/events", {
-      method: "POST",
-      body: {
-        title: newEventTitle.value,
-        start: finalStart,
-        end: finalEnd,
-        allDay: isAllDay.value,
-      },
+      method: method as any,
+      body: body,
     });
 
-    await refresh(); // Refresh events from server
+    await refresh();
     closeModal();
   } catch (error) {
-    console.error("Failed to create event", error);
-    alert("Failed to create event");
+    console.error("Failed to save event", error);
+    alert("Failed to save event");
+  }
+};
+
+const deleteEvent = async () => {
+  if (!editingEventId.value) return;
+
+  if (!confirm("Are you sure you want to delete this event?")) return;
+
+  try {
+    await $fetch("/api/common/events", {
+      method: "DELETE",
+      query: { id: editingEventId.value },
+    });
+    await refresh();
+    closeModal();
+  } catch (error) {
+    console.error("Failed to delete event", error);
+    alert("Failed to delete event");
   }
 };
 
@@ -123,6 +224,7 @@ const calendarOptions = ref({
   dayMaxEvents: true,
   weekends: true,
   select: handleDateSelect,
+  eventClick: handleEventClick,
   dateClick: handleDateClick, // Handle single clicks (especially on mobile)
   selectLongPressDelay: 200, // Reduce delay for touch selection
   eventDrop: updateEvent,
@@ -166,7 +268,9 @@ onUnmounted(() => {
     <!-- Event Creation Modal -->
     <dialog id="event_modal" class="modal" ref="eventModal">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Create Personal Event</h3>
+        <h3 class="font-bold text-lg">
+          {{ editingEventId ? "Edit Event" : "Create Personal Event" }}
+        </h3>
         <div class="form-control w-full mt-4">
           <label class="label">
             <span class="label-text">Event Title</span>
@@ -176,7 +280,7 @@ onUnmounted(() => {
             type="text"
             placeholder="Study for math test"
             class="input input-bordered w-full"
-            @keyup.enter="createEvent"
+            @keyup.enter="saveEvent"
           />
         </div>
 
@@ -212,9 +316,16 @@ onUnmounted(() => {
 
         <div class="modal-action">
           <form method="dialog">
+            <button
+              v-if="editingEventId"
+              class="btn btn-error mr-2"
+              @click.prevent="deleteEvent"
+            >
+              Delete
+            </button>
             <button class="btn btn-ghost" @click="closeModal">Cancel</button>
-            <button class="btn btn-primary" @click.prevent="createEvent">
-              Create
+            <button class="btn btn-primary" @click.prevent="saveEvent">
+              {{ editingEventId ? "Save" : "Create" }}
             </button>
           </form>
         </div>
