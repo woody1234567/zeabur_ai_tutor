@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="p-8 max-w-4xl mx-auto">
+  <div class="p-4 md:p-8 max-w-4xl mx-auto">
     <div class="flex items-center gap-4 mb-8">
       <NuxtLink to="/teacher/problems" class="btn btn-circle btn-ghost">
         <svg

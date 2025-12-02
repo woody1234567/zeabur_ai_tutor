@@ -143,7 +143,7 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 max-w-7xl">
+  <div class="container mx-auto p-4 md:p-6 max-w-7xl">
     <h1 class="text-2xl font-bold mb-6">Edit Problem</h1>
 
     <div v-if="problem" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -159,7 +159,7 @@ const handleCancel = () => {
       </div>
 
       <!-- Right Column: Live Preview -->
-      <div class="hidden lg:block">
+      <div class="mt-8 lg:mt-0">
         <TeacherProblemPreview :problem="formData" />
       </div>
     </div>

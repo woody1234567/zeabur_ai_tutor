@@ -99,7 +99,7 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 max-w-7xl">
+  <div class="container mx-auto p-4 md:p-6 max-w-7xl">
     <div class="flex items-center gap-2 mb-6">
       <h1 class="text-2xl font-bold">Create New Problem</h1>
       <NuxtLink
@@ -137,7 +137,7 @@ const handleCancel = () => {
       </div>
 
       <!-- Right Column: Live Preview -->
-      <div class="hidden lg:block">
+      <div class="mt-8 lg:mt-0">
         <TeacherProblemPreview :problem="formData" />
       </div>
     </div>

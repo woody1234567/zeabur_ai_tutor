@@ -112,7 +112,7 @@ const updateClassroom = async () => {
       v-model="isSettingsOpen"
     />
     <div class="drawer-content">
-      <div class="container mx-auto p-6">
+      <div class="container mx-auto p-4 md:p-6">
         <div class="mb-4">
           <NuxtLink to="/teacher/classrooms" class="btn btn-ghost btn-sm gap-2">
             <svg
@@ -135,14 +135,18 @@ const updateClassroom = async () => {
 
         <div v-if="classroom" class="space-y-8">
           <!-- Header -->
-          <div class="flex justify-between items-start">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start gap-4"
+          >
             <div>
-              <h1 class="text-3xl font-bold">{{ classroom.name }}</h1>
-              <p class="text-lg opacity-70 mt-2">
+              <h1 class="text-2xl md:text-3xl font-bold">
+                {{ classroom.name }}
+              </h1>
+              <p class="text-base md:text-lg opacity-70 mt-2">
                 {{ classroom.description }}
               </p>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 w-full md:w-auto">
               <button class="btn btn-primary" @click="isAddingStudent = true">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

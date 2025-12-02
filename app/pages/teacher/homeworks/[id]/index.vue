@@ -104,7 +104,7 @@ const updateHomework = async () => {
       v-model="isSettingsOpen"
     />
     <div class="drawer-content">
-      <div class="container mx-auto p-4">
+      <div class="container mx-auto p-4 md:p-6">
         <div class="mb-6 flex justify-between items-center">
           <NuxtLink to="/teacher/homeworks" class="btn btn-ghost gap-2 pl-0">
             <svg
@@ -164,16 +164,18 @@ const updateHomework = async () => {
           <!-- Homework Header -->
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
-              <div class="flex justify-between items-start">
+              <div
+                class="flex flex-col md:flex-row justify-between items-start gap-4"
+              >
                 <div>
-                  <h1 class="text-3xl font-bold text-primary mb-2">
+                  <h1 class="text-2xl md:text-3xl font-bold text-primary mb-2">
                     {{ data.homework.title }}
                   </h1>
                   <div class="badge badge-secondary text-lg p-3">
                     {{ data.homework.subject }}
                   </div>
                 </div>
-                <div class="text-right">
+                <div class="text-left md:text-right w-full md:w-auto">
                   <div class="text-sm text-gray-500">Classroom</div>
                   <div class="font-semibold text-lg">
                     {{ data.homework.classroomName }}

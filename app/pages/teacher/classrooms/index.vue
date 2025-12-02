@@ -33,7 +33,7 @@ const createClassroom = async () => {
 </script>
 
 <template>
-  <div class="container mx-auto p-6">
+  <div class="container mx-auto p-4 md:p-6">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold">Classrooms</h1>
       <button class="btn btn-primary" @click="isCreating = true">
