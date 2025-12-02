@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     3. Use single dollar signs $ ... $ for inline equations (equations within text), do not use \( \).
     4. Do NOT use code blocks (backticks) for math.
     5. Fix any obvious typos or OCR errors in the text.
-    6. please stict to the raw text above and do not add any additional text. 
+    6. important: please strict to the raw text above and do not add any additional text. 
     
     Example Input:
     The area of a circle is pi r squared. If r=5, then A = 25pi.

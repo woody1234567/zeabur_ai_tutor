@@ -19,6 +19,7 @@ interface ProblemData {
 
 import VisionTool from "./VisionTool.vue";
 import FormatTool from "./FormatTool.vue";
+import GenerateOptionsTool from "./GenerateOptionsTool.vue";
 
 const props = defineProps<{
   modelValue: ProblemData;
@@ -50,6 +51,16 @@ const handleTextExtracted = (text: string) => {
 
 const handleContentFormatted = (formattedContent: string) => {
   updateField("content", formattedContent);
+};
+
+const handleOptionsGenerated = (data: {
+  choices: Choice[];
+  correctAnswer: string;
+  explanation: string;
+}) => {
+  updateField("choices", data.choices);
+  updateField("correctAnswer", data.correctAnswer);
+  updateField("explanation", data.explanation);
 };
 
 const addChoice = () => {
@@ -231,10 +242,18 @@ const handleSubmit = () => {
     <div class="form-control">
       <label class="label mb-2">Content (Markdown supported)</label>
       <VisionTool @text-extracted="handleTextExtracted" />
-      <FormatTool
-        :current-content="modelValue.content"
-        @content-formatted="handleContentFormatted"
-      />
+      <div class="flex gap-2 mb-2">
+        <FormatTool
+          :current-content="modelValue.content"
+          @content-formatted="handleContentFormatted"
+          class="flex-1"
+        />
+        <GenerateOptionsTool
+          :current-content="modelValue.content"
+          @options-generated="handleOptionsGenerated"
+          class="flex-1"
+        />
+      </div>
       <br />
       <textarea
         :value="modelValue.content"
