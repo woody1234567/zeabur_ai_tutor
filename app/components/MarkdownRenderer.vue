@@ -119,7 +119,7 @@ const renderedContent = computed(() => {
 
 <template>
   <div
-    class="markdown-body prose prose-sm md:prose-base max-w-none"
+    class="markdown-body prose prose-sm md:prose-base max-w-none overflow-x-auto"
     v-html="renderedContent"
   ></div>
 </template>
