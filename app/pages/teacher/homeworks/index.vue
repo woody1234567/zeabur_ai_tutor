@@ -17,7 +17,12 @@ const formatDate = (dateString: string | null) => {
 
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6 text-primary">My Homeworks</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-primary">My Homeworks</h1>
+      <NuxtLink to="/teacher/homeworks/create" class="btn btn-primary">
+        Create Homework
+      </NuxtLink>
+    </div>
 
     <div v-if="pending" class="flex justify-center items-center h-64">
       <span class="loading loading-spinner loading-lg text-primary"></span>
@@ -32,7 +37,7 @@ const formatDate = (dateString: string | null) => {
       class="text-center py-10"
     >
       <p class="text-xl text-gray-500">No homeworks found.</p>
-      <NuxtLink to="/teacher/problems" class="btn btn-primary mt-4">
+      <NuxtLink to="/teacher/homeworks/create" class="btn btn-primary mt-4">
         Create Homework
       </NuxtLink>
     </div>
