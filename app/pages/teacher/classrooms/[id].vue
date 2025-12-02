@@ -101,6 +101,32 @@ const updateClassroom = async () => {
     isUpdatingSettings.value = false;
   }
 };
+
+const isDeleting = ref(false);
+
+const deleteClassroom = async () => {
+  if (
+    !confirm(
+      "Are you sure you want to delete this classroom? This action cannot be undone."
+    )
+  ) {
+    return;
+  }
+
+  isDeleting.value = true;
+  settingsError.value = "";
+
+  try {
+    await $fetch(`/api/teacher/classrooms/${classroomId}`, {
+      method: "DELETE",
+    });
+    // Redirect to classrooms list
+    await navigateTo("/teacher/classrooms");
+  } catch (e: any) {
+    settingsError.value = e.message || "Failed to delete classroom";
+    isDeleting.value = false;
+  }
+};
 </script>
 
 <template>
@@ -436,6 +462,20 @@ const updateClassroom = async () => {
                 class="loading loading-spinner"
               ></span>
               Save Changes
+            </button>
+          </div>
+
+          <div class="divider">DANGER ZONE</div>
+
+          <div>
+            <button
+              type="button"
+              class="btn btn-error btn-outline w-full"
+              @click="deleteClassroom"
+              :disabled="isDeleting"
+            >
+              <span v-if="isDeleting" class="loading loading-spinner"></span>
+              Delete Classroom
             </button>
           </div>
         </form>

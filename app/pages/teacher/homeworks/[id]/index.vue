@@ -93,6 +93,32 @@ const updateHomework = async () => {
     isUpdatingSettings.value = false;
   }
 };
+
+const isDeleting = ref(false);
+
+const deleteHomework = async () => {
+  if (
+    !confirm(
+      "Are you sure you want to delete this homework? This action cannot be undone."
+    )
+  ) {
+    return;
+  }
+
+  isDeleting.value = true;
+  settingsError.value = "";
+
+  try {
+    await $fetch(`/api/teacher/homeworks/${homeworkId}`, {
+      method: "DELETE",
+    });
+    // Redirect to homeworks list
+    await navigateTo("/teacher/homeworks");
+  } catch (e: any) {
+    settingsError.value = e.message || "Failed to delete homework";
+    isDeleting.value = false;
+  }
+};
 </script>
 
 <template>
@@ -399,6 +425,20 @@ const updateHomework = async () => {
                 class="loading loading-spinner"
               ></span>
               Save Changes
+            </button>
+          </div>
+
+          <div class="divider">DANGER ZONE</div>
+
+          <div>
+            <button
+              type="button"
+              class="btn btn-error btn-outline w-full"
+              @click="deleteHomework"
+              :disabled="isDeleting"
+            >
+              <span v-if="isDeleting" class="loading loading-spinner"></span>
+              Delete Homework
             </button>
           </div>
         </form>
