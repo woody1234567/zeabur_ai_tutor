@@ -63,6 +63,34 @@ const renderedContent = computed(() => {
     }
   );
 
+  // Handle block equation \[...\]
+  processedContent = processedContent.replace(
+    /\\\[([\s\S]*?)\\\]/g,
+    (match, math) => {
+      const id = mathBlocks.length;
+      try {
+        mathBlocks.push(katex.renderToString(math, { displayMode: true }));
+      } catch (e) {
+        mathBlocks.push(match);
+      }
+      return `${PLACEHOLDER}${id}%%%`;
+    }
+  );
+
+  // Handle inline equation \(...\)
+  processedContent = processedContent.replace(
+    /\\\(([\s\S]*?)\\\)/g,
+    (match, math) => {
+      const id = mathBlocks.length;
+      try {
+        mathBlocks.push(katex.renderToString(math, { displayMode: false }));
+      } catch (e) {
+        mathBlocks.push(match);
+      }
+      return `${PLACEHOLDER}${id}%%%`;
+    }
+  );
+
   processedContent = processedContent.replace(
     /\$([\s\S]*?)\$/g,
     (match, math) => {
@@ -83,7 +111,7 @@ const renderedContent = computed(() => {
   return sanitized.replace(
     /%%%MATH_BLOCK_(\d+)%%%/g,
     (match: string, id: string) => {
-      return mathBlocks[parseInt(id)];
+      return mathBlocks[parseInt(id)] || match;
     }
   );
 });
