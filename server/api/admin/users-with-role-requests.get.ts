@@ -1,6 +1,6 @@
 import { db } from "../../../db";
 import { user, roleRequests } from "../../../db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, ilike, or, and } from "drizzle-orm";
 import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
@@ -13,6 +13,23 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const query = getQuery(event);
+  const search = (query.search as string) || "";
+  const role = (query.role as string) || "";
+
+  const conditions = [];
+
+  if (search) {
+    const searchLower = `%${search.toLowerCase()}%`;
+    conditions.push(
+      or(ilike(user.name, searchLower), ilike(user.email, searchLower))
+    );
+  }
+
+  if (role) {
+    conditions.push(eq(user.role, role as any));
+  }
+
   const usersWithRequests = await db
     .select({
       userData: user,
@@ -20,6 +37,7 @@ export default defineEventHandler(async (event) => {
     })
     .from(user)
     .leftJoin(roleRequests, eq(user.id, roleRequests.userId))
+    .where(and(...conditions))
     .orderBy(desc(user.createdAt));
 
   console.log("Fetched users count:", usersWithRequests.length);

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createAuthClient } from "better-auth/client";
 import { adminClient } from "better-auth/client/plugins";
+import UserSearchBar from "~/components/admin/UserSearchBar.vue";
 
 definePageMeta({
   layout: "admin",
@@ -23,11 +24,18 @@ interface User {
 
 const users = ref<User[]>([]);
 const loading = ref(true);
+const searchQuery = ref("");
+const roleFilter = ref("");
 
 const fetchUsers = async () => {
   loading.value = true;
   try {
-    const res = await $fetch("/api/admin/users-with-role-requests");
+    const res = await $fetch("/api/admin/users-with-role-requests", {
+      params: {
+        search: searchQuery.value,
+        role: roleFilter.value,
+      },
+    });
     console.log("API Response:", res);
     if (res.users) {
       users.value = res.users as unknown as User[];
@@ -39,6 +47,14 @@ const fetchUsers = async () => {
     loading.value = false;
   }
 };
+
+const handleSearch = () => {
+  fetchUsers();
+};
+
+watch(roleFilter, () => {
+  fetchUsers();
+});
 
 const updateUserRole = async (userId: string, newRole: string) => {
   try {
@@ -62,6 +78,14 @@ onMounted(() => {
 <template>
   <div class="p-8">
     <h1 class="text-2xl font-bold mb-6">User Management</h1>
+
+    <div class="mb-6">
+      <UserSearchBar
+        v-model="searchQuery"
+        v-model:roleFilter="roleFilter"
+        @search="handleSearch"
+      />
+    </div>
 
     <div v-if="loading" class="flex justify-center">
       <span class="loading loading-spinner loading-lg"></span>
