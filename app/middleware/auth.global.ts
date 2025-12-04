@@ -12,12 +12,28 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (session) {
     console.log("Full User Object:", session.user);
     console.log("User Role:", userRole);
-  }
 
-  // Pending user routes
-  if (userRole === "user") {
-    if (to.path !== "/pending" && to.path !== "/") {
-      return navigateTo("/pending");
+    if (userRole === "user") {
+      try {
+        const { hasRequestedRole } = await $fetch(
+          "/api/user/has-requested-role",
+          {
+            headers: useRequestHeaders(["cookie"]),
+          }
+        );
+
+        if (hasRequestedRole) {
+          if (to.path !== "/pending") {
+            return navigateTo("/pending");
+          }
+        } else {
+          if (to.path !== "/role_picking") {
+            return navigateTo("/role_picking");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check role request status:", error);
+      }
     }
   }
 

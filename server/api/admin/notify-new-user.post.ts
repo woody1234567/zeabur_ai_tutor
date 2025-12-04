@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { db } from "../../../db";
+import * as schema from "../../../db/schema";
+import { eq } from "drizzle-orm";
 
 // Load .env first
 dotenv.config();
@@ -38,12 +41,19 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: "Admin email not configured" };
   }
 
+  // Fetch requested role
+  const roleRequest = await db.query.roleRequests.findFirst({
+    where: eq(schema.roleRequests.userId, user.id),
+  });
+
+  const requestedRole = roleRequest?.role || "Not specified";
+
   try {
     await transporter.sendMail({
       from: `"AI Tutor" <${config.smtpUser || process.env.SMTP_USER}>`,
       to: adminEmail,
       subject: "New User Signup - AI Tutor",
-      text: `A new user has signed up and is pending approval.\n\nName: ${user.name}\nEmail: ${user.email}\nID: ${user.id}`,
+      text: `A new user has signed up and is pending approval.\n\nName: ${user.name}\nEmail: ${user.email}\nID: ${user.id}\nRequested Role: ${requestedRole}`,
       html: `
         <h1>New User Signup</h1>
         <p>A new user has signed up and is pending approval.</p>
@@ -51,6 +61,7 @@ export default defineEventHandler(async (event) => {
           <li><strong>Name:</strong> ${user.name}</li>
           <li><strong>Email:</strong> ${user.email}</li>
           <li><strong>ID:</strong> ${user.id}</li>
+          <li><strong>Requested Role:</strong> ${requestedRole}</li>
         </ul>
         <a href=${config.public.baseURL || process.env.PUBLIC_BASE_URL}
             style="

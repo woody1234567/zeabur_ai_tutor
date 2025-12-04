@@ -208,3 +208,14 @@ export const pendingParent = pgTable("pending_parent", {
   status: text("status").default("pending").notNull(), // pending, approved, rejected
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const roleRequests = pgTable("role_requests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  role: text("role").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
