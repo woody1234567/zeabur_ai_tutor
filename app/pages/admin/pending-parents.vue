@@ -90,18 +90,12 @@ onMounted(() => {
             </td>
             <td>
               <div class="flex gap-2" v-if="item.status === 'pending'">
-                <button
+                <NuxtLink
                   class="btn btn-xs btn-success text-white"
-                  @click="updateStatus(item.id, 'approved')"
+                  :to="'/admin/link-student-parent?id=' + item.id"
                 >
-                  Approve
-                </button>
-                <button
-                  class="btn btn-xs btn-error text-white"
-                  @click="updateStatus(item.id, 'rejected')"
-                >
-                  Reject
-                </button>
+                  link
+                </NuxtLink>
               </div>
             </td>
           </tr>

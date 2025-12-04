@@ -12,7 +12,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const results = await db
+  const query = getQuery(event);
+  const id = query.id as string;
+
+  let queryBuilder = db
     .select({
       id: pendingParent.id,
       parentId: pendingParent.parentId,
@@ -25,6 +28,13 @@ export default defineEventHandler(async (event) => {
     })
     .from(pendingParent)
     .leftJoin(user, eq(pendingParent.parentId, user.id));
+
+  if (id) {
+    // @ts-ignore
+    queryBuilder.where(eq(pendingParent.id, id));
+  }
+
+  const results = await queryBuilder;
 
   return results;
 });

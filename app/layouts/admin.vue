@@ -23,7 +23,7 @@ const handleLogout = async () => {
           </li>
           <li>
             <NuxtLink class="btn btn-ghost" to="/admin/pending-parents"
-              >Pending Parents</NuxtLink
+              >Link Student with Parent</NuxtLink
             >
           </li>
           <li>
