@@ -17,16 +17,16 @@ export default defineEventHandler(async (event) => {
   });
 
   // Check if user has an approved request (effectively linked)
-  const approvedRequest = await db.query.pendingParent.findFirst({
+  const linkedRequest = await db.query.pendingParent.findFirst({
     where: (pendingParent, { eq, and }) =>
       and(
         eq(pendingParent.parentId, session.user.id),
-        eq(pendingParent.status, "approved")
+        eq(pendingParent.status, "linked")
       ),
   });
 
   return {
     isPending: !!pendingRequest,
-    isLinked: !!approvedRequest,
+    isLinked: !!linkedRequest,
   };
 });
