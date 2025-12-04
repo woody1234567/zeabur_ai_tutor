@@ -16,11 +16,16 @@ interface PendingParent {
 
 const pendingParents = ref<PendingParent[]>([]);
 const loading = ref(true);
+const search = ref("");
+
+let debounceTimer: NodeJS.Timeout;
 
 const fetchPendingParents = async () => {
   loading.value = true;
   try {
-    const res = await $fetch("/api/admin/pending-parents");
+    const res = await $fetch("/api/admin/pending-parents", {
+      query: { search: search.value },
+    });
     pendingParents.value = res as PendingParent[];
   } catch (error) {
     console.error("Failed to fetch pending parents", error);
@@ -28,6 +33,13 @@ const fetchPendingParents = async () => {
     loading.value = false;
   }
 };
+
+watch(search, () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchPendingParents();
+  }, 300);
+});
 
 const updateStatus = async (id: string, status: string) => {
   try {
@@ -49,7 +61,15 @@ onMounted(() => {
 
 <template>
   <div class="p-8">
-    <h1 class="text-2xl font-bold mb-6">Pending Parent Links</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Pending Parent Links</h1>
+      <input
+        v-model="search"
+        type="text"
+        placeholder="Search by name, email or status..."
+        class="input input-bordered w-full max-w-xs"
+      />
+    </div>
 
     <div v-if="loading" class="flex justify-center">
       <span class="loading loading-spinner loading-lg"></span>

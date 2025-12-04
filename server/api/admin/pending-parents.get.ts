@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or, ilike, and } from "drizzle-orm";
 import { pendingParent, user } from "../../../db/schema";
 import { db } from "../../../db";
 import { requireAuthSession } from "../../utils/auth";
@@ -14,6 +14,26 @@ export default defineEventHandler(async (event) => {
 
   const query = getQuery(event);
   const id = query.id as string;
+  const search = query.search as string;
+
+  const conditions = [];
+
+  if (id) {
+    conditions.push(eq(pendingParent.id, id));
+  }
+
+  if (search) {
+    const searchLower = `%${search.toLowerCase()}%`;
+    conditions.push(
+      or(
+        ilike(pendingParent.studentName, searchLower),
+        ilike(pendingParent.studentEmail, searchLower),
+        ilike(pendingParent.status, searchLower),
+        ilike(user.name, searchLower),
+        ilike(user.email, searchLower)
+      )
+    );
+  }
 
   let queryBuilder = db
     .select({
@@ -29,9 +49,9 @@ export default defineEventHandler(async (event) => {
     .from(pendingParent)
     .leftJoin(user, eq(pendingParent.parentId, user.id));
 
-  if (id) {
+  if (conditions.length > 0) {
     // @ts-ignore
-    queryBuilder.where(eq(pendingParent.id, id));
+    queryBuilder.where(and(...conditions));
   }
 
   const results = await queryBuilder;
