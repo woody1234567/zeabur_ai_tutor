@@ -12,32 +12,32 @@ const handleLogout = async () => {
   <div class="min-h-screen bg-base-200">
     <div class="navbar bg-base-100 shadow-md">
       <div class="flex-1">
-        <NuxtLink :to="localePath('/admin')" class="btn btn-ghost text-xl"
-          >AI Tutor - Admin</NuxtLink
-        >
+        <NuxtLink :to="localePath('/admin')" class="btn btn-ghost text-xl">{{
+          $t("admin.layout.title")
+        }}</NuxtLink>
       </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
           <li>
-            <NuxtLink class="btn btn-ghost" :to="localePath('/admin/')"
-              >Home</NuxtLink
-            >
+            <NuxtLink class="btn btn-ghost" :to="localePath('/admin/')">{{
+              $t("admin.layout.home")
+            }}</NuxtLink>
           </li>
           <li>
-            <NuxtLink class="btn btn-ghost" :to="localePath('/admin/users')"
-              >Users</NuxtLink
-            >
+            <NuxtLink class="btn btn-ghost" :to="localePath('/admin/users')">{{
+              $t("admin.layout.users")
+            }}</NuxtLink>
           </li>
           <li>
             <NuxtLink
               class="btn btn-ghost"
               :to="localePath('/admin/pending-parents')"
-              >Link Student with Parent</NuxtLink
+              >{{ $t("admin.layout.link_student_parent") }}</NuxtLink
             >
           </li>
           <li>
             <button @click="handleLogout" class="btn btn-primary">
-              Logout
+              {{ $t("admin.layout.logout") }}
             </button>
           </li>
           <li>

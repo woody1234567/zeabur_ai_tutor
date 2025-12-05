@@ -3,6 +3,7 @@ definePageMeta({
   layout: "teacher",
 });
 
+const localePath = useLocalePath();
 const { data: classrooms, refresh } = await useFetch("/api/teacher/classrooms");
 
 const isCreating = ref(false);
@@ -129,7 +130,7 @@ const createClassroom = async () => {
           </p>
           <div class="card-actions justify-end mt-4">
             <NuxtLink
-              :to="`/teacher/classrooms/${classroom.id}`"
+              :to="localePath(`/teacher/classrooms/${classroom.id}`)"
               class="btn btn-sm btn-ghost"
               >{{ $t("teacher.classrooms.view_details") }}</NuxtLink
             >

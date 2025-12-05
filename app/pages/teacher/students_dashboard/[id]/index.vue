@@ -43,11 +43,13 @@ const {
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-        Back to Students
+        {{ $t("teacher.students_dashboard.back") }}
       </NuxtLink>
     </div>
 
-    <h1 class="text-2xl md:text-3xl font-bold mb-6">Student Classrooms</h1>
+    <h1 class="text-2xl md:text-3xl font-bold mb-6">
+      {{ $t("teacher.students_dashboard.classrooms") }}
+    </h1>
 
     <div v-if="pending" class="flex justify-center py-10">
       <span class="loading loading-spinner loading-lg"></span>

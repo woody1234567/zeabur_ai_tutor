@@ -6,7 +6,7 @@
       "calendar_help": "How to use the calendar"
     },
     "layout": {
-      "title": "AI Tutor - Student",
+      "title": "Student",
       "external_links": "External Links",
       "physimhub": "PhysimHub",
       "testbank": "Testbank",
@@ -134,7 +134,7 @@
       "title": "Teacher Dashboard"
     },
     "layout": {
-      "title": "AI Tutor - Teacher",
+      "title": "Teacher",
       "problems": "Problems",
       "classrooms": "Classrooms",
       "homeworks": "Homeworks",
@@ -219,6 +219,17 @@
       "created_label": "Created:",
       "view_details": "View Details",
       "no_deadline": "No deadline",
+      "add": {
+        "back": "Back",
+        "problems": "Add Problems",
+        "assigned": "Assigned",
+        "add_to_hw": "Add to HW",
+        "selected": "Selected",
+        "adding": "Adding...",
+        "selected_problems": "Selected Problems",
+        "no_problems_selected": "No problems selected",
+        "no_problems_selected_description": "Click 'Add to HW' on the left to select problems."
+      },
       "create": {
         "select_problems": "Select Problems",
         "cancel": "Cancel",
@@ -374,6 +385,15 @@
           "image_desc": "Uploaded images will appear in the preview immediately."
         }
       }
+    },
+    "students_dashboard": {
+      "title": "My Students",
+      "name": "Name",
+      "email": "Email",
+      "actions": "Actions",
+      "view_classrooms": "View Classrooms",
+      "back": "Back to Students",
+      "classrooms": "Classrooms"
     }
   },
   "parent": {
@@ -418,6 +438,13 @@
     }
   },
   "admin": {
+    "layout": {
+      "title": "Admin",
+      "home": "Home",
+      "users": "Users",
+      "link_student_parent": "Link Student with Parent",
+      "logout": "Logout"
+    },
     "dashboard": {
       "title": "Admin Dashboard",
       "welcome": "Welcome, Admin! This is a protected area."
@@ -528,22 +555,25 @@
         "average_score_desc": "Across all homeworks",
         "completion_rate": "Completion Rate",
         "tasks": "tasks",
+        "back": "Back",
         "late_submissions": "Late Submissions",
         "late_submissions_desc": "Tasks submitted after deadline",
         "homework_history": "Homework History",
-        "table_homework": "Homework",
-        "table_status": "Status",
-        "table_score": "Score",
-        "table_submitted": "Submitted",
-        "table_deadline": "Deadline",
+        "table": {
+          "homework": "Homework",
+          "status": "Status",
+          "score": "Score",
+          "submitted": "Submitted",
+          "deadline": "Deadline"
+        },
         "untitled": "Untitled",
         "no_deadline": "No deadline",
         "no_homeworks": "No homeworks assigned in this classroom yet."
       },
       "classrooms_list": {
         "no_description": "No description provided.",
-        "teacher_label": "Teacher:",
-        "joined_label": "Joined:",
+        "teacher": "Teacher:",
+        "joined": "Joined:",
         "view_performance": "View Performance"
       },
       "homework_header": {

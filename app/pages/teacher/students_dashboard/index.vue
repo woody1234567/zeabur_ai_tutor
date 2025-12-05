@@ -3,6 +3,7 @@ definePageMeta({
   layout: "teacher",
 });
 
+const localePath = useLocalePath();
 const {
   data: students,
   pending,
@@ -12,7 +13,9 @@ const {
 
 <template>
   <div class="container mx-auto p-4 md:p-6">
-    <h1 class="text-2xl md:text-3xl font-bold mb-6">My Students</h1>
+    <h1 class="text-2xl md:text-3xl font-bold mb-6">
+      {{ $t("teacher.students_dashboard.title") }}
+    </h1>
 
     <div v-if="pending" class="flex justify-center py-10">
       <span class="loading loading-spinner loading-lg"></span>
@@ -31,9 +34,9 @@ const {
           <table class="table w-full">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Actions</th>
+                <th>{{ $t("teacher.students_dashboard.name") }}</th>
+                <th>{{ $t("teacher.students_dashboard.email") }}</th>
+                <th>{{ $t("teacher.students_dashboard.actions") }}</th>
               </tr>
             </thead>
             <tbody>
@@ -58,10 +61,12 @@ const {
                 <td>{{ student.email }}</td>
                 <td>
                   <NuxtLink
-                    :to="`/teacher/students_dashboard/${student.id}`"
+                    :to="
+                      localePath(`/teacher/students_dashboard/${student.id}`)
+                    "
                     class="btn btn-sm btn-primary"
                   >
-                    View Classrooms
+                    {{ $t("teacher.students_dashboard.view_classrooms") }}
                   </NuxtLink>
                 </td>
               </tr>

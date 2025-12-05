@@ -3,6 +3,7 @@ definePageMeta({
   layout: "teacher",
 });
 
+const localePath = useLocalePath();
 const route = useRoute();
 const homeworkId = route.params.id as string;
 const router = useRouter();
@@ -76,7 +77,7 @@ const saveChanges = async () => {
       },
     });
     // Navigate back to homework details
-    router.push(`/teacher/homeworks/${homeworkId}`);
+    router.push(localePath(`/teacher/homeworks/${homeworkId}`));
   } catch (error) {
     console.error("Failed to add problems:", error);
     alert("Failed to add problems to homework");
@@ -93,7 +94,7 @@ const saveChanges = async () => {
       <div class="p-4 border-b border-base-300 bg-base-100 z-10">
         <div class="flex items-center gap-4 mb-4">
           <NuxtLink
-            :to="`/teacher/homeworks/${homeworkId}`"
+            :to="localePath(`/teacher/homeworks/${homeworkId}`)"
             class="btn btn-ghost btn-sm gap-2"
           >
             <svg
@@ -110,9 +111,11 @@ const saveChanges = async () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back
+            {{ $t("teacher.homeworks.add.back") }}
           </NuxtLink>
-          <h1 class="text-2xl font-bold">Add Problems to Homework</h1>
+          <h1 class="text-2xl font-bold">
+            {{ $t("teacher.homeworks.add.problems") }}
+          </h1>
         </div>
         <ProblemSearch @search="handleSearch" />
       </div>
@@ -156,21 +159,21 @@ const saveChanges = async () => {
                   v-if="existingProblemIds.has(problem.id)"
                   class="btn btn-sm btn-disabled"
                 >
-                  Assigned
+                  {{ $t("teacher.homeworks.add.assigned") }}
                 </button>
                 <button
                   v-else-if="stagedProblemIds.has(problem.id)"
                   class="btn btn-sm btn-success text-white"
                   disabled
                 >
-                  Selected
+                  {{ $t("teacher.homeworks.add.selected") }}
                 </button>
                 <button
                   v-else
                   @click="addToStage(problem)"
                   class="btn btn-sm btn-primary"
                 >
-                  Add to HW
+                  {{ $t("teacher.homeworks.add.add_to_hw") }}
                 </button>
               </div>
             </div>
@@ -186,7 +189,7 @@ const saveChanges = async () => {
     <div class="w-96 flex flex-col bg-base-100 shadow-xl z-20">
       <div class="p-4 border-b border-base-300">
         <h2 class="text-xl font-bold flex justify-between items-center">
-          Selected Problems
+          {{ $t("teacher.homeworks.add.selected_problems") }}
           <span class="badge badge-primary">{{ stagedProblems.length }}</span>
         </h2>
       </div>
@@ -196,9 +199,9 @@ const saveChanges = async () => {
           v-if="stagedProblems.length === 0"
           class="text-center py-10 opacity-50"
         >
-          <p>No problems selected.</p>
+          <p>{{ $t("teacher.homeworks.add.no_problems_selected") }}</p>
           <p class="text-sm">
-            Click "Add to HW" on the left to select problems.
+            {{ $t("teacher.homeworks.add.no_problems_selected_description") }}
           </p>
         </div>
         <div v-else class="space-y-3">
@@ -243,7 +246,11 @@ const saveChanges = async () => {
           :disabled="stagedProblems.length === 0 || isSaving"
         >
           <span v-if="isSaving" class="loading loading-spinner"></span>
-          {{ isSaving ? "Adding..." : "Add to Homework" }}
+          {{
+            isSaving
+              ? $t("teacher.homeworks.add.adding")
+              : $t("teacher.homeworks.add.add_to_hw")
+          }}
         </button>
       </div>
     </div>

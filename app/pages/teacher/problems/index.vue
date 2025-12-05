@@ -67,6 +67,7 @@ const deleteProblem = async (id: string) => {
 
         <ProblemSearch @search="handleSearch" />
 
+        <br />
         <div v-if="problems" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="problem in problems"

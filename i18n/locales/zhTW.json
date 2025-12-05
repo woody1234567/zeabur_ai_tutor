@@ -6,7 +6,7 @@
       "calendar_help": "如何使用行事曆"
     },
     "layout": {
-      "title": "AI 家教 - 學生",
+      "title": "學生",
       "external_links": "外部連結",
       "physimhub": "PhysimHub",
       "testbank": "題庫",
@@ -134,7 +134,7 @@
       "title": "教師儀表板"
     },
     "layout": {
-      "title": "AI 家教 - 教師",
+      "title": "教師",
       "problems": "題庫",
       "classrooms": "教室",
       "homeworks": "作業",
@@ -219,6 +219,17 @@
       "created_label": "建立日期：",
       "view_details": "查看詳情",
       "no_deadline": "無截止日期",
+      "add": {
+        "back": "返回",
+        "problems": "新增題目",
+        "assigned": "已加入",
+        "add_to_hw": "加入作業",
+        "selected": "已選擇",
+        "adding": "新增中...",
+        "selected_problems": "已選題目",
+        "no_problems_selected": "尚未選擇題目。",
+        "no_problems_selected_description": "點擊 '加入作業' 以選擇題目。"
+      },
       "create": {
         "select_problems": "選擇題目",
         "cancel": "取消",
@@ -374,6 +385,15 @@
           "image_desc": "上傳的圖片將立即顯示在預覽中。"
         }
       }
+    },
+    "students_dashboard": {
+      "title": "我的學生",
+      "name": "姓名",
+      "email": "電子郵件",
+      "actions": "操作",
+      "view_classrooms": "查看教室",
+      "back": "返回學生列表",
+      "classrooms": "教室"
     }
   },
   "parent": {
@@ -418,6 +438,13 @@
     }
   },
   "admin": {
+    "layout": {
+      "title": "管理員",
+      "home": "首頁",
+      "users": "使用者管理",
+      "link_student_parent": "連結學生與家長",
+      "logout": "登出"
+    },
     "dashboard": {
       "title": "管理員儀表板",
       "welcome": "歡迎，管理員！這是受保護的區域。"
@@ -531,19 +558,22 @@
         "late_submissions": "遲交作業",
         "late_submissions_desc": "截止日期後提交的任務",
         "homework_history": "作業紀錄",
-        "table_homework": "作業",
-        "table_status": "狀態",
-        "table_score": "分數",
-        "table_submitted": "提交日期",
-        "table_deadline": "截止日期",
+        "back": "返回學生教室列表",
+        "table": {
+          "homework": "作業",
+          "status": "狀態",
+          "score": "分數",
+          "submitted": "提交日期",
+          "deadline": "截止日期"
+        },
         "untitled": "無標題",
         "no_deadline": "無截止日期",
         "no_homeworks": "此教室尚無作業。"
       },
       "classrooms_list": {
         "no_description": "無描述。",
-        "teacher_label": "教師：",
-        "joined_label": "加入日期：",
+        "teacher": "教師：",
+        "joined": "加入日期：",
         "view_performance": "查看表現"
       },
       "homework_header": {
