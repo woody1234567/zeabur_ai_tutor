@@ -26,33 +26,60 @@ const handleSearch = () => {
 </script>
 
 <template>
-  <div class="flex gap-2 items-end">
-    <div class="form-control w-full max-w-xs">
-      <label class="label">
-        <span class="label-text">Search User</span>
-      </label>
-      <input
-        type="text"
-        placeholder="Name or Email"
-        class="input input-bordered w-full max-w-xs"
-        v-model="searchQuery"
-        @keyup.enter="handleSearch"
-      />
-    </div>
+  <div class="card bg-base-100 shadow-xl mb-8">
+    <div class="card-body">
+      <div class="flex flex-col md:flex-row gap-4 items-end">
+        <div class="form-control flex-1 w-full">
+          <label class="label">
+            <span class="label-text">{{
+              $t("components.admin.search.label")
+            }}</span>
+          </label>
+          <div class="join w-full">
+            <input
+              v-model="searchQuery"
+              type="text"
+              :placeholder="$t('components.admin.search.placeholder')"
+              class="input input-bordered join-item w-full"
+              @keyup.enter="handleSearch"
+            />
+          </div>
+        </div>
 
-    <div class="form-control w-full max-w-xs">
-      <label class="label">
-        <span class="label-text">Role</span>
-      </label>
-      <select class="select select-bordered" v-model="selectedRole">
-        <option value="">All Roles</option>
-        <option value="student">Student</option>
-        <option value="parent">Parent</option>
-        <option value="teacher">Teacher</option>
-        <option value="admin">Admin</option>
-      </select>
-    </div>
+        <div class="form-control w-full md:w-48">
+          <label class="label">
+            <span class="label-text">{{
+              $t("components.admin.search.role_label")
+            }}</span>
+          </label>
+          <select
+            v-model="selectedRole"
+            class="select select-bordered w-full"
+            @change="handleSearch"
+          >
+            <option value="">
+              {{ $t("components.admin.search.all_roles") }}
+            </option>
+            <option value="student">
+              {{ $t("components.admin.search.student") }}
+            </option>
+            <option value="parent">
+              {{ $t("components.admin.search.parent") }}
+            </option>
+            <option value="teacher">
+              {{ $t("components.admin.search.teacher") }}
+            </option>
+            <option value="admin">
+              {{ $t("components.admin.search.admin") }}
+            </option>
+          </select>
+        </div>
 
-    <button class="btn btn-primary" @click="handleSearch">Search</button>
+        <button class="btn btn-primary" @click="handleSearch">
+          <Icon name="heroicons:magnifying-glass" class="w-5 h-5" />
+          {{ $t("components.admin.search.search_button") }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>

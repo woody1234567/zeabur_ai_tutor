@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import type {
+  CalendarOptions,
+  EventClickArg,
+  DateSelectArg,
+  EventDropArg,
+  EventResizeDoneArg,
+} from "@fullcalendar/core";
+
+const { t } = useI18n();
 
 const { data: events, refresh } = await useFetch("/api/common/calendar-events");
 
@@ -14,27 +23,49 @@ const startTime = ref("09:00");
 const endTime = ref("10:00");
 const editingEventId = ref<string | null>(null);
 
-const handleDateSelect = (selectInfo: any) => {
-  selectedDateInfo.value = selectInfo;
-  newEventTitle.value = "";
-  isAllDay.value = selectInfo.allDay;
-  editingEventId.value = null; // Reset editing state
+// Form state for better handling
+const eventForm = ref({
+  title: "",
+  allDay: true,
+  startTime: "09:00",
+  endTime: "10:00",
+  startStr: "",
+  endStr: "",
+});
+const errors = ref({
+  title: false,
+});
+const showModal = ref(false);
+const isEditing = computed(() => !!editingEventId.value);
+const selectedEventId = ref<string | null>(null);
 
-  // Set default times if not all day
+const handleDateSelect = (selectInfo: DateSelectArg) => {
+  selectedDateInfo.value = selectInfo;
+  selectedEventId.value = null;
+  editingEventId.value = null;
+
+  // Reset form
+  eventForm.value = {
+    title: "",
+    allDay: selectInfo.allDay,
+    startTime: "09:00",
+    endTime: "10:00",
+    startStr: selectInfo.startStr,
+    endStr: selectInfo.endStr,
+  };
+
   if (!selectInfo.allDay && selectInfo.startStr.includes("T")) {
     const start = new Date(selectInfo.start);
     const end = new Date(selectInfo.end);
-    startTime.value = start.toTimeString().slice(0, 5);
-    endTime.value = end.toTimeString().slice(0, 5);
-  } else {
-    startTime.value = "09:00";
-    endTime.value = "10:00";
+    eventForm.value.startTime = start.toTimeString().slice(0, 5);
+    eventForm.value.endTime = end.toTimeString().slice(0, 5);
   }
 
-  eventModal.value?.showModal();
+  showModal.value = true;
+  // eventModal.value?.showModal()
 };
 
-const handleEventClick = (clickInfo: any) => {
+const handleEventClick = (clickInfo: EventClickArg) => {
   const { event } = clickInfo;
 
   // Only allow editing personal events
@@ -42,41 +73,183 @@ const handleEventClick = (clickInfo: any) => {
     return;
   }
 
+  selectedEventId.value = event.id;
   editingEventId.value = event.id;
-  newEventTitle.value = event.title;
-  isAllDay.value = event.allDay;
 
-  // Set times
-  if (event.start) {
-    startTime.value = event.start.toTimeString().slice(0, 5);
-  }
-  if (event.end) {
-    endTime.value = event.end.toTimeString().slice(0, 5);
-  } else if (event.start) {
-    // If no end time, default to 1 hour after start
-    const end = new Date(event.start);
-    end.setHours(end.getHours() + 1);
-    endTime.value = end.toTimeString().slice(0, 5);
-  }
-
-  // Mock selectedDateInfo for save logic
-  selectedDateInfo.value = {
+  eventForm.value = {
+    title: event.title,
+    allDay: event.allDay,
+    startTime: "09:00",
+    endTime: "10:00",
     startStr: event.startStr,
-    endStr: event.endStr || event.startStr, // Fallback
-    view: clickInfo.view,
+    endStr: event.endStr || event.startStr,
   };
 
-  eventModal.value?.showModal();
+  if (event.start) {
+    eventForm.value.startTime = event.start.toTimeString().slice(0, 5);
+  }
+  if (event.end) {
+    eventForm.value.endTime = event.end.toTimeString().slice(0, 5);
+  } else if (event.start) {
+    const end = new Date(event.start);
+    end.setHours(end.getHours() + 1);
+    eventForm.value.endTime = end.toTimeString().slice(0, 5);
+  }
+
+  showModal.value = true;
+  // eventModal.value?.showModal()
 };
 
 const closeModal = () => {
-  eventModal.value?.close();
+  showModal.value = false;
+  // eventModal.value?.close()
   if (selectedDateInfo.value?.view?.calendar) {
     selectedDateInfo.value.view.calendar.unselect();
   }
   selectedDateInfo.value = null;
+  selectedEventId.value = null;
   editingEventId.value = null;
-  newEventTitle.value = "";
+  errors.value.title = false;
+};
+
+const handleDelete = async () => {
+  if (!selectedEventId.value) return;
+
+  if (!confirm(t("components.common.calendar.confirm_delete"))) return;
+
+  try {
+    await $fetch(`/api/student/events/${selectedEventId.value}`, {
+      method: "DELETE",
+    });
+
+    // Remove from local state
+    calendarOptions.value.events = (
+      calendarOptions.value.events as any[]
+    ).filter((e) => e.id !== selectedEventId.value);
+
+    closeModal();
+  } catch (error) {
+    console.error("Failed to delete event:", error);
+    alert(t("components.common.calendar.failed_delete"));
+  }
+};
+
+const saveEvent = async () => {
+  if (!eventForm.value.title) {
+    errors.value.title = true;
+    return;
+  }
+
+  try {
+    const eventData = {
+      title: eventForm.value.title,
+      start: eventForm.value.startStr,
+      end: eventForm.value.endStr,
+      allDay: eventForm.value.allDay,
+      extendedProps: {
+        type: "personal",
+      },
+    };
+
+    // Adjust times if not all day
+    if (
+      !eventForm.value.allDay &&
+      eventForm.value.startTime &&
+      eventForm.value.endTime
+    ) {
+      const baseDate = eventForm.value.startStr.split("T")[0];
+      eventData.start = `${baseDate}T${eventForm.value.startTime}`;
+      eventData.end = `${baseDate}T${eventForm.value.endTime}`;
+    }
+
+    if (isEditing.value && selectedEventId.value) {
+      // Update existing event
+      await $fetch(`/api/student/events/${selectedEventId.value}`, {
+        method: "PUT",
+        body: eventData,
+      });
+
+      // Update local state
+      const eventIndex = (calendarOptions.value.events as any[]).findIndex(
+        (e) => e.id === selectedEventId.value
+      );
+      if (eventIndex !== -1) {
+        const updatedEvents = [...(calendarOptions.value.events as any[])];
+        updatedEvents[eventIndex] = {
+          ...updatedEvents[eventIndex],
+          ...eventData,
+        };
+        calendarOptions.value.events = updatedEvents;
+      }
+    } else {
+      // Create new event
+      const newEvent = await $fetch("/api/student/events", {
+        method: "POST",
+        body: eventData,
+      });
+
+      // Add to calendar
+      calendarOptions.value.events = [
+        ...(calendarOptions.value.events as any[]),
+        {
+          id: newEvent.id,
+          ...eventData,
+          backgroundColor: "#3788d8",
+          borderColor: "#3788d8",
+          editable: true,
+        },
+      ];
+    }
+
+    closeModal();
+  } catch (error) {
+    console.error("Failed to save event:", error);
+    alert(t("components.common.calendar.failed_save"));
+  }
+};
+
+const handleEventDrop = async (info: EventDropArg) => {
+  const { event } = info;
+
+  // Only allow moving personal events
+  if (event.extendedProps.type === "homework") {
+    info.revert();
+    return;
+  }
+
+  try {
+    await $fetch(`/api/student/events/${event.id}`, {
+      method: "PUT",
+      body: {
+        start: event.start?.toISOString(),
+        end: event.end?.toISOString(),
+        allDay: event.allDay,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update event:", error);
+    info.revert();
+    alert(t("components.common.calendar.failed_update"));
+  }
+};
+
+const handleEventResize = async (info: EventResizeDoneArg) => {
+  const { event } = info;
+
+  try {
+    await $fetch(`/api/student/events/${event.id}`, {
+      method: "PUT",
+      body: {
+        start: event.start?.toISOString(),
+        end: event.end?.toISOString(),
+        allDay: event.allDay,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update event:", error);
+    info.revert();
+    alert(t("components.common.calendar.failed_update"));
+  }
 };
 
 const handleDateClick = (info: any) => {
@@ -96,120 +269,12 @@ const handleDateClick = (info: any) => {
     allDay: info.allDay,
     view: info.view,
     jsEvent: info.jsEvent,
-  };
+  } as unknown as DateSelectArg;
 
   handleDateSelect(selectInfo);
 };
 
-const saveEvent = async () => {
-  if (!newEventTitle.value || !selectedDateInfo.value) return;
-
-  let finalStart, finalEnd;
-
-  if (editingEventId.value) {
-    // Logic for updating existing event
-    // We need to reconstruct the date from the original event or current selection
-    // But wait, if we are editing, we might not have changed the date, only the time or title.
-    // For simplicity, let's assume we are just updating title/time on the SAME day(s) unless we implement full date picker.
-    // Actually, FullCalendar's event object has the dates.
-
-    // If we are editing, selectedDateInfo.startStr might be the ISO string.
-    const baseDate = selectedDateInfo.value.startStr.split("T")[0];
-
-    if (isAllDay.value) {
-      finalStart = baseDate;
-      // For all day, end date is usually exclusive +1 day, but let's keep it simple for now or use what we have.
-      // If we switched from timed to all-day, we might need to adjust.
-      finalEnd = selectedDateInfo.value.endStr
-        ? selectedDateInfo.value.endStr.split("T")[0]
-        : baseDate;
-    } else {
-      finalStart = `${baseDate}T${startTime.value}:00`;
-      finalEnd = `${baseDate}T${endTime.value}:00`;
-    }
-  } else {
-    // Creating new event logic (existing)
-    const { startStr, endStr } = selectedDateInfo.value;
-    finalStart = startStr;
-    finalEnd = endStr;
-
-    if (!isAllDay.value) {
-      const datePart = startStr.split("T")[0];
-      finalStart = `${datePart}T${startTime.value}:00`;
-      finalEnd = `${datePart}T${endTime.value}:00`;
-    }
-  }
-
-  try {
-    const method = editingEventId.value ? "PUT" : "POST";
-    const body: any = {
-      title: newEventTitle.value,
-      start: finalStart,
-      end: finalEnd,
-      allDay: isAllDay.value,
-    };
-
-    if (editingEventId.value) {
-      body.id = editingEventId.value;
-    }
-
-    await $fetch("/api/common/events", {
-      method: method as any,
-      body: body,
-    });
-
-    await refresh();
-    closeModal();
-  } catch (error) {
-    console.error("Failed to save event", error);
-    alert("Failed to save event");
-  }
-};
-
-const deleteEvent = async () => {
-  if (!editingEventId.value) return;
-
-  if (!confirm("Are you sure you want to delete this event?")) return;
-
-  try {
-    await $fetch("/api/common/events", {
-      method: "DELETE",
-      query: { id: editingEventId.value },
-    });
-    await refresh();
-    closeModal();
-  } catch (error) {
-    console.error("Failed to delete event", error);
-    alert("Failed to delete event");
-  }
-};
-
-const updateEvent = async (info: any) => {
-  const { event } = info;
-  // Only allow updating personal events
-  if (event.extendedProps.type !== "personal") {
-    info.revert();
-    return;
-  }
-
-  try {
-    await $fetch("/api/common/events", {
-      method: "PUT" as any,
-      body: {
-        id: event.id,
-        start: event.startStr,
-        end: event.endStr,
-        allDay: event.allDay,
-      },
-    });
-  } catch (error) {
-    console.error("Failed to update event", error);
-    alert("Failed to update event");
-    info.revert();
-  }
-};
-
-const calendarOptions = ref({
+const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
   initialView: "dayGridMonth",
   headerToolbar: {
@@ -217,7 +282,7 @@ const calendarOptions = ref({
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay",
   },
-  events: events, // Pass the ref directly so it updates on refresh
+  events: events.value as any, // Pass the ref directly so it updates on refresh
   editable: true, // Enable drag and drop
   selectable: true,
   selectMirror: true,
@@ -227,8 +292,8 @@ const calendarOptions = ref({
   eventClick: handleEventClick,
   dateClick: handleDateClick, // Handle single clicks (especially on mobile)
   selectLongPressDelay: 200, // Reduce delay for touch selection
-  eventDrop: updateEvent,
-  eventResize: updateEvent,
+  eventDrop: handleEventDrop,
+  eventResize: handleEventResize,
   height: "auto", // Let it adapt to container
 });
 
@@ -246,9 +311,6 @@ const updateCalendarOptions = () => {
         center: "title",
         right: "dayGridMonth,timeGridWeek,timeGridDay",
       };
-
-  // Adjust aspect ratio for mobile to make it more compact if needed
-  // calendarOptions.value.aspectRatio = isMobile ? 0.8 : 1.35;
 };
 
 onMounted(() => {
@@ -265,69 +327,96 @@ onUnmounted(() => {
   <div class="bg-base-100 p-4 rounded-lg shadow">
     <FullCalendar :options="calendarOptions" class="fc-daisy" />
 
-    <!-- Event Creation Modal -->
-    <dialog id="event_modal" class="modal" ref="eventModal">
+    <!-- Event Modal -->
+    <dialog id="event_modal" class="modal" :class="{ 'modal-open': showModal }">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">
-          {{ editingEventId ? "Edit Event" : "Create Personal Event" }}
+        <h3 class="font-bold text-lg mb-4">
+          {{
+            isEditing
+              ? $t("components.common.calendar.modal_title_edit")
+              : $t("components.common.calendar.modal_title_create")
+          }}
         </h3>
-        <div class="form-control w-full mt-4">
+
+        <div class="form-control w-full mb-4">
           <label class="label">
-            <span class="label-text">Event Title</span>
+            <span class="label-text">{{
+              $t("components.common.calendar.event_title_label")
+            }}</span>
           </label>
           <input
-            v-model="newEventTitle"
+            v-model="eventForm.title"
             type="text"
-            placeholder="Study for math test"
+            :placeholder="
+              $t('components.common.calendar.event_title_placeholder')
+            "
             class="input input-bordered w-full"
-            @keyup.enter="saveEvent"
+            :class="{ 'input-error': errors.title }"
           />
         </div>
 
-        <div class="form-control w-full mt-4">
+        <div class="form-control mb-4">
           <label class="label cursor-pointer justify-start gap-4">
-            <span class="label-text">All Day</span>
-            <input type="checkbox" class="checkbox" v-model="isAllDay" />
+            <span class="label-text">{{
+              $t("components.common.calendar.all_day_label")
+            }}</span>
+            <input
+              type="checkbox"
+              v-model="eventForm.allDay"
+              class="checkbox"
+            />
           </label>
         </div>
 
-        <div v-if="!isAllDay" class="flex flex-col md:flex-row gap-4 mt-4">
-          <div class="form-control w-full md:w-1/2">
+        <div v-if="!eventForm.allDay" class="grid grid-cols-2 gap-4 mb-4">
+          <div class="form-control">
             <label class="label">
-              <span class="label-text">Start Time</span>
+              <span class="label-text">{{
+                $t("components.common.calendar.start_time_label")
+              }}</span>
             </label>
             <input
-              v-model="startTime"
+              v-model="eventForm.startTime"
               type="time"
               class="input input-bordered w-full"
             />
           </div>
-          <div class="form-control w-full md:w-1/2">
+          <div class="form-control">
             <label class="label">
-              <span class="label-text">End Time</span>
+              <span class="label-text">{{
+                $t("components.common.calendar.end_time_label")
+              }}</span>
             </label>
             <input
-              v-model="endTime"
+              v-model="eventForm.endTime"
               type="time"
               class="input input-bordered w-full"
             />
           </div>
         </div>
 
-        <div class="modal-action">
-          <form method="dialog">
+        <div class="modal-action justify-between">
+          <div>
             <button
-              v-if="editingEventId"
-              class="btn btn-error mr-2"
-              @click.prevent="deleteEvent"
+              v-if="isEditing"
+              class="btn btn-error btn-outline"
+              @click="handleDelete"
             >
-              Delete
+              {{ $t("components.common.calendar.delete") }}
             </button>
-            <button class="btn btn-ghost" @click="closeModal">Cancel</button>
-            <button class="btn btn-primary" @click.prevent="saveEvent">
-              {{ editingEventId ? "Save" : "Create" }}
+          </div>
+          <div class="flex gap-2">
+            <button class="btn" @click="closeModal">
+              {{ $t("components.common.calendar.cancel") }}
             </button>
-          </form>
+            <button class="btn btn-primary" @click="saveEvent">
+              {{
+                isEditing
+                  ? $t("components.common.calendar.save")
+                  : $t("components.common.calendar.create")
+              }}
+            </button>
+          </div>
         </div>
       </div>
       <form method="dialog" class="modal-backdrop">

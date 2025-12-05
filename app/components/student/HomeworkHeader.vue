@@ -55,15 +55,21 @@ const getCircleClass = (problem: ProblemStatus, index: number) => {
       <div class="text-sm breadcrumbs">
         <ul>
           <li>
-            <NuxtLink :to="localePath('/student/homeworks')"
-              >Homeworks</NuxtLink
+            <NuxtLink :to="localePath('/student/homeworks')">{{
+              $t("components.student.homework_header.homeworks")
+            }}</NuxtLink>
+          </li>
+          <li>
+            {{ title }}
+            <span v-if="mode === 'review'"
+              >({{ $t("components.student.homework_header.review") }})</span
             >
           </li>
-          <li>{{ title }} <span v-if="mode === 'review'">(Review)</span></li>
         </ul>
       </div>
       <div class="badge badge-lg">
-        Question {{ currentIndex + 1 }} / {{ problems.length }}
+        {{ $t("components.student.homework_header.question") }}
+        {{ currentIndex + 1 }} / {{ problems.length }}
       </div>
     </div>
 

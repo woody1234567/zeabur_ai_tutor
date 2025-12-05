@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const props = defineProps<{
   currentContent: string;
 }>();
@@ -19,7 +20,7 @@ const isGenerating = ref(false);
 
 const generateOptions = async () => {
   if (!props.currentContent.trim()) {
-    alert("Please enter problem content first.");
+    alert(t("components.teacher.tools.generate.alert_empty"));
     return;
   }
 
@@ -49,7 +50,7 @@ const generateOptions = async () => {
     });
   } catch (error: any) {
     console.error("Generation error:", error);
-    alert("Failed to generate options. Please try again.");
+    alert(t("components.teacher.tools.generate.alert_failed"));
   } finally {
     isGenerating.value = false;
   }
@@ -65,15 +66,18 @@ const generateOptions = async () => {
     >
       <span class="flex items-center gap-2">
         <span class="icon">💡</span>
-        AI Generator
+        {{ $t("components.teacher.tools.generate.title") }}
       </span>
-      <span class="text-sm opacity-70">{{ isOpen ? "Hide" : "Show" }}</span>
+      <span class="text-sm opacity-70">{{
+        isOpen
+          ? $t("components.teacher.tools.generate.hide")
+          : $t("components.teacher.tools.generate.show")
+      }}</span>
     </button>
 
     <div v-if="isOpen" class="mt-4">
       <p class="text-sm text-gray-500 mb-4">
-        Use AI to automatically generate options and explanation based on the
-        problem content.
+        {{ $t("components.teacher.tools.generate.description") }}
       </p>
 
       <button
@@ -86,7 +90,11 @@ const generateOptions = async () => {
           v-if="isGenerating"
           class="loading loading-spinner loading-sm"
         ></span>
-        {{ isGenerating ? "Generating..." : "Generate Options & Explanation" }}
+        {{
+          isGenerating
+            ? $t("components.teacher.tools.generate.generating")
+            : $t("components.teacher.tools.generate.generate_button")
+        }}
       </button>
     </div>
   </div>

@@ -22,10 +22,11 @@ const getStatusColor = (status: string) => {
     <!-- Header -->
     <div>
       <h1 class="text-2xl md:text-3xl font-bold">
-        {{ performance.student.name }}'s Performance
+        {{ performance.student.name
+        }}{{ $t("components.student.performance.title_suffix") }}
       </h1>
       <p class="text-lg opacity-70 mt-1">
-        Classroom:
+        {{ $t("components.student.performance.classroom_label") }}
         <span class="font-semibold">{{ performance.classroom.name }}</span>
       </p>
     </div>
@@ -49,11 +50,15 @@ const getStatusColor = (status: string) => {
               ></path>
             </svg>
           </div>
-          <div class="stat-title">Average Score</div>
+          <div class="stat-title">
+            {{ $t("components.student.performance.average_score") }}
+          </div>
           <div class="stat-value text-primary">
             {{ performance.summary.averageScore }}%
           </div>
-          <div class="stat-desc">Across all homeworks</div>
+          <div class="stat-desc">
+            {{ $t("components.student.performance.average_score_desc") }}
+          </div>
         </div>
       </div>
 
@@ -74,13 +79,16 @@ const getStatusColor = (status: string) => {
               ></path>
             </svg>
           </div>
-          <div class="stat-title">Completion Rate</div>
+          <div class="stat-title">
+            {{ $t("components.student.performance.completion_rate") }}
+          </div>
           <div class="stat-value text-secondary">
             {{ performance.summary.completionRate }}%
           </div>
           <div class="stat-desc">
             {{ performance.summary.completedHomeworks }} /
-            {{ performance.summary.totalHomeworks }} tasks
+            {{ performance.summary.totalHomeworks }}
+            {{ $t("components.student.performance.tasks") }}
           </div>
         </div>
       </div>
@@ -102,11 +110,15 @@ const getStatusColor = (status: string) => {
               ></path>
             </svg>
           </div>
-          <div class="stat-title">Late Submissions</div>
+          <div class="stat-title">
+            {{ $t("components.student.performance.late_submissions") }}
+          </div>
           <div class="stat-value text-warning">
             {{ performance.summary.lateHomeworks }}
           </div>
-          <div class="stat-desc">Tasks submitted after deadline</div>
+          <div class="stat-desc">
+            {{ $t("components.student.performance.late_submissions_desc") }}
+          </div>
         </div>
       </div>
     </div>
@@ -114,21 +126,33 @@ const getStatusColor = (status: string) => {
     <!-- Homework List -->
     <div class="card bg-base-100 shadow-xl border border-base-200">
       <div class="card-body">
-        <h2 class="card-title mb-4">Homework History</h2>
+        <h2 class="card-title mb-4">
+          {{ $t("components.student.performance.homework_history") }}
+        </h2>
         <div class="overflow-x-auto">
           <table class="table w-full">
             <thead>
               <tr>
-                <th>Homework</th>
-                <th>Status</th>
-                <th>Score</th>
-                <th>Submitted</th>
-                <th>Deadline</th>
+                <th>
+                  {{ $t("components.student.performance.table.homework") }}
+                </th>
+                <th>{{ $t("components.student.performance.table.status") }}</th>
+                <th>{{ $t("components.student.performance.table.score") }}</th>
+                <th>
+                  {{ $t("components.student.performance.table.submitted") }}
+                </th>
+                <th>
+                  {{ $t("components.student.performance.table.deadline") }}
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="hw in performance.homeworks" :key="hw.id">
-                <td class="font-bold">{{ hw.title || "Untitled" }}</td>
+                <td class="font-bold">
+                  {{
+                    hw.title || $t("components.student.performance.untitled")
+                  }}
+                </td>
                 <td>
                   <div class="badge" :class="getStatusColor(hw.status)">
                     {{ hw.status }}
@@ -159,7 +183,7 @@ const getStatusColor = (status: string) => {
                     {{
                       hw.deadline
                         ? new Date(hw.deadline).toLocaleDateString()
-                        : "No deadline"
+                        : $t("components.student.performance.no_deadline")
                     }}
                   </span>
                 </td>
@@ -171,7 +195,7 @@ const getStatusColor = (status: string) => {
           v-if="performance.homeworks.length === 0"
           class="text-center py-10 opacity-50"
         >
-          <p>No homeworks assigned in this classroom yet.</p>
+          <p>{{ $t("components.student.performance.no_homeworks") }}</p>
         </div>
       </div>
     </div>

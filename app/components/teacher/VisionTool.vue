@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const emit = defineEmits<{
   (e: "text-extracted", text: string): void;
 }>();
@@ -71,11 +72,11 @@ const extractText = async () => {
       // Optional: close tool or clear after success
       // isOpen.value = false;
     } else {
-      alert("No text found in the image.");
+      alert(t("components.teacher.tools.vision.alert_no_text"));
     }
   } catch (error: any) {
     console.error("Extraction error:", error);
-    alert("Failed to extract text. Please try again.");
+    alert(t("components.teacher.tools.vision.alert_failed"));
   } finally {
     isProcessing.value = false;
   }
@@ -96,9 +97,13 @@ const clearImage = () => {
     >
       <span class="flex items-center gap-2">
         <span class="icon">📷</span>
-        Image to Text Tool
+        {{ $t("components.teacher.tools.vision.title") }}
       </span>
-      <span class="text-sm opacity-70">{{ isOpen ? "Hide" : "Show" }}</span>
+      <span class="text-sm opacity-70">{{
+        isOpen
+          ? $t("components.teacher.tools.vision.hide")
+          : $t("components.teacher.tools.vision.show")
+      }}</span>
     </button>
 
     <div v-if="isOpen" class="mt-4 space-y-4">
@@ -110,10 +115,9 @@ const clearImage = () => {
           class="file-input file-input-bordered w-full"
         />
         <label class="label">
-          <span class="label-text-alt text-gray-500"
-            >Upload an image or paste from clipboard (Ctrl+V) to extract
-            text</span
-          >
+          <span class="label-text-alt text-gray-500">{{
+            $t("components.teacher.tools.vision.upload_hint")
+          }}</span>
         </label>
       </div>
 
@@ -127,7 +131,7 @@ const clearImage = () => {
           <button
             @click="clearImage"
             class="absolute top-2 right-2 btn btn-circle btn-xs btn-error"
-            title="Remove image"
+            :title="$t('components.teacher.tools.vision.remove_image')"
           >
             ✕
           </button>
@@ -143,7 +147,11 @@ const clearImage = () => {
             v-if="isProcessing"
             class="loading loading-spinner loading-sm"
           ></span>
-          {{ isProcessing ? "Extracting Text..." : "Extract Text to Content" }}
+          {{
+            isProcessing
+              ? $t("components.teacher.tools.vision.extracting")
+              : $t("components.teacher.tools.vision.extract_button")
+          }}
         </button>
       </div>
     </div>

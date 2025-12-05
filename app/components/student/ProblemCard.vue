@@ -25,7 +25,7 @@ defineEmits<{
         v-if="currentIndex > 0"
         @click="$emit('prev')"
         class="btn btn-circle btn-sm btn-ghost"
-        title="Previous Problem"
+        :title="$t('components.student.problem_card.previous_problem')"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@ defineEmits<{
         v-if="currentIndex < totalProblems - 1"
         @click="$emit('next')"
         class="btn btn-circle btn-sm btn-ghost"
-        title="Next Problem"
+        :title="$t('components.student.problem_card.next_problem')"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,7 @@ defineEmits<{
       <div v-if="problem.imageUrl" class="my-4 flex justify-center">
         <img
           :src="problem.imageUrl"
-          alt="Problem Image"
+          :alt="$t('components.student.problem_card.problem_image')"
           class="max-h-96 rounded-lg shadow-md object-contain"
         />
       </div>

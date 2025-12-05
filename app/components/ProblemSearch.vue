@@ -1,7 +1,9 @@
 <script setup lang="ts">
-const title = ref("");
-const source = ref("");
-const hashtag = ref("");
+const filters = reactive({
+  keyword: "",
+  source: "",
+  hashtag: "",
+});
 
 const emit = defineEmits<{
   search: [params: { title: string; source: string; hashtag: string }];
@@ -9,65 +11,103 @@ const emit = defineEmits<{
 
 const handleSearch = () => {
   emit("search", {
-    title: title.value,
-    source: source.value,
-    hashtag: hashtag.value,
+    title: filters.keyword,
+    source: filters.source,
+    hashtag: filters.hashtag,
   });
 };
 
-const clearSearch = () => {
-  title.value = "";
-  source.value = "";
-  hashtag.value = "";
+const clearFilters = () => {
+  filters.keyword = "";
+  filters.source = "";
+  filters.hashtag = "";
   handleSearch();
 };
 </script>
 
 <template>
-  <div class="card bg-base-100 shadow-sm border border-base-200 mb-8">
-    <div class="card-body p-4 md:p-6">
-      <h2 class="card-title text-lg mb-4">Search Problems</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-2xl mb-6">
+        {{ $t("components.common.search.title") }}
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Keyword Search -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text">Keyword (Title)</span>
+            <span class="label-text font-medium">{{
+              $t("components.common.search.keyword_label")
+            }}</span>
+          </label>
+          <div class="relative">
+            <input
+              v-model="filters.keyword"
+              type="text"
+              :placeholder="$t('components.common.search.keyword_placeholder')"
+              class="input input-bordered w-full pl-10"
+              @keyup.enter="handleSearch"
+            />
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <Icon
+                name="heroicons:magnifying-glass"
+                class="w-5 h-5 text-gray-400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Source Filter -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">{{
+              $t("components.common.search.source_label")
+            }}</span>
           </label>
           <input
-            v-model="title"
+            v-model="filters.source"
             type="text"
-            placeholder="Search by title..."
+            :placeholder="$t('components.common.search.source_placeholder')"
             class="input input-bordered w-full"
             @keyup.enter="handleSearch"
           />
         </div>
+
+        <!-- Hashtag Filter -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text">Source</span>
+            <span class="label-text font-medium">{{
+              $t("components.common.search.hashtag_label")
+            }}</span>
           </label>
-          <input
-            v-model="source"
-            type="text"
-            placeholder="e.g. Textbook, Exam..."
-            class="input input-bordered w-full"
-            @keyup.enter="handleSearch"
-          />
-        </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Hashtag</span>
-          </label>
-          <input
-            v-model="hashtag"
-            type="text"
-            placeholder="e.g. math, physics..."
-            class="input input-bordered w-full"
-            @keyup.enter="handleSearch"
-          />
+          <div class="relative">
+            <input
+              v-model="filters.hashtag"
+              type="text"
+              :placeholder="$t('components.common.search.hashtag_placeholder')"
+              class="input input-bordered w-full pl-10"
+              @keyup.enter="handleSearch"
+            />
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <Icon name="heroicons:tag" class="w-5 h-5 text-gray-400" />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card-actions justify-end mt-4">
-        <button @click="clearSearch" class="btn btn-ghost">Clear</button>
-        <button @click="handleSearch" class="btn btn-primary">Search</button>
+
+      <div class="card-actions justify-end mt-6 gap-3">
+        <button class="btn btn-ghost" @click="clearFilters">
+          <Icon name="heroicons:x-mark" class="w-5 h-5 mr-2" />
+          {{ $t("components.common.search.clear") }}
+        </button>
+        <button class="btn btn-primary" @click="handleSearch">
+          <Icon name="heroicons:funnel" class="w-5 h-5 mr-2" />
+          {{ $t("components.common.search.search") }}
+        </button>
       </div>
     </div>
   </div>

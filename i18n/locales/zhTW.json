@@ -475,5 +475,122 @@
       "failed_fetch": "無法取得使用者",
       "failed_update": "無法更新角色"
     }
+  },
+  "components": {
+    "common": {
+      "search": {
+        "title": "搜尋題目",
+        "keyword_label": "關鍵字 (標題)",
+        "keyword_placeholder": "搜尋標題...",
+        "source_label": "來源",
+        "source_placeholder": "例如：教科書、考試...",
+        "hashtag_label": "標籤",
+        "hashtag_placeholder": "例如：數學、物理...",
+        "clear": "清除",
+        "search": "搜尋"
+      },
+      "calendar": {
+        "modal_title_edit": "編輯行程",
+        "modal_title_create": "建立個人行程",
+        "event_title_label": "行程標題",
+        "event_title_placeholder": "準備數學考試",
+        "all_day_label": "整天",
+        "start_time_label": "開始時間",
+        "end_time_label": "結束時間",
+        "delete": "刪除",
+        "cancel": "取消",
+        "save": "儲存",
+        "create": "建立",
+        "confirm_delete": "您確定要刪除此行程嗎？",
+        "failed_save": "儲存行程失敗",
+        "failed_delete": "刪除行程失敗",
+        "failed_update": "更新行程失敗"
+      }
+    },
+    "admin": {
+      "search": {
+        "label": "搜尋使用者",
+        "placeholder": "姓名或電子郵件",
+        "role_label": "角色",
+        "all_roles": "所有角色",
+        "student": "學生",
+        "parent": "家長",
+        "teacher": "教師",
+        "admin": "管理員",
+        "search_button": "搜尋"
+      }
+    },
+    "student": {
+      "performance": {
+        "title_suffix": "的表現",
+        "classroom_label": "教室：",
+        "average_score": "平均分數",
+        "average_score_desc": "所有作業",
+        "completion_rate": "完成率",
+        "tasks": "項任務",
+        "late_submissions": "遲交作業",
+        "late_submissions_desc": "截止日期後提交的任務",
+        "homework_history": "作業紀錄",
+        "table_homework": "作業",
+        "table_status": "狀態",
+        "table_score": "分數",
+        "table_submitted": "提交日期",
+        "table_deadline": "截止日期",
+        "untitled": "無標題",
+        "no_deadline": "無截止日期",
+        "no_homeworks": "此教室尚無作業。"
+      },
+      "classrooms_list": {
+        "no_description": "無描述。",
+        "teacher_label": "教師：",
+        "joined_label": "加入日期：",
+        "view_performance": "查看表現"
+      },
+      "homework_header": {
+        "breadcrumbs_homeworks": "作業",
+        "review_mode": "(複習)",
+        "question": "題目"
+      },
+      "problem_card": {
+        "prev_problem": "上一題",
+        "next_problem": "下一題"
+      }
+    },
+    "teacher": {
+      "tools": {
+        "format": {
+          "title": "AI 格式化工具",
+          "hide": "隱藏",
+          "show": "顯示",
+          "description": "使用 AI 將您的內容格式化為帶有 LaTeX 數學公式的整潔 Markdown。",
+          "description_small": "(將文字轉換為 $...$ 用於行內數學公式，$$...$$ 用於區塊數學公式)",
+          "button_formatting": "格式化中...",
+          "button_format": "格式化目前內容",
+          "alert_enter_content": "請先輸入一些內容以進行格式化。",
+          "alert_failed": "格式化內容失敗。請重試。"
+        },
+        "generate": {
+          "title": "AI 產生器",
+          "hide": "隱藏",
+          "show": "顯示",
+          "description": "使用 AI 根據題目內容自動產生選項和詳解。",
+          "button_generating": "產生中...",
+          "button_generate": "產生選項和詳解",
+          "alert_enter_content": "請先輸入題目內容。",
+          "alert_failed": "產生選項失敗。請重試。"
+        },
+        "vision": {
+          "title": "圖片轉文字工具",
+          "hide": "隱藏",
+          "show": "顯示",
+          "upload_placeholder": "上傳圖片或從剪貼簿貼上 (Ctrl+V) 以擷取文字",
+          "remove_image": "移除圖片",
+          "button_extracting": "擷取中...",
+          "button_extract": "擷取文字至內容",
+          "alert_no_text": "在圖片中找不到文字。",
+          "alert_failed": "擷取文字失敗。請重試。"
+        }
+      }
+    }
   }
 }

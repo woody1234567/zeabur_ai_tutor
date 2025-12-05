@@ -475,5 +475,122 @@
       "failed_fetch": "Failed to fetch users",
       "failed_update": "Failed to update role"
     }
+  },
+  "components": {
+    "common": {
+      "search": {
+        "title": "Search Problems",
+        "keyword_label": "Keyword (Title)",
+        "keyword_placeholder": "Search by title...",
+        "source_label": "Source",
+        "source_placeholder": "e.g. Textbook, Exam...",
+        "hashtag_label": "Hashtag",
+        "hashtag_placeholder": "e.g. math, physics...",
+        "clear": "Clear",
+        "search": "Search"
+      },
+      "calendar": {
+        "modal_title_edit": "Edit Event",
+        "modal_title_create": "Create Personal Event",
+        "event_title_label": "Event Title",
+        "event_title_placeholder": "Study for math test",
+        "all_day_label": "All Day",
+        "start_time_label": "Start Time",
+        "end_time_label": "End Time",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create",
+        "confirm_delete": "Are you sure you want to delete this event?",
+        "failed_save": "Failed to save event",
+        "failed_delete": "Failed to delete event",
+        "failed_update": "Failed to update event"
+      }
+    },
+    "admin": {
+      "search": {
+        "label": "Search User",
+        "placeholder": "Name or Email",
+        "role_label": "Role",
+        "all_roles": "All Roles",
+        "student": "Student",
+        "parent": "Parent",
+        "teacher": "Teacher",
+        "admin": "Admin",
+        "search_button": "Search"
+      }
+    },
+    "student": {
+      "performance": {
+        "title_suffix": "'s Performance",
+        "classroom_label": "Classroom:",
+        "average_score": "Average Score",
+        "average_score_desc": "Across all homeworks",
+        "completion_rate": "Completion Rate",
+        "tasks": "tasks",
+        "late_submissions": "Late Submissions",
+        "late_submissions_desc": "Tasks submitted after deadline",
+        "homework_history": "Homework History",
+        "table_homework": "Homework",
+        "table_status": "Status",
+        "table_score": "Score",
+        "table_submitted": "Submitted",
+        "table_deadline": "Deadline",
+        "untitled": "Untitled",
+        "no_deadline": "No deadline",
+        "no_homeworks": "No homeworks assigned in this classroom yet."
+      },
+      "classrooms_list": {
+        "no_description": "No description provided.",
+        "teacher_label": "Teacher:",
+        "joined_label": "Joined:",
+        "view_performance": "View Performance"
+      },
+      "homework_header": {
+        "breadcrumbs_homeworks": "Homeworks",
+        "review_mode": "(Review)",
+        "question": "Question"
+      },
+      "problem_card": {
+        "prev_problem": "Previous Problem",
+        "next_problem": "Next Problem"
+      }
+    },
+    "teacher": {
+      "tools": {
+        "format": {
+          "title": "AI Formatting Tool",
+          "hide": "Hide",
+          "show": "Show",
+          "description": "Use AI to format your content into clean Markdown with LaTeX math equations.",
+          "description_small": "(Converts text to $...$ for inline math and $$...$$ for block math)",
+          "button_formatting": "Formatting...",
+          "button_format": "Format Current Content",
+          "alert_enter_content": "Please enter some content to format first.",
+          "alert_failed": "Failed to format content. Please try again."
+        },
+        "generate": {
+          "title": "AI Generator",
+          "hide": "Hide",
+          "show": "Show",
+          "description": "Use AI to automatically generate options and explanation based on the problem content.",
+          "button_generating": "Generating...",
+          "button_generate": "Generate Options & Explanation",
+          "alert_enter_content": "Please enter problem content first.",
+          "alert_failed": "Failed to generate options. Please try again."
+        },
+        "vision": {
+          "title": "Image to Text Tool",
+          "hide": "Hide",
+          "show": "Show",
+          "upload_placeholder": "Upload an image or paste from clipboard (Ctrl+V) to extract text",
+          "remove_image": "Remove image",
+          "button_extracting": "Extracting Text...",
+          "button_extract": "Extract Text to Content",
+          "alert_no_text": "No text found in the image.",
+          "alert_failed": "Failed to extract text. Please try again."
+        }
+      }
+    }
   }
 }

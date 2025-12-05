@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const props = defineProps<{
   currentContent: string;
 }>();
@@ -12,7 +13,7 @@ const isProcessing = ref(false);
 
 const formatContent = async () => {
   if (!props.currentContent.trim()) {
-    alert("Please enter some content to format first.");
+    alert(t("components.teacher.tools.format.alert_empty"));
     return;
   }
 
@@ -33,7 +34,7 @@ const formatContent = async () => {
     }
   } catch (error: any) {
     console.error("Formatting error:", error);
-    alert("Failed to format content. Please try again.");
+    alert(t("components.teacher.tools.format.alert_failed"));
   } finally {
     isProcessing.value = false;
   }
@@ -49,18 +50,21 @@ const formatContent = async () => {
     >
       <span class="flex items-center gap-2">
         <span class="icon">✨</span>
-        AI Formatting Tool
+        {{ $t("components.teacher.tools.format.title") }}
       </span>
-      <span class="text-sm opacity-70">{{ isOpen ? "Hide" : "Show" }}</span>
+      <span class="text-sm opacity-70">{{
+        isOpen
+          ? $t("components.teacher.tools.format.hide")
+          : $t("components.teacher.tools.format.show")
+      }}</span>
     </button>
 
     <div v-if="isOpen" class="mt-4">
       <p class="text-sm text-gray-500 mb-4">
-        Use AI to format your content into clean Markdown with LaTeX math
-        equations.
+        {{ $t("components.teacher.tools.format.description") }}
         <br />
         <span class="text-xs opacity-70">
-          (Converts text to $...$ for inline math and $$...$$ for block math)
+          {{ $t("components.teacher.tools.format.hint") }}
         </span>
       </p>
 
@@ -74,7 +78,11 @@ const formatContent = async () => {
           v-if="isProcessing"
           class="loading loading-spinner loading-sm"
         ></span>
-        {{ isProcessing ? "Formatting..." : "Format Current Content" }}
+        {{
+          isProcessing
+            ? $t("components.teacher.tools.format.formatting")
+            : $t("components.teacher.tools.format.format_button")
+        }}
       </button>
     </div>
   </div>
