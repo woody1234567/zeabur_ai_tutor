@@ -1,0 +1,132 @@
+{
+  "welcome": "歡迎",
+  "student": {
+    "dashboard": {
+      "title": "學生儀表板",
+      "calendar_help": "如何使用行事曆"
+    },
+    "layout": {
+      "title": "AI 家教 - 學生",
+      "external_links": "外部連結",
+      "physimhub": "PhysimHub",
+      "testbank": "題庫",
+      "classrooms": "教室",
+      "homework": "作業",
+      "logout": "登出",
+      "menu": "選單",
+      "dashboard": "儀表板"
+    },
+    "classrooms": {
+      "title": "我的教室",
+      "no_description": "無描述。",
+      "view_details": "查看詳情",
+      "empty": {
+        "title": "尚無教室",
+        "desc": "您尚未加入任何教室。"
+      },
+      "back": "返回教室列表",
+      "classmates": "同學",
+      "table": {
+        "name": "姓名",
+        "joined_date": "加入日期",
+        "title": "標題",
+        "subject": "科目",
+        "deadline": "截止日期",
+        "created_at": "建立日期",
+        "actions": "操作"
+      },
+      "no_students": "尚無其他學生加入。",
+      "homeworks": "作業",
+      "untitled": "無標題",
+      "no_deadline": "無截止日期",
+      "view_hw": "查看作業",
+      "no_homeworks": "此教室尚無作業。",
+      "error_loading": "載入教室時發生錯誤："
+    },
+    "homeworks": {
+      "title": "我的作業",
+      "no_assignments": "您尚無作業。",
+      "no_homework_in_class": "此教室尚無作業。",
+      "subject": "科目：",
+      "deadline": "截止日期",
+      "no_deadline": "無截止日期",
+      "review_hw": "複習作業",
+      "completed": "已完成",
+      "start_hw": "開始作業",
+      "error_loading": "載入作業時發生錯誤：",
+      "questions": "題目",
+      "start_button": "開始作業",
+      "untitled": "無標題",
+      "answer_submitted": "答案已提交（您可以更新它）",
+      "update_answer": "更新答案",
+      "submit_answer": "提交答案",
+      "finish_homework": "完成作業",
+      "complete_all": "（請先完成所有題目）",
+      "failed_complete": "完成作業失敗。請重試。",
+      "review": {
+        "error_loading": "載入作業複習時發生錯誤：",
+        "go_back": "返回",
+        "correct_badge": "正確",
+        "your_answer_badge": "您的答案",
+        "correct_message": "正確！做得好。",
+        "incorrect_message": "不正確。",
+        "official_solution": "官方解答",
+        "no_explanation": "未提供解釋。",
+        "ai_tutor": "AI 家教",
+        "ai_tutor_desc": "仍然感到困惑？請 AI 為您提供個人化的解釋。",
+        "ask_ai_button": "向我解釋"
+      }
+    },
+    "problems": {
+      "title": "題庫",
+      "solve": "解題",
+      "no_problems": "沒有找到符合條件的題目。",
+      "back": "返回題庫",
+      "submit_answer": "提交答案",
+      "correct_message": "正確！做得好。",
+      "incorrect_message": "不正確。請查看下方的解答。",
+      "official_solution": "官方解答",
+      "ai_tutor": "AI 家教",
+      "ai_tutor_desc": "仍然感到困惑？請 AI 為您提供個人化的解釋。",
+      "ask_ai_button": "向我解釋",
+      "error_loading": "載入題目時發生錯誤："
+    }
+  },
+  "calendar_help": {
+    "title": "行事曆說明",
+    "create_events": {
+      "title": "如何建立個人行程",
+      "step1": {
+        "title": "選擇日期或時間範圍",
+        "desc": "在月檢視中點擊特定日期，或在週/日檢視中點擊並拖曳時間區段。"
+      },
+      "step2": {
+        "title": "輸入行程詳情",
+        "desc": "將會出現一個視窗。輸入您的行程標題（例如：「讀書會」）。"
+      },
+      "step3": {
+        "title": "選擇時間選項",
+        "desc": "預設勾選「整天」。取消勾選以指定確切的開始和結束時間。"
+      },
+      "step4": {
+        "title": "建立行程",
+        "desc": "點擊「建立」按鈕將行程儲存至行事曆。"
+      }
+    },
+    "managing_events": {
+      "title": "管理行程",
+      "move": {
+        "title": "移動行程：",
+        "desc": "拖放您的個人行程（綠色）以將其移動到不同的日期或時間。"
+      },
+      "resize": {
+        "title": "調整行程大小：",
+        "desc": "拖曳計時行程的底部邊緣以更改其持續時間。"
+      },
+      "homework": {
+        "title": "作業：",
+        "desc": "作業截止日期（藍色）由您的老師自動新增，無法移動。"
+      }
+    }
+  }
+}

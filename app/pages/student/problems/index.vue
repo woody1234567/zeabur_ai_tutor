@@ -25,7 +25,7 @@ const handleSearch = (params: {
 
 <template>
   <div class="container mx-auto p-4 max-w-7xl">
-    <h1 class="text-3xl font-bold mb-8">Student Dashboard</h1>
+    <h1 class="text-3xl font-bold mb-8">{{ $t("student.problems.title") }}</h1>
 
     <ProblemSearch @search="handleSearch" />
 
@@ -67,7 +67,7 @@ const handleSearch = (params: {
               :to="`/student/problems/${problem.id}`"
               class="btn btn-primary btn-sm"
             >
-              Solve
+              {{ $t("student.problems.solve") }}
             </NuxtLink>
           </div>
         </div>
@@ -82,7 +82,7 @@ const handleSearch = (params: {
       v-if="problems && problems.length === 0"
       class="text-center py-10 text-base-content/70"
     >
-      No problems found matching your criteria.
+      {{ $t("student.problems.no_problems") }}
     </div>
   </div>
 </template>

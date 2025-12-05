@@ -17,52 +17,57 @@
           />
         </svg>
       </NuxtLink>
-      <h1 class="text-3xl font-bold">Calendar Help</h1>
+      <h1 class="text-3xl font-bold">{{ $t("calendar_help.title") }}</h1>
     </div>
 
     <div class="space-y-8">
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
           <h2 class="card-title text-2xl mb-4">
-            How to Create Personal Events
+            {{ $t("calendar_help.create_events.title") }}
           </h2>
 
           <div class="steps steps-vertical">
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Select a Date or Time Range</h3>
+                <h3 class="font-bold">
+                  {{ $t("calendar_help.create_events.step1.title") }}
+                </h3>
                 <p>
-                  Click on a specific day in the Month view, or click and drag
-                  across time slots in the Week/Day view.
+                  {{ $t("calendar_help.create_events.step1.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Enter Event Details</h3>
+                <h3 class="font-bold">
+                  {{ $t("calendar_help.create_events.step2.title") }}
+                </h3>
                 <p>
-                  A modal will appear. Enter a title for your event (e.g.,
-                  "Study Group").
+                  {{ $t("calendar_help.create_events.step2.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Choose Time Options</h3>
+                <h3 class="font-bold">
+                  {{ $t("calendar_help.create_events.step3.title") }}
+                </h3>
                 <p>
-                  By default, "All Day" is checked. Uncheck it to specify exact
-                  Start and End times.
+                  {{ $t("calendar_help.create_events.step3.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Create Event</h3>
+                <h3 class="font-bold">
+                  {{ $t("calendar_help.create_events.step4.title") }}
+                </h3>
                 <p>
-                  Click the "Create" button to save your event to the calendar.
+                  {{ $t("calendar_help.create_events.step4.desc") }}
                 </p>
               </div>
             </div>
@@ -72,19 +77,27 @@
 
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl mb-4">Managing Events</h2>
+          <h2 class="card-title text-2xl mb-4">
+            {{ $t("calendar_help.managing_events.title") }}
+          </h2>
           <ul class="list-disc list-inside space-y-2">
             <li>
-              <span class="font-bold">Move Event:</span> Drag and drop your
-              personal events (green) to move them to a different day or time.
+              <span class="font-bold">{{
+                $t("calendar_help.managing_events.move.title")
+              }}</span>
+              {{ $t("calendar_help.managing_events.move.desc") }}
             </li>
             <li>
-              <span class="font-bold">Resize Event:</span> Drag the bottom edge
-              of a timed event to change its duration.
+              <span class="font-bold">{{
+                $t("calendar_help.managing_events.resize.title")
+              }}</span>
+              {{ $t("calendar_help.managing_events.resize.desc") }}
             </li>
             <li>
-              <span class="font-bold">Homework:</span> Homework deadlines (blue)
-              are automatically added by your teachers and cannot be moved.
+              <span class="font-bold">{{
+                $t("calendar_help.managing_events.homework.title")
+              }}</span>
+              {{ $t("calendar_help.managing_events.homework.desc") }}
             </li>
           </ul>
         </div>

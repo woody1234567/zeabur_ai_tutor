@@ -9,7 +9,22 @@ dotenv.config({ path: ".env.local", override: true });
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/i18n"],
+  i18n: {
+    locales: [
+      { code: "en", file: "en.json", name: "English" },
+      { code: "zh-TW", file: "zh-TW.json", name: "繁體中文" },
+    ],
+    lazy: true,
+    langDir: "locales",
+    defaultLocale: "zh-TW",
+    strategy: "prefix_and_default", // or 'no_prefix' depending on preference, usually prefix_except_default or prefix_and_default
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      redirectOn: "root",
+    },
+  },
   runtimeConfig: {
     public: {
       baseURL: process.env.NUXT_BASE_URL || "",

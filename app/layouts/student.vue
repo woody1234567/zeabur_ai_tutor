@@ -44,9 +44,9 @@ const closeDrawer = () => {
           </label>
         </div>
         <div class="flex-1 px-2 mx-2">
-          <NuxtLink to="/student" class="btn btn-ghost text-xl"
-            >AI Tutor - Student</NuxtLink
-          >
+          <NuxtLink to="/student" class="btn btn-ghost text-xl">{{
+            $t("student.layout.title")
+          }}</NuxtLink>
         </div>
         <div class="flex-none hidden lg:block">
           <ul class="menu menu-horizontal px-1">
@@ -54,29 +54,35 @@ const closeDrawer = () => {
             <li>
               <details>
                 <summary class="list-none marker:content-none">
-                  External Links
+                  {{ $t("student.layout.external_links") }}
                 </summary>
                 <ul class="bg-base-100 rounded-t-none p-2">
                   <li>
-                    <NuxtLink to="https://physimhub.studywithwoody.site/"
-                      >PhysimHub</NuxtLink
-                    >
+                    <NuxtLink to="https://physimhub.studywithwoody.site/">{{
+                      $t("student.layout.physimhub")
+                    }}</NuxtLink>
                   </li>
                 </ul>
               </details>
             </li>
             <li>
-              <NuxtLink to="/student/problems">Testbank</NuxtLink>
+              <NuxtLink to="/student/problems">{{
+                $t("student.layout.testbank")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/student/classrooms">Classrooms</NuxtLink>
+              <NuxtLink to="/student/classrooms">{{
+                $t("student.layout.classrooms")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/student/homeworks">Homework</NuxtLink>
+              <NuxtLink to="/student/homeworks">{{
+                $t("student.layout.homework")
+              }}</NuxtLink>
             </li>
             <li>
               <button @click="handleLogout" class="btn btn-secondary ml-2">
-                Logout
+                {{ $t("student.layout.logout") }}
               </button>
             </li>
           </ul>
@@ -96,29 +102,33 @@ const closeDrawer = () => {
       <ul class="menu p-4 w-80 min-h-full bg-base-200">
         <!-- Sidebar content here -->
         <li class="mb-4">
-          <span class="text-xl font-bold px-4">Menu</span>
+          <span class="text-xl font-bold px-4">{{
+            $t("student.layout.menu")
+          }}</span>
         </li>
         <li>
-          <NuxtLink to="/student" @click="closeDrawer">Dashboard</NuxtLink>
+          <NuxtLink to="/student" @click="closeDrawer">{{
+            $t("student.layout.dashboard")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/student/problems" @click="closeDrawer"
-            >Testbank</NuxtLink
-          >
+          <NuxtLink to="/student/problems" @click="closeDrawer">{{
+            $t("student.layout.testbank")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/student/classrooms" @click="closeDrawer"
-            >Classrooms</NuxtLink
-          >
+          <NuxtLink to="/student/classrooms" @click="closeDrawer">{{
+            $t("student.layout.classrooms")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/student/homeworks" @click="closeDrawer"
-            >Homework</NuxtLink
-          >
+          <NuxtLink to="/student/homeworks" @click="closeDrawer">{{
+            $t("student.layout.homework")
+          }}</NuxtLink>
         </li>
         <li class="mt-auto">
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
-            Logout
+            {{ $t("student.layout.logout") }}
           </button>
         </li>
       </ul>

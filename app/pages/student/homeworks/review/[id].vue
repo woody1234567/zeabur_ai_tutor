@@ -95,8 +95,12 @@ const askAI = async () => {
 
     <!-- Error State -->
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading homework review: {{ error.message }}</span>
-      <NuxtLink to="/student/homeworks" class="btn btn-sm">Go Back</NuxtLink>
+      <span
+        >{{ $t("homeworks.review.error_loading") }} {{ error.message }}</span
+      >
+      <NuxtLink to="/student/homeworks" class="btn btn-sm">{{
+        $t("homeworks.review.go_back")
+      }}</NuxtLink>
     </div>
 
     <!-- Review View -->
@@ -140,12 +144,12 @@ const askAI = async () => {
             <span
               v-if="key === currentProblem.correctAnswer"
               class="badge badge-success ml-2"
-              >Correct</span
+              >{{ $t("homeworks.review.correct_badge") }}</span
             >
             <span
               v-if="key === currentProblem.submissionStatus?.userAnswer"
               class="badge badge-info ml-2"
-              >Your Answer</span
+              >{{ $t("homeworks.review.your_answer_badge") }}</span
             >
           </div>
         </div>
@@ -190,8 +194,8 @@ const askAI = async () => {
             </svg>
             <span>{{
               currentProblem.submissionStatus?.correct
-                ? "Correct! Great job."
-                : "Incorrect."
+                ? $t("homeworks.review.correct_message")
+                : $t("homeworks.review.incorrect_message")
             }}</span>
           </div>
 
@@ -199,12 +203,13 @@ const askAI = async () => {
           <div class="collapse collapse-arrow bg-base-200">
             <input type="checkbox" checked />
             <div class="collapse-title text-xl font-medium">
-              Official Solution
+              {{ $t("homeworks.review.official_solution") }}
             </div>
             <div class="collapse-content">
               <MarkdownRenderer
                 :content="
-                  currentProblem.explanation || 'No explanation provided.'
+                  currentProblem.explanation ||
+                  $t('homeworks.review.no_explanation')
                 "
               />
             </div>
@@ -214,10 +219,11 @@ const askAI = async () => {
           <div class="card bg-base-200 border-2 border-primary/20">
             <div class="card-body">
               <h3 class="card-title flex items-center gap-2">
-                <span class="text-2xl">🤖</span> AI Tutor
+                <span class="text-2xl">🤖</span>
+                {{ $t("homeworks.review.ai_tutor") }}
               </h3>
               <p class="text-sm opacity-70">
-                Still confused? Ask the AI for a personalized explanation.
+                {{ $t("homeworks.review.ai_tutor_desc") }}
               </p>
 
               <div v-if="aiExplanation" class="mt-4 prose">
@@ -242,7 +248,7 @@ const askAI = async () => {
                   :disabled="isExplaining"
                 >
                   <span v-if="isExplaining" class="loading loading-dots"></span>
-                  <span v-else>Explain this to me</span>
+                  <span v-else>{{ $t("homeworks.review.ask_ai_button") }}</span>
                 </button>
               </div>
             </div>

@@ -1,0 +1,132 @@
+{
+  "welcome": "Welcome",
+  "student": {
+    "dashboard": {
+      "title": "Student Dashboard",
+      "calendar_help": "How to use the calendar"
+    },
+    "layout": {
+      "title": "AI Tutor - Student",
+      "external_links": "External Links",
+      "physimhub": "PhysimHub",
+      "testbank": "Testbank",
+      "classrooms": "Classrooms",
+      "homework": "Homework",
+      "logout": "Logout",
+      "menu": "Menu",
+      "dashboard": "Dashboard"
+    },
+    "classrooms": {
+      "title": "My Classrooms",
+      "no_description": "No description provided.",
+      "view_details": "View Details",
+      "empty": {
+        "title": "No classrooms yet",
+        "desc": "You are not enrolled in any classrooms."
+      },
+      "back": "Back to Classrooms",
+      "classmates": "Classmates",
+      "table": {
+        "name": "Name",
+        "joined_date": "Joined Date",
+        "title": "Title",
+        "subject": "Subject",
+        "deadline": "Deadline",
+        "created_at": "Created At",
+        "actions": "Actions"
+      },
+      "no_students": "No other students enrolled yet.",
+      "homeworks": "Homeworks",
+      "untitled": "Untitled",
+      "no_deadline": "No deadline",
+      "view_hw": "View HW",
+      "no_homeworks": "No homeworks assigned to this classroom yet.",
+      "error_loading": "Error loading classroom:"
+    },
+    "homeworks": {
+      "title": "My Homework",
+      "no_assignments": "You have no homework assignments yet.",
+      "no_homework_in_class": "No homework assigned in this classroom.",
+      "subject": "Subject:",
+      "deadline": "Deadline",
+      "no_deadline": "No deadline",
+      "review_hw": "Review HW",
+      "completed": "Completed",
+      "start_hw": "Start HW",
+      "error_loading": "Error loading homework:",
+      "questions": "Questions",
+      "start_button": "Start Homework",
+      "untitled": "Untitled",
+      "answer_submitted": "Answer Submitted (You can update it)",
+      "update_answer": "Update Answer",
+      "submit_answer": "Submit Answer",
+      "finish_homework": "Finish Homework",
+      "complete_all": "(Complete all questions first)",
+      "failed_complete": "Failed to complete homework. Please try again.",
+      "review": {
+        "error_loading": "Error loading homework review:",
+        "go_back": "Go Back",
+        "correct_badge": "Correct",
+        "your_answer_badge": "Your Answer",
+        "correct_message": "Correct! Great job.",
+        "incorrect_message": "Incorrect.",
+        "official_solution": "Official Solution",
+        "no_explanation": "No explanation provided.",
+        "ai_tutor": "AI Tutor",
+        "ai_tutor_desc": "Still confused? Ask the AI for a personalized explanation.",
+        "ask_ai_button": "Explain this to me"
+      }
+    },
+    "problems": {
+      "title": "Testbank",
+      "solve": "Solve",
+      "no_problems": "No problems found matching your criteria.",
+      "back": "Back to Problems",
+      "submit_answer": "Submit Answer",
+      "correct_message": "Correct! Great job.",
+      "incorrect_message": "Incorrect. Review the solution below.",
+      "official_solution": "Official Solution",
+      "ai_tutor": "AI Tutor",
+      "ai_tutor_desc": "Still confused? Ask the AI for a personalized explanation.",
+      "ask_ai_button": "Explain this to me",
+      "error_loading": "Error loading problem:"
+    }
+  },
+  "calendar_help": {
+    "title": "Calendar Help",
+    "create_events": {
+      "title": "How to Create Personal Events",
+      "step1": {
+        "title": "Select a Date or Time Range",
+        "desc": "Click on a specific day in the Month view, or click and drag across time slots in the Week/Day view."
+      },
+      "step2": {
+        "title": "Enter Event Details",
+        "desc": "A modal will appear. Enter a title for your event (e.g., \"Study Group\")."
+      },
+      "step3": {
+        "title": "Choose Time Options",
+        "desc": "By default, \"All Day\" is checked. Uncheck it to specify exact Start and End times."
+      },
+      "step4": {
+        "title": "Create Event",
+        "desc": "Click the \"Create\" button to save your event to the calendar."
+      }
+    },
+    "managing_events": {
+      "title": "Managing Events",
+      "move": {
+        "title": "Move Event:",
+        "desc": "Drag and drop your personal events (green) to move them to a different day or time."
+      },
+      "resize": {
+        "title": "Resize Event:",
+        "desc": "Drag the bottom edge of a timed event to change its duration."
+      },
+      "homework": {
+        "title": "Homework:",
+        "desc": "Homework deadlines (blue) are automatically added by your teachers and cannot be moved."
+      }
+    }
+  }
+}

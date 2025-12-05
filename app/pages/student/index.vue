@@ -9,11 +9,11 @@ definePageMeta({
 <template>
   <div class="p-4 md:p-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Student Dashboard</h1>
+      <h1 class="text-2xl font-bold">{{ $t("student.dashboard.title") }}</h1>
       <NuxtLink
         to="/student/calendar-help"
         class="btn btn-circle btn-ghost"
-        title="Calendar Help"
+        :title="$t('student.dashboard.calendar_help')"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

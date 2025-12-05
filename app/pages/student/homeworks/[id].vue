@@ -125,7 +125,7 @@ const finishHomework = async () => {
     await navigateTo("/student/homeworks");
   } catch (e) {
     console.error("Failed to complete homework", e);
-    alert("Failed to complete homework. Please try again.");
+    alert($t("homeworks.failed_complete"));
   }
 };
 </script>
@@ -139,35 +139,37 @@ const finishHomework = async () => {
 
     <!-- Error State -->
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading homework: {{ error.message }}</span>
+      <span>{{ $t("homeworks.error_loading") }} {{ error.message }}</span>
     </div>
 
     <!-- Start Screen -->
     <div v-else-if="!started && data" class="card bg-base-100 shadow-xl mt-10">
       <div class="card-body text-center p-4 md:p-8">
         <h1 class="text-4xl font-bold mb-4">{{ data.homework.title }}</h1>
-        <p class="text-xl mb-6">Subject: {{ data.homework.subject }}</p>
+        <p class="text-xl mb-6">
+          {{ $t("homeworks.subject") }} {{ data.homework.subject }}
+        </p>
         <div
           class="stats stats-vertical lg:stats-horizontal shadow mb-8 w-full"
         >
           <div class="stat">
-            <div class="stat-title">Questions</div>
+            <div class="stat-title">{{ $t("homeworks.questions") }}</div>
             <div class="stat-value">{{ data.problems.length }}</div>
           </div>
           <div class="stat">
-            <div class="stat-title">Deadline</div>
+            <div class="stat-title">{{ $t("homeworks.deadline") }}</div>
             <div class="stat-value text-lg">
               {{
                 data.homework.deadline
                   ? new Date(data.homework.deadline).toLocaleDateString()
-                  : "None"
+                  : $t("homeworks.no_deadline")
               }}
             </div>
           </div>
         </div>
         <div class="card-actions justify-center">
           <button @click="startHomework" class="btn btn-primary btn-lg">
-            Start Homework
+            {{ $t("homeworks.start_button") }}
           </button>
         </div>
       </div>
@@ -176,7 +178,7 @@ const finishHomework = async () => {
     <!-- Problem View -->
     <div v-else-if="currentProblem && data" class="space-y-6">
       <HomeworkHeader
-        :title="data.homework.title || 'Untitled'"
+        :title="data.homework.title || $t('homeworks.untitled')"
         :current-index="currentProblemIndex"
         :problems="data.problems"
         mode="take"
@@ -233,7 +235,7 @@ const finishHomework = async () => {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>Answer Submitted (You can update it)</span>
+            <span>{{ $t("homeworks.answer_submitted") }}</span>
           </div>
 
           <button
@@ -244,8 +246,8 @@ const finishHomework = async () => {
             <span v-if="isSubmitting" class="loading loading-spinner"></span>
             {{
               currentProblem.submissionStatus?.submitted
-                ? "Update Answer"
-                : "Submit Answer"
+                ? $t("homeworks.update_answer")
+                : $t("homeworks.submit_answer")
             }}
           </button>
         </div>
@@ -258,10 +260,10 @@ const finishHomework = async () => {
           @click="finishHomework"
           :disabled="!allProblemsSubmitted"
         >
-          Finish Homework
-          <span v-if="!allProblemsSubmitted" class="text-xs ml-2"
-            >(Complete all questions first)</span
-          >
+          {{ $t("homeworks.finish_homework") }}
+          <span v-if="!allProblemsSubmitted" class="text-xs block mt-1">{{
+            $t("student.homeworks.complete_all")
+          }}</span>
         </button>
       </div>
     </div>

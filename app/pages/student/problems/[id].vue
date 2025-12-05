@@ -82,7 +82,7 @@ const askAI = async () => {
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-        Back to Problems
+        {{ $t("student.problems.back") }}
       </NuxtLink>
     </div>
 
@@ -151,7 +151,7 @@ const askAI = async () => {
             :disabled="selectedAnswer === null || isSubmitting"
           >
             <span v-if="isSubmitting" class="loading loading-spinner"></span>
-            Submit Answer
+            {{ $t("student.problems.submit_answer") }}
           </button>
         </div>
 
@@ -191,8 +191,8 @@ const askAI = async () => {
             </svg>
             <span>{{
               submissionResult.correct
-                ? "Correct! Great job."
-                : "Incorrect. Review the solution below."
+                ? $t("student.problems.correct_message")
+                : $t("student.problems.incorrect_message")
             }}</span>
           </div>
 
@@ -200,7 +200,7 @@ const askAI = async () => {
           <div class="collapse collapse-arrow bg-base-200">
             <input type="checkbox" checked />
             <div class="collapse-title text-xl font-medium">
-              Official Solution
+              {{ $t("student.problems.official_solution") }}
             </div>
             <div class="collapse-content">
               <MarkdownRenderer :content="submissionResult.explanation || ''" />
@@ -211,10 +211,11 @@ const askAI = async () => {
           <div class="card bg-base-200 border-2 border-primary/20">
             <div class="card-body">
               <h3 class="card-title flex items-center gap-2">
-                <span class="text-2xl">🤖</span> AI Tutor
+                <span class="text-2xl">🤖</span>
+                {{ $t("student.problems.ai_tutor") }}
               </h3>
               <p class="text-sm opacity-70">
-                Still confused? Ask the AI for a personalized explanation.
+                {{ $t("student.problems.ai_tutor_desc") }}
               </p>
 
               <div v-if="aiExplanation" class="mt-4 prose">
@@ -239,7 +240,7 @@ const askAI = async () => {
                   :disabled="isExplaining"
                 >
                   <span v-if="isExplaining" class="loading loading-dots"></span>
-                  <span v-else>Explain this to me</span>
+                  <span v-else>{{ $t("student.problems.ask_ai_button") }}</span>
                 </button>
               </div>
             </div>
@@ -249,7 +250,9 @@ const askAI = async () => {
     </div>
 
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading problem: {{ error.message }}</span>
+      <span
+        >{{ $t("student.problems.error_loading") }} {{ error.message }}</span
+      >
     </div>
 
     <div v-else class="flex justify-center py-20">

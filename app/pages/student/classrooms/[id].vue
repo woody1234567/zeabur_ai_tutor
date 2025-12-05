@@ -37,7 +37,7 @@ const { data: homeworks } = await useFetch(
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-        Back to Classrooms
+        {{ $t("student.classrooms.back") }}
       </NuxtLink>
     </div>
 
@@ -54,15 +54,17 @@ const { data: homeworks } = await useFetch(
       <div class="card bg-base-100 shadow-xl border border-base-200">
         <div class="card-body">
           <h2 class="card-title mb-4">
-            Classmates ({{ classroom.students.length }})
+            {{ $t("student.classrooms.classmates") }} ({{
+              classroom.students.length
+            }})
           </h2>
 
           <div v-if="classroom.students.length > 0" class="overflow-x-auto">
             <table class="table w-full">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Joined Date</th>
+                  <th>{{ $t("student.classrooms.table.name") }}</th>
+                  <th>{{ $t("student.classrooms.table.joined_date") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,7 +93,7 @@ const { data: homeworks } = await useFetch(
           </div>
 
           <div v-else class="text-center py-10 opacity-50">
-            <p>No other students enrolled yet.</p>
+            <p>{{ $t("student.classrooms.no_students") }}</p>
           </div>
         </div>
       </div>
@@ -99,22 +101,26 @@ const { data: homeworks } = await useFetch(
       <!-- Homeworks List -->
       <div class="card bg-base-100 shadow-xl border border-base-200">
         <div class="card-body">
-          <h2 class="card-title mb-4">Homeworks</h2>
+          <h2 class="card-title mb-4">
+            {{ $t("student.classrooms.homeworks") }}
+          </h2>
 
           <div v-if="homeworks && homeworks.length > 0" class="overflow-x-auto">
             <table class="table w-full">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Subject</th>
-                  <th>Deadline</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
+                  <th>{{ $t("student.classrooms.table.title") }}</th>
+                  <th>{{ $t("student.classrooms.table.subject") }}</th>
+                  <th>{{ $t("student.classrooms.table.deadline") }}</th>
+                  <th>{{ $t("student.classrooms.table.created_at") }}</th>
+                  <th>{{ $t("student.classrooms.table.actions") }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="hw in homeworks" :key="hw.id">
-                  <td class="font-bold">{{ hw.title || "Untitled" }}</td>
+                  <td class="font-bold">
+                    {{ hw.title || $t("student.classrooms.untitled") }}
+                  </td>
                   <td>{{ hw.subject || "-" }}</td>
                   <td>
                     <span
@@ -126,7 +132,7 @@ const { data: homeworks } = await useFetch(
                       {{
                         hw.deadline
                           ? new Date(hw.deadline).toLocaleString()
-                          : "No deadline"
+                          : $t("student.classrooms.no_deadline")
                       }}
                     </span>
                   </td>
@@ -136,7 +142,7 @@ const { data: homeworks } = await useFetch(
                       :to="`/student/homeworks/${hw.id}`"
                       class="btn btn-sm btn-primary"
                     >
-                      View HW
+                      {{ $t("student.classrooms.view_hw") }}
                     </NuxtLink>
                   </td>
                 </tr>
@@ -145,14 +151,16 @@ const { data: homeworks } = await useFetch(
           </div>
 
           <div v-else class="text-center py-10 opacity-50">
-            <p>No homeworks assigned to this classroom yet.</p>
+            <p>{{ $t("student.classrooms.no_homeworks") }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading classroom: {{ error.message }}</span>
+      <span
+        >{{ $t("student.classrooms.error_loading") }} {{ error.message }}</span
+      >
     </div>
 
     <div v-else class="flex justify-center py-20">

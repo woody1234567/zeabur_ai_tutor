@@ -17,7 +17,7 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
 
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6">My Homework</h1>
+    <h1 class="text-3xl font-bold mb-6">{{ $t("homeworks.title") }}</h1>
 
     <div v-if="status === 'pending'" class="flex justify-center">
       <span class="loading loading-spinner loading-lg"></span>
@@ -38,7 +38,7 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           ></path>
         </svg>
-        <span>You have no homework assignments yet.</span>
+        <span>{{ $t("homeworks.no_assignments") }}</span>
       </div>
     </div>
 
@@ -54,7 +54,7 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
           </h2>
 
           <div v-if="group.homeworks.length === 0" class="text-gray-500 italic">
-            No homework assigned in this classroom.
+            {{ $t("homeworks.no_homework_in_class") }}
           </div>
 
           <div
@@ -69,10 +69,10 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
               <div class="card-body">
                 <h3 class="card-title text-lg">{{ hw.title }}</h3>
                 <p class="text-sm text-gray-600">
-                  Subject: {{ hw.subject || "N/A" }}
+                  {{ $t("homeworks.subject") }} {{ hw.subject || "N/A" }}
                 </p>
                 <p class="text-sm">
-                  Deadline:
+                  {{ $t("homeworks.deadline") }}
                   <span
                     :class="{
                       'text-error font-bold':
@@ -82,7 +82,7 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
                     {{
                       hw.deadline
                         ? new Date(hw.deadline).toLocaleDateString()
-                        : "No deadline"
+                        : $t("homeworks.no_deadline")
                     }}
                   </span>
                 </p>
@@ -92,14 +92,18 @@ const { data: groupedHomeworks, status } = await useFetch<HomeworkGroup[]>(
                     :to="`/student/homeworks/review/${hw.id}`"
                     class="btn btn-sm btn-secondary"
                   >
-                    Review HW
+                    {{ $t("homeworks.review_hw") }}
                   </NuxtLink>
                   <NuxtLink
                     v-else
                     :to="`/student/homeworks/${hw.id}`"
                     class="btn btn-sm btn-primary"
                   >
-                    {{ hw.isCompleted ? "Completed" : "Start HW" }}
+                    {{
+                      hw.isCompleted
+                        ? $t("homeworks.completed")
+                        : $t("homeworks.start_hw")
+                    }}
                   </NuxtLink>
                 </div>
                 <!-- Future enhancement: Add link to homework details/submission page -->
