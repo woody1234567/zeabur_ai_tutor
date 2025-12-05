@@ -45,7 +45,10 @@ const addStudent = async () => {
 };
 
 const removeStudent = async (studentId: string) => {
-  if (!confirm("Are you sure you want to remove this student?")) return;
+  if (
+    !confirm(useNuxtApp().$i18n.t("teacher.classrooms.confirm_remove_student"))
+  )
+    return;
 
   try {
     await $fetch(`/api/teacher/classrooms/${classroomId}/students`, {
@@ -107,7 +110,7 @@ const isDeleting = ref(false);
 const deleteClassroom = async () => {
   if (
     !confirm(
-      "Are you sure you want to delete this classroom? This action cannot be undone."
+      useNuxtApp().$i18n.t("teacher.classrooms.confirm_delete_classroom")
     )
   ) {
     return;
@@ -155,7 +158,7 @@ const deleteClassroom = async () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Classrooms
+            {{ $t("teacher.classrooms.back") }}
           </NuxtLink>
         </div>
 
@@ -188,11 +191,11 @@ const deleteClassroom = async () => {
                     d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
                   />
                 </svg>
-                Add Student
+                {{ $t("teacher.classrooms.add_student") }}
               </button>
               <button
                 class="btn btn-ghost btn-circle"
-                title="Settings"
+                :title="$t('teacher.classrooms.settings')"
                 @click="openSettings"
               >
                 <svg
@@ -223,17 +226,19 @@ const deleteClassroom = async () => {
           <div class="card bg-base-100 shadow-xl border border-base-200">
             <div class="card-body">
               <h2 class="card-title mb-4">
-                Enrolled Students ({{ classroom.students.length }})
+                {{ $t("teacher.classrooms.enrolled_students") }} ({{
+                  classroom.students.length
+                }})
               </h2>
 
               <div v-if="classroom.students.length > 0" class="overflow-x-auto">
                 <table class="table w-full">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Joined Date</th>
-                      <th>Actions</th>
+                      <th>{{ $t("teacher.classrooms.table.name") }}</th>
+                      <th>{{ $t("teacher.classrooms.table.email") }}</th>
+                      <th>{{ $t("teacher.classrooms.table.joined_date") }}</th>
+                      <th>{{ $t("teacher.classrooms.table.actions") }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -264,7 +269,7 @@ const deleteClassroom = async () => {
                           class="btn btn-ghost btn-xs text-error"
                           @click="removeStudent(student.id)"
                         >
-                          Remove
+                          {{ $t("teacher.classrooms.table.remove") }}
                         </button>
                       </td>
                     </tr>
@@ -273,7 +278,7 @@ const deleteClassroom = async () => {
               </div>
 
               <div v-else class="text-center py-10 opacity-50">
-                <p>No students enrolled yet.</p>
+                <p>{{ $t("teacher.classrooms.no_students") }}</p>
               </div>
             </div>
           </div>
@@ -281,7 +286,9 @@ const deleteClassroom = async () => {
           <!-- Homeworks List -->
           <div class="card bg-base-100 shadow-xl border border-base-200">
             <div class="card-body">
-              <h2 class="card-title mb-4">Homeworks</h2>
+              <h2 class="card-title mb-4">
+                {{ $t("teacher.classrooms.homeworks") }}
+              </h2>
 
               <div
                 v-if="homeworks && homeworks.length > 0"
@@ -290,16 +297,26 @@ const deleteClassroom = async () => {
                 <table class="table w-full">
                   <thead>
                     <tr>
-                      <th>Title</th>
-                      <th>Subject</th>
-                      <th>Deadline</th>
-                      <th>Created At</th>
-                      <th>Actions</th>
+                      <th>
+                        {{ $t("teacher.classrooms.homework_table.title") }}
+                      </th>
+                      <th>
+                        {{ $t("teacher.classrooms.homework_table.subject") }}
+                      </th>
+                      <th>
+                        {{ $t("teacher.classrooms.homework_table.deadline") }}
+                      </th>
+                      <th>
+                        {{ $t("teacher.classrooms.homework_table.created_at") }}
+                      </th>
+                      <th>{{ $t("teacher.classrooms.table.actions") }}</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="hw in homeworks" :key="hw.id">
-                      <td class="font-bold">{{ hw.title || "Untitled" }}</td>
+                      <td class="font-bold">
+                        {{ hw.title || $t("teacher.classrooms.untitled") }}
+                      </td>
                       <td>{{ hw.subject || "-" }}</td>
                       <td>
                         <span
@@ -310,7 +327,7 @@ const deleteClassroom = async () => {
                           {{
                             hw.deadline
                               ? new Date(hw.deadline).toLocaleString()
-                              : "No deadline"
+                              : $t("teacher.classrooms.no_deadline")
                           }}
                         </span>
                       </td>
@@ -322,7 +339,7 @@ const deleteClassroom = async () => {
                           :to="`/teacher/homeworks/${hw.id}`"
                           class="btn btn-sm btn-primary"
                         >
-                          View HW
+                          {{ $t("teacher.classrooms.view_hw") }}
                         </NuxtLink>
                       </td>
                     </tr>
@@ -331,12 +348,12 @@ const deleteClassroom = async () => {
               </div>
 
               <div v-else class="text-center py-10 opacity-50">
-                <p>No homeworks assigned to this classroom yet.</p>
+                <p>{{ $t("teacher.classrooms.no_homeworks") }}</p>
                 <NuxtLink
                   to="/teacher/problems"
                   class="btn btn-link btn-sm mt-2"
                 >
-                  Go to Problems to create HW
+                  {{ $t("teacher.classrooms.go_to_problems") }}
                 </NuxtLink>
               </div>
             </div>
@@ -344,7 +361,10 @@ const deleteClassroom = async () => {
         </div>
 
         <div v-else-if="error" class="alert alert-error">
-          <span>Error loading classroom: {{ error.message }}</span>
+          <span
+            >{{ $t("teacher.classrooms.error_loading") }}
+            {{ error.message }}</span
+          >
         </div>
 
         <div v-else class="flex justify-center py-20">
@@ -354,17 +374,25 @@ const deleteClassroom = async () => {
         <!-- Add Student Modal -->
         <dialog :class="{ 'modal-open': isAddingStudent }" class="modal">
           <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Add Student to Class</h3>
+            <h3 class="font-bold text-lg mb-4">
+              {{ $t("teacher.classrooms.add_student_modal.title") }}
+            </h3>
 
             <div class="form-control w-full">
               <label class="label">
-                <span class="label-text">Select Student</span>
+                <span class="label-text">{{
+                  $t("teacher.classrooms.add_student_modal.select_label")
+                }}</span>
               </label>
               <select
                 v-model="selectedStudentId"
                 class="select select-bordered w-full"
               >
-                <option disabled value="">Pick a student</option>
+                <option disabled value="">
+                  {{
+                    $t("teacher.classrooms.add_student_modal.pick_placeholder")
+                  }}
+                </option>
                 <option
                   v-for="student in availableStudents"
                   :key="student.id"
@@ -378,7 +406,7 @@ const deleteClassroom = async () => {
                   class="label-text-alt text-warning"
                   v-if="availableStudents.length === 0"
                 >
-                  No available students to add.
+                  {{ $t("teacher.classrooms.add_student_modal.no_students") }}
                 </span>
               </label>
             </div>
@@ -389,7 +417,7 @@ const deleteClassroom = async () => {
                 @click="isAddingStudent = false"
                 :disabled="isSubmitting"
               >
-                Cancel
+                {{ $t("teacher.classrooms.create_modal.cancel") }}
               </button>
               <button
                 class="btn btn-primary"
@@ -400,7 +428,7 @@ const deleteClassroom = async () => {
                   v-if="isSubmitting"
                   class="loading loading-spinner"
                 ></span>
-                Add
+                {{ $t("teacher.classrooms.add_student_modal.add") }}
               </button>
             </div>
           </div>
@@ -414,16 +442,22 @@ const deleteClassroom = async () => {
         class="drawer-overlay"
       ></label>
       <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-        <h2 class="text-2xl font-bold mb-6">Classroom Settings</h2>
+        <h2 class="text-2xl font-bold mb-6">
+          {{ $t("teacher.classrooms.settings_drawer.title") }}
+        </h2>
         <form @submit.prevent="updateClassroom" class="space-y-6">
           <div class="form-control w-full">
             <label class="label">
-              <span class="label-text font-medium">Classroom Name</span>
+              <span class="label-text font-medium">{{
+                $t("teacher.classrooms.settings_drawer.name_label")
+              }}</span>
             </label>
             <input
               v-model="settingsForm.name"
               type="text"
-              placeholder="e.g. Advanced Mathematics"
+              :placeholder="
+                $t('teacher.classrooms.settings_drawer.name_placeholder')
+              "
               class="input input-bordered w-full"
               required
             />
@@ -431,12 +465,16 @@ const deleteClassroom = async () => {
 
           <div class="form-control w-full">
             <label class="label">
-              <span class="label-text font-medium">Description</span>
+              <span class="label-text font-medium">{{
+                $t("teacher.classrooms.settings_drawer.desc_label")
+              }}</span>
             </label>
             <textarea
               v-model="settingsForm.description"
               class="textarea textarea-bordered h-24"
-              placeholder="Describe your classroom..."
+              :placeholder="
+                $t('teacher.classrooms.settings_drawer.desc_placeholder')
+              "
             ></textarea>
           </div>
 
@@ -450,7 +488,7 @@ const deleteClassroom = async () => {
               class="btn btn-ghost"
               @click="isSettingsOpen = false"
             >
-              Cancel
+              {{ $t("teacher.classrooms.create_modal.cancel") }}
             </button>
             <button
               type="submit"
@@ -461,11 +499,13 @@ const deleteClassroom = async () => {
                 v-if="isUpdatingSettings"
                 class="loading loading-spinner"
               ></span>
-              Save Changes
+              {{ $t("teacher.classrooms.settings_drawer.save") }}
             </button>
           </div>
 
-          <div class="divider">DANGER ZONE</div>
+          <div class="divider">
+            {{ $t("teacher.classrooms.settings_drawer.danger_zone") }}
+          </div>
 
           <div>
             <button
@@ -475,7 +515,7 @@ const deleteClassroom = async () => {
               :disabled="isDeleting"
             >
               <span v-if="isDeleting" class="loading loading-spinner"></span>
-              Delete Classroom
+              {{ $t("teacher.classrooms.settings_drawer.delete") }}
             </button>
           </div>
         </form>

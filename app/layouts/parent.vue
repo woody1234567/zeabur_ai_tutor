@@ -56,6 +56,9 @@ const closeDrawer = () => {
                 Logout
               </button>
             </li>
+            <li>
+              <LangSwitcher />
+            </li>
           </ul>
         </div>
       </div>
@@ -82,6 +85,9 @@ const closeDrawer = () => {
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
             Logout
           </button>
+        </li>
+        <li>
+          <LangSwitcher />
         </li>
       </ul>
     </div>

@@ -17,26 +17,33 @@ defineProps<{
 
 <template>
   <div class="sticky top-4">
-    <h2 class="text-xl font-bold mb-4 text-base-content/70">Live Preview</h2>
+    <h2 class="text-xl font-bold mb-4 text-base-content/70">
+      {{ $t("teacher.problems.preview.title") }}
+    </h2>
 
     <div class="card bg-base-100 shadow-xl border border-base-200">
       <div class="card-body">
         <div class="flex justify-between items-start">
           <h1 class="card-title text-2xl">
-            {{ problem.title || "Problem Title" }}
+            {{ problem.title || $t("teacher.problems.preview.default_title") }}
           </h1>
           <div class="flex gap-2">
             <div class="badge badge-outline">{{ problem.difficulty }}</div>
           </div>
         </div>
         <div v-if="problem.source" class="badge badge-ghost">
-          <span class="badge badge-outline">Source:</span> {{ problem.source }}
+          <span class="badge badge-outline">{{
+            $t("teacher.problems.preview.source")
+          }}</span>
+          {{ problem.source }}
         </div>
 
         <!-- Problem Content -->
         <div class="py-4">
           <MarkdownRenderer
-            :content="problem.content || 'Problem content will appear here...'"
+            :content="
+              problem.content || $t('teacher.problems.preview.default_content')
+            "
           />
         </div>
 
@@ -67,7 +74,10 @@ defineProps<{
                 >{{ String.fromCharCode(65 + index) }}.</span
               >
               <MarkdownRenderer
-                :content="choice.text || 'Choice ' + (index + 1)"
+                :content="
+                  choice.text ||
+                  $t('teacher.problems.preview.default_choice') + (index + 1)
+                "
               />
             </span>
             <input
@@ -85,7 +95,7 @@ defineProps<{
           <div class="collapse collapse-arrow bg-base-200">
             <input type="checkbox" checked />
             <div class="collapse-title text-xl font-medium">
-              Official Solution
+              {{ $t("teacher.problems.preview.solution") }}
             </div>
             <div class="collapse-content">
               <MarkdownRenderer :content="problem.explanation" />

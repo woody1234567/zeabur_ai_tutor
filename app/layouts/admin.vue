@@ -31,6 +31,9 @@ const handleLogout = async () => {
               Logout
             </button>
           </li>
+          <li>
+            <LangSwitcher />
+          </li>
         </ul>
       </div>
     </div>

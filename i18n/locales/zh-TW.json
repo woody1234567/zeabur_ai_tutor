@@ -128,5 +128,252 @@
         "desc": "作業截止日期（藍色）由您的老師自動新增，無法移動。"
       }
     }
+  },
+  "teacher": {
+    "dashboard": {
+      "title": "教師儀表板"
+    },
+    "layout": {
+      "title": "AI 家教 - 教師",
+      "problems": "題庫",
+      "classrooms": "教室",
+      "homeworks": "作業",
+      "students": "學生",
+      "logout": "登出",
+      "menu": "選單",
+      "dashboard": "儀表板",
+      "manage_problems": "管理題目",
+      "create_problem": "建立題目"
+    },
+    "classrooms": {
+      "title": "教室",
+      "create_button": "建立教室",
+      "create_modal": {
+        "title": "建立新教室",
+        "name_label": "教室名稱",
+        "name_placeholder": "例如：物理 101",
+        "desc_label": "描述（選填）",
+        "desc_placeholder": "課程簡介...",
+        "cancel": "取消",
+        "create": "建立"
+      },
+      "no_description": "無描述。",
+      "view_details": "查看詳情",
+      "empty": {
+        "title": "尚無教室",
+        "desc": "建立您的第一個教室以開始使用。"
+      },
+      "back": "返回教室列表",
+      "add_student": "新增學生",
+      "settings": "設定",
+      "enrolled_students": "已加入學生",
+      "table": {
+        "name": "姓名",
+        "email": "電子郵件",
+        "joined_date": "加入日期",
+        "actions": "操作",
+        "remove": "移除"
+      },
+      "no_students": "尚無學生加入。",
+      "homeworks": "作業",
+      "homework_table": {
+        "title": "標題",
+        "subject": "科目",
+        "deadline": "截止日期",
+        "created_at": "建立日期"
+      },
+      "untitled": "無標題",
+      "no_deadline": "無截止日期",
+      "view_hw": "查看作業",
+      "no_homeworks": "此教室尚無作業。",
+      "go_to_problems": "前往題庫建立作業",
+      "error_loading": "載入教室時發生錯誤：",
+      "add_student_modal": {
+        "title": "新增學生至教室",
+        "select_label": "選擇學生",
+        "pick_placeholder": "選擇一位學生",
+        "no_students": "無可新增的學生。",
+        "add": "新增"
+      },
+      "settings_drawer": {
+        "title": "教室設定",
+        "name_label": "教室名稱",
+        "name_placeholder": "例如：進階數學",
+        "desc_label": "描述",
+        "desc_placeholder": "描述您的教室...",
+        "save": "儲存變更",
+        "danger_zone": "危險區域",
+        "delete": "刪除教室"
+      },
+      "confirm_remove_student": "您確定要移除此學生嗎？",
+      "confirm_delete_classroom": "您確定要刪除此教室嗎？此動作無法復原。"
+    },
+    "homeworks": {
+      "title": "我的作業",
+      "create_button": "建立作業",
+      "error_loading": "載入作業時發生錯誤：",
+      "no_homeworks": "沒有找到作業。",
+      "classroom_label": "教室：",
+      "unknown_classroom": "未知",
+      "deadline_label": "截止日期：",
+      "created_label": "建立日期：",
+      "view_details": "查看詳情",
+      "no_deadline": "無截止日期",
+      "create": {
+        "select_problems": "選擇題目",
+        "cancel": "取消",
+        "added": "已新增",
+        "add": "新增",
+        "no_problems_found": "沒有找到符合條件的題目。",
+        "title": "建立作業",
+        "classroom_label": "教室",
+        "select_classroom_placeholder": "選擇一個教室",
+        "subject_label": "科目",
+        "subject_placeholder": "例如：數學",
+        "title_label": "標題",
+        "title_placeholder": "作業標題",
+        "deadline_label": "截止日期",
+        "selected_problems": "已選題目",
+        "no_problems_selected": "尚未選擇題目。",
+        "add_instruction": "點擊左側的「新增」以選擇題目。",
+        "alert_select_classroom": "請選擇一個教室",
+        "alert_select_problem": "請至少選擇一個題目",
+        "success_message": "作業建立成功！",
+        "error_message": "建立作業失敗"
+      },
+      "detail": {
+        "back": "返回作業列表",
+        "settings": "設定",
+        "error_loading": "載入作業詳情時發生錯誤：",
+        "classroom_label": "教室",
+        "deadline_label": "截止日期：",
+        "created_label": "建立日期：",
+        "assigned_problems": "已指派題目",
+        "add_problems": "新增題目",
+        "no_problems": "此作業尚未指派題目。",
+        "edit_problem": "編輯題目"
+      },
+      "settings": {
+        "title": "作業設定",
+        "title_label": "標題",
+        "title_placeholder": "作業標題",
+        "subject_label": "科目",
+        "subject_placeholder": "科目",
+        "deadline_label": "截止日期",
+        "classroom_label": "教室",
+        "select_classroom": "選擇一個教室",
+        "save": "儲存變更",
+        "danger_zone": "危險區域",
+        "delete": "刪除作業"
+      },
+      "confirm_delete": "您確定要刪除此作業嗎？此動作無法復原。",
+      "update_error": "更新作業失敗",
+      "delete_error": "刪除作業失敗"
+    },
+    "problems": {
+      "page_title": "題目管理",
+      "create_hw": "建立作業",
+      "create_new": "建立新題目",
+      "edit_button": "編輯",
+      "delete": "刪除",
+      "no_problems_found": "沒有找到符合條件的題目。",
+      "confirm_delete": "您確定要刪除此題目嗎？",
+      "delete_error": "刪除題目失敗",
+      "create": {
+        "title": "建立新題目",
+        "success": "題目建立成功！",
+        "error": "建立題目失敗：",
+        "submit": "建立題目",
+        "help": "說明"
+      },
+      "edit": {
+        "title": "編輯題目",
+        "not_found": "找不到題目",
+        "success": "題目更新成功！",
+        "error": "更新題目失敗：",
+        "submit": "更新題目",
+        "load_error": "載入題目時發生錯誤："
+      },
+      "form": {
+        "difficulty": "難度",
+        "difficulty_options": {
+          "easy": "簡單",
+          "medium": "中等",
+          "hard": "困難"
+        },
+        "source": "來源",
+        "title": "標題",
+        "hashtags": "標籤",
+        "hashtag_placeholder": "輸入標籤並按 Enter",
+        "add_hashtag": "新增",
+        "content": "內容 (支援 Markdown)",
+        "image": "圖片 (選填)",
+        "choices": "選項",
+        "choice_placeholder": "選項文字",
+        "add_choice": "+ 新增選項",
+        "explanation": "詳解",
+        "cancel": "取消",
+        "uploading": "上傳中...",
+        "validation": {
+          "title": "請輸入標題",
+          "content": "請輸入題目內容",
+          "min_choices": "請至少新增 2 個選項",
+          "choice_text": "請填寫所有選項文字",
+          "correct_answer": "請選擇正確答案"
+        }
+      },
+      "preview": {
+        "title": "即時預覽",
+        "default_title": "題目標題",
+        "source": "來源：",
+        "default_content": "題目內容將顯示於此...",
+        "default_choice": "選項 ",
+        "solution": "官方詳解"
+      },
+      "help_page": {
+        "title": "題目建立說明",
+        "how_to": {
+          "title": "如何建立題目",
+          "step1": {
+            "title": "輸入題目詳細資訊",
+            "desc": "填寫標題和難度等級。您也可以新增來源參考。"
+          },
+          "step2": {
+            "title": "新增標籤",
+            "desc": "新增標籤以分類題目（例如：#代數, #幾何）。按 Enter 鍵新增標籤。"
+          },
+          "step3": {
+            "title": "新增內容",
+            "desc": "使用編輯器新增題目內容。您可以使用 Markdown 進行格式設定，並使用 LaTeX 輸入數學公式。還有一些工具可以幫助您建立內容（OCR、AI 格式化）。"
+          },
+          "step4": {
+            "title": "上傳圖片（選填）",
+            "desc": "您可以上傳圖片以配合題目。它將顯示在題目內容上方。"
+          },
+          "step5": {
+            "title": "新增選項",
+            "desc": "新增多選題選項。使用單選按鈕標記正確答案。您可以根據需要新增更多選項。"
+          },
+          "step6": {
+            "title": "提供詳解",
+            "desc": "為解答撰寫詳細說明。學生嘗試作答後將會看到此說明。"
+          },
+          "step7": {
+            "title": "提交",
+            "desc": "點擊「建立題目」以將其儲存至資料庫。"
+          }
+        },
+        "preview": {
+          "title": "即時預覽功能",
+          "desc": "當您在左側編輯器輸入時，右側的即時預覽面板會顯示題目在學生端的實際呈現樣貌。",
+          "markdown_title": "Markdown 支援：",
+          "markdown_desc": "使用標準 Markdown 進行格式設定（粗體、斜體、列表等）。",
+          "latex_title": "LaTeX 支援：",
+          "latex_desc": "使用 $ 進行行內數學公式，使用 $$ 進行區塊數學公式。",
+          "image_title": "圖片預覽：",
+          "image_desc": "上傳的圖片將立即顯示在預覽中。"
+        }
+      }
+    }
   }
 }

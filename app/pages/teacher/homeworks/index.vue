@@ -10,7 +10,7 @@ const {
 } = await useFetch("/api/teacher/homeworks");
 
 const formatDate = (dateString: string | null) => {
-  if (!dateString) return "No deadline";
+  if (!dateString) return useNuxtApp().$i18n.t("teacher.homeworks.no_deadline");
   return new Date(dateString).toLocaleDateString();
 };
 </script>
@@ -18,9 +18,11 @@ const formatDate = (dateString: string | null) => {
 <template>
   <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-primary">My Homeworks</h1>
+      <h1 class="text-3xl font-bold text-primary">
+        {{ $t("teacher.homeworks.title") }}
+      </h1>
       <NuxtLink to="/teacher/homeworks/create" class="btn btn-primary">
-        Create Homework
+        {{ $t("teacher.homeworks.create_button") }}
       </NuxtLink>
     </div>
 
@@ -29,16 +31,20 @@ const formatDate = (dateString: string | null) => {
     </div>
 
     <div v-else-if="error" class="alert alert-error">
-      <span>Error loading homeworks: {{ error.message }}</span>
+      <span
+        >{{ $t("teacher.homeworks.error_loading") }} {{ error.message }}</span
+      >
     </div>
 
     <div
       v-else-if="!homeworks || homeworks.length === 0"
       class="text-center py-10"
     >
-      <p class="text-xl text-gray-500">No homeworks found.</p>
+      <p class="text-xl text-gray-500">
+        {{ $t("teacher.homeworks.no_homeworks") }}
+      </p>
       <NuxtLink to="/teacher/homeworks/create" class="btn btn-primary mt-4">
-        Create Homework
+        {{ $t("teacher.homeworks.create_button") }}
       </NuxtLink>
     </div>
 
@@ -54,11 +60,17 @@ const formatDate = (dateString: string | null) => {
 
           <div class="space-y-2">
             <div class="flex items-center text-sm">
-              <span class="font-semibold w-24">Classroom:</span>
-              <span>{{ hw.classroomName || "Unknown" }}</span>
+              <span class="font-semibold w-24">{{
+                $t("teacher.homeworks.classroom_label")
+              }}</span>
+              <span>{{
+                hw.classroomName || $t("teacher.homeworks.unknown_classroom")
+              }}</span>
             </div>
             <div class="flex items-center text-sm">
-              <span class="font-semibold w-24">Deadline:</span>
+              <span class="font-semibold w-24">{{
+                $t("teacher.homeworks.deadline_label")
+              }}</span>
               <span
                 :class="{
                   'text-error':
@@ -69,7 +81,9 @@ const formatDate = (dateString: string | null) => {
               </span>
             </div>
             <div class="flex items-center text-sm text-gray-500">
-              <span class="font-semibold w-24">Created:</span>
+              <span class="font-semibold w-24">{{
+                $t("teacher.homeworks.created_label")
+              }}</span>
               <span>{{ new Date(hw.createdAt).toLocaleDateString() }}</span>
             </div>
           </div>
@@ -78,7 +92,7 @@ const formatDate = (dateString: string | null) => {
             <NuxtLink
               :to="`/teacher/homeworks/${hw.id}`"
               class="btn btn-primary btn-sm"
-              >View Details</NuxtLink
+              >{{ $t("teacher.homeworks.view_details") }}</NuxtLink
             >
           </div>
         </div>

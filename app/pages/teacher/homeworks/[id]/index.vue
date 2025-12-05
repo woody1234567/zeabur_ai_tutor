@@ -32,7 +32,7 @@ const { data, pending, error, refresh } = await useFetch<HomeworkDetails>(
 );
 
 const formatDate = (dateString: string | null) => {
-  if (!dateString) return "No deadline";
+  if (!dateString) return useNuxtApp().$i18n.t("teacher.homeworks.no_deadline");
   return (
     new Date(dateString).toLocaleDateString() +
     " " +
@@ -88,7 +88,8 @@ const updateHomework = async () => {
     await refresh(); // Refresh homework data
     isSettingsOpen.value = false;
   } catch (e: any) {
-    settingsError.value = e.message || "Failed to update homework";
+    settingsError.value =
+      e.message || useNuxtApp().$i18n.t("teacher.homeworks.update_error");
   } finally {
     isUpdatingSettings.value = false;
   }
@@ -97,11 +98,7 @@ const updateHomework = async () => {
 const isDeleting = ref(false);
 
 const deleteHomework = async () => {
-  if (
-    !confirm(
-      "Are you sure you want to delete this homework? This action cannot be undone."
-    )
-  ) {
+  if (!confirm(useNuxtApp().$i18n.t("teacher.homeworks.confirm_delete"))) {
     return;
   }
 
@@ -115,7 +112,8 @@ const deleteHomework = async () => {
     // Redirect to homeworks list
     await navigateTo("/teacher/homeworks");
   } catch (e: any) {
-    settingsError.value = e.message || "Failed to delete homework";
+    settingsError.value =
+      e.message || useNuxtApp().$i18n.t("teacher.homeworks.delete_error");
     isDeleting.value = false;
   }
 };
@@ -147,13 +145,13 @@ const deleteHomework = async () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Homeworks
+            {{ $t("teacher.homeworks.detail.back") }}
           </NuxtLink>
           <button
             v-if="data"
             @click="openSettings"
             class="btn btn-ghost btn-circle"
-            title="Settings"
+            :title="$t('teacher.homeworks.detail.settings')"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -183,7 +181,10 @@ const deleteHomework = async () => {
         </div>
 
         <div v-else-if="error" class="alert alert-error">
-          <span>Error loading homework details: {{ error.message }}</span>
+          <span
+            >{{ $t("teacher.homeworks.detail.error_loading") }}
+            {{ error.message }}</span
+          >
         </div>
 
         <div v-else-if="data" class="space-y-8">
@@ -202,7 +203,9 @@ const deleteHomework = async () => {
                   </div>
                 </div>
                 <div class="text-left md:text-right w-full md:w-auto">
-                  <div class="text-sm text-gray-500">Classroom</div>
+                  <div class="text-sm text-gray-500">
+                    {{ $t("teacher.homeworks.detail.classroom_label") }}
+                  </div>
                   <div class="font-semibold text-lg">
                     {{ data.homework.classroomName }}
                   </div>
@@ -227,7 +230,9 @@ const deleteHomework = async () => {
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  <span class="font-semibold">Deadline:</span>
+                  <span class="font-semibold">{{
+                    $t("teacher.homeworks.detail.deadline_label")
+                  }}</span>
                   <span
                     :class="{
                       'text-error':
@@ -253,7 +258,9 @@ const deleteHomework = async () => {
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span class="font-semibold">Created:</span>
+                  <span class="font-semibold">{{
+                    $t("teacher.homeworks.detail.created_label")
+                  }}</span>
                   <span>{{
                     new Date(data.homework.createdAt).toLocaleDateString()
                   }}</span>
@@ -266,7 +273,9 @@ const deleteHomework = async () => {
           <div>
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-2xl font-bold">
-                Assigned Problems ({{ data.problems.length }})
+                {{ $t("teacher.homeworks.detail.assigned_problems") }} ({{
+                  data.problems.length
+                }})
               </h2>
               <NuxtLink
                 :to="`/teacher/homeworks/${homeworkId}/add`"
@@ -286,7 +295,7 @@ const deleteHomework = async () => {
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                Add Problems
+                {{ $t("teacher.homeworks.detail.add_problems") }}
               </NuxtLink>
             </div>
 
@@ -304,7 +313,7 @@ const deleteHomework = async () => {
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 ></path>
               </svg>
-              <span>No problems assigned to this homework.</span>
+              <span>{{ $t("teacher.homeworks.detail.no_problems") }}</span>
             </div>
 
             <div v-else class="space-y-4">
@@ -334,7 +343,7 @@ const deleteHomework = async () => {
                       :to="`/teacher/problems/${problem.id}/edit`"
                       class="btn btn-sm btn-outline btn-primary"
                     >
-                      Edit Problem
+                      {{ $t("teacher.homeworks.detail.edit_problem") }}
                     </NuxtLink>
                   </div>
                 </div>
@@ -351,7 +360,9 @@ const deleteHomework = async () => {
         class="drawer-overlay"
       ></label>
       <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-        <h2 class="text-2xl font-bold mb-6">Homework Settings</h2>
+        <h2 class="text-2xl font-bold mb-6">
+          {{ $t("teacher.homeworks.settings.title") }}
+        </h2>
 
         <div v-if="settingsError" class="alert alert-error mb-4">
           <span>{{ settingsError }}</span>
@@ -360,12 +371,14 @@ const deleteHomework = async () => {
         <form @submit.prevent="updateHomework" class="space-y-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Title</span>
+              <span class="label-text">{{
+                $t("teacher.homeworks.settings.title_label")
+              }}</span>
             </label>
             <input
               v-model="settingsForm.title"
               type="text"
-              placeholder="Homework Title"
+              :placeholder="$t('teacher.homeworks.settings.title_placeholder')"
               class="input input-bordered w-full"
               required
             />
@@ -373,19 +386,25 @@ const deleteHomework = async () => {
 
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Subject</span>
+              <span class="label-text">{{
+                $t("teacher.homeworks.settings.subject_label")
+              }}</span>
             </label>
             <input
               v-model="settingsForm.subject"
               type="text"
-              placeholder="Subject"
+              :placeholder="
+                $t('teacher.homeworks.settings.subject_placeholder')
+              "
               class="input input-bordered w-full"
             />
           </div>
 
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Deadline</span>
+              <span class="label-text">{{
+                $t("teacher.homeworks.settings.deadline_label")
+              }}</span>
             </label>
             <input
               v-model="settingsForm.deadline"
@@ -396,14 +415,18 @@ const deleteHomework = async () => {
 
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Classroom</span>
+              <span class="label-text">{{
+                $t("teacher.homeworks.settings.classroom_label")
+              }}</span>
             </label>
             <select
               v-model="settingsForm.classroomId"
               class="select select-bordered w-full"
               required
             >
-              <option disabled value="">Select a classroom</option>
+              <option disabled value="">
+                {{ $t("teacher.homeworks.settings.select_classroom") }}
+              </option>
               <option
                 v-for="classroom in classrooms"
                 :key="classroom.id"
@@ -424,11 +447,13 @@ const deleteHomework = async () => {
                 v-if="isUpdatingSettings"
                 class="loading loading-spinner"
               ></span>
-              Save Changes
+              {{ $t("teacher.homeworks.settings.save") }}
             </button>
           </div>
 
-          <div class="divider">DANGER ZONE</div>
+          <div class="divider">
+            {{ $t("teacher.homeworks.settings.danger_zone") }}
+          </div>
 
           <div>
             <button
@@ -438,7 +463,7 @@ const deleteHomework = async () => {
               :disabled="isDeleting"
             >
               <span v-if="isDeleting" class="loading loading-spinner"></span>
-              Delete Homework
+              {{ $t("teacher.homeworks.settings.delete") }}
             </button>
           </div>
         </form>

@@ -90,7 +90,8 @@ watchEffect(() => {
 const updateProblem = async () => {
   try {
     isUploading.value = true;
-    if (!problem.value) throw new Error("Problem not found");
+    if (!problem.value)
+      throw new Error(useNuxtApp().$i18n.t("teacher.problems.edit.not_found"));
     let imageUrl = problem.value.imageUrl || "";
 
     if (formData.value.imageFile) {
@@ -127,11 +128,15 @@ const updateProblem = async () => {
       },
     });
 
-    alert("Problem updated successfully!");
+    alert(useNuxtApp().$i18n.t("teacher.problems.edit.success"));
     navigateTo("/teacher/problems");
   } catch (error: any) {
     console.error("Error updating problem:", error);
-    alert(`Failed to update problem: ${error.message || "Unknown error"}`);
+    alert(
+      `${useNuxtApp().$i18n.t("teacher.problems.edit.error")} ${
+        error.message || "Unknown error"
+      }`
+    );
   } finally {
     isUploading.value = false;
   }
@@ -144,7 +149,9 @@ const handleCancel = () => {
 
 <template>
   <div class="container mx-auto p-4 md:p-6 max-w-7xl">
-    <h1 class="text-2xl font-bold mb-6">Edit Problem</h1>
+    <h1 class="text-2xl font-bold mb-6">
+      {{ $t("teacher.problems.edit.title") }}
+    </h1>
 
     <div v-if="problem" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Left Column: Editor -->
@@ -152,7 +159,7 @@ const handleCancel = () => {
         <TeacherProblemForm
           v-model="formData"
           :is-uploading="isUploading"
-          submit-label="Update Problem"
+          :submit-label="$t('teacher.problems.edit.submit')"
           @submit="updateProblem"
           @cancel="handleCancel"
         />
@@ -164,7 +171,7 @@ const handleCancel = () => {
       </div>
     </div>
     <div v-else-if="error" class="alert alert-error">
-      Error loading problem: {{ error.message }}
+      {{ $t("teacher.problems.edit.load_error") }} {{ error.message }}
     </div>
     <div v-else class="flex justify-center py-20">
       <span class="loading loading-spinner loading-lg"></span>

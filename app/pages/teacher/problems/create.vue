@@ -83,11 +83,15 @@ const submitProblem = async () => {
       },
     });
 
-    alert("Problem created successfully!");
+    alert(useNuxtApp().$i18n.t("teacher.problems.create.success"));
     navigateTo("/teacher/problems");
   } catch (error: any) {
     console.error("Error creating problem:", error);
-    alert(`Failed to create problem: ${error.message || "Unknown error"}`);
+    alert(
+      `${useNuxtApp().$i18n.t("teacher.problems.create.error")} ${
+        error.message || "Unknown error"
+      }`
+    );
   } finally {
     isUploading.value = false;
   }
@@ -101,11 +105,13 @@ const handleCancel = () => {
 <template>
   <div class="container mx-auto p-4 md:p-6 max-w-7xl">
     <div class="flex items-center gap-2 mb-6">
-      <h1 class="text-2xl font-bold">Create New Problem</h1>
+      <h1 class="text-2xl font-bold">
+        {{ $t("teacher.problems.create.title") }}
+      </h1>
       <NuxtLink
         to="/teacher/problems/help"
         class="btn btn-circle btn-ghost btn-sm"
-        title="Help"
+        :title="$t('teacher.problems.create.help')"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +136,7 @@ const handleCancel = () => {
         <TeacherProblemForm
           v-model="formData"
           :is-uploading="isUploading"
-          submit-label="Create Problem"
+          :submit-label="$t('teacher.problems.create.submit')"
           @submit="submitProblem"
           @cancel="handleCancel"
         />

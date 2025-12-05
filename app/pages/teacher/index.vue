@@ -8,7 +8,7 @@ definePageMeta({
 
 <template>
   <div class="p-4 md:p-6">
-    <h1 class="text-2xl font-bold mb-6">Teacher Dashboard</h1>
+    <h1 class="text-2xl font-bold mb-6">{{ $t("teacher.dashboard.title") }}</h1>
     <EventCalendar />
   </div>
 </template>

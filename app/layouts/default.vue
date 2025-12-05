@@ -38,7 +38,8 @@
           <li><NuxtLink to="/about">About</NuxtLink></li>
         </ul>
       </div>
-      <div class="navbar-end">
+      <div class="navbar-end gap-2">
+        <LangSwitcher />
         <NuxtLink to="/auth" class="btn btn-primary">Get Started</NuxtLink>
       </div>
     </div>

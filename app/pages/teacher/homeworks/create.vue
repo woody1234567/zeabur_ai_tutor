@@ -47,11 +47,15 @@ const removeFromHw = (problemId: string) => {
 
 const createHomework = async () => {
   if (!hwForm.value.classroomId) {
-    alert("Please select a classroom");
+    alert(
+      useNuxtApp().$i18n.t("teacher.homeworks.create.alert_select_classroom")
+    );
     return;
   }
   if (selectedProblems.value.length === 0) {
-    alert("Please select at least one problem");
+    alert(
+      useNuxtApp().$i18n.t("teacher.homeworks.create.alert_select_problem")
+    );
     return;
   }
 
@@ -63,12 +67,12 @@ const createHomework = async () => {
         problemIds: selectedProblems.value.map((p) => p.id),
       },
     });
-    alert("Homework created successfully!");
+    alert(useNuxtApp().$i18n.t("teacher.homeworks.create.success_message"));
     // Redirect to homework list
     navigateTo("/teacher/homeworks");
   } catch (error) {
     console.error("Failed to create homework:", error);
-    alert("Failed to create homework");
+    alert(useNuxtApp().$i18n.t("teacher.homeworks.create.error_message"));
   }
 };
 </script>
@@ -79,9 +83,11 @@ const createHomework = async () => {
     <div class="flex-1 flex flex-col overflow-hidden border-r border-base-300">
       <div class="p-4 md:p-6 overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-bold">Select Problems</h1>
+          <h1 class="text-2xl font-bold">
+            {{ $t("teacher.homeworks.create.select_problems") }}
+          </h1>
           <NuxtLink to="/teacher/homeworks" class="btn btn-ghost btn-sm">
-            Cancel
+            {{ $t("teacher.homeworks.create.cancel") }}
           </NuxtLink>
         </div>
 
@@ -123,8 +129,8 @@ const createHomework = async () => {
                 >
                   {{
                     selectedProblems.find((p) => p.id === problem.id)
-                      ? "Added"
-                      : "Add"
+                      ? $t("teacher.homeworks.create.added")
+                      : $t("teacher.homeworks.create.add")
                   }}
                 </button>
               </div>
@@ -140,7 +146,7 @@ const createHomework = async () => {
           v-if="problems && problems.length === 0"
           class="text-center py-10 text-base-content/70"
         >
-          No problems found matching your criteria.
+          {{ $t("teacher.homeworks.create.no_problems_found") }}
         </div>
       </div>
     </div>
@@ -150,19 +156,25 @@ const createHomework = async () => {
       class="w-full md:w-96 bg-base-200 flex flex-col h-full overflow-hidden shadow-xl z-10"
     >
       <div class="p-4 bg-base-200 border-b border-base-300">
-        <h2 class="text-xl font-bold">Create Homework</h2>
+        <h2 class="text-xl font-bold">
+          {{ $t("teacher.homeworks.create.title") }}
+        </h2>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4">
         <div class="form-control w-full mb-4">
           <label class="label">
-            <span class="label-text">Classroom</span>
+            <span class="label-text">{{
+              $t("teacher.homeworks.create.classroom_label")
+            }}</span>
           </label>
           <select
             v-model="hwForm.classroomId"
             class="select select-bordered w-full bg-base-100"
           >
-            <option disabled value="">Select a classroom</option>
+            <option disabled value="">
+              {{ $t("teacher.homeworks.create.select_classroom_placeholder") }}
+            </option>
             <option
               v-for="classroom in classrooms"
               :key="classroom.id"
@@ -175,31 +187,37 @@ const createHomework = async () => {
 
         <div class="form-control w-full mb-4">
           <label class="label">
-            <span class="label-text">Subject</span>
+            <span class="label-text">{{
+              $t("teacher.homeworks.create.subject_label")
+            }}</span>
           </label>
           <input
             v-model="hwForm.subject"
             type="text"
-            placeholder="e.g. Math"
+            :placeholder="$t('teacher.homeworks.create.subject_placeholder')"
             class="input input-bordered w-full bg-base-100"
           />
         </div>
 
         <div class="form-control w-full mb-4">
           <label class="label">
-            <span class="label-text">Title</span>
+            <span class="label-text">{{
+              $t("teacher.homeworks.create.title_label")
+            }}</span>
           </label>
           <input
             v-model="hwForm.title"
             type="text"
-            placeholder="Homework Title"
+            :placeholder="$t('teacher.homeworks.create.title_placeholder')"
             class="input input-bordered w-full bg-base-100"
           />
         </div>
 
         <div class="form-control w-full mb-4">
           <label class="label">
-            <span class="label-text">Deadline</span>
+            <span class="label-text">{{
+              $t("teacher.homeworks.create.deadline_label")
+            }}</span>
           </label>
           <input
             v-model="hwForm.deadline"
@@ -209,7 +227,9 @@ const createHomework = async () => {
         </div>
 
         <div class="divider">
-          Selected Problems ({{ selectedProblems.length }})
+          {{ $t("teacher.homeworks.create.selected_problems") }} ({{
+            selectedProblems.length
+          }})
         </div>
 
         <div class="flex flex-col gap-2 mb-4">
@@ -247,10 +267,10 @@ const createHomework = async () => {
             v-if="selectedProblems.length === 0"
             class="text-center text-sm opacity-70 py-8 border-2 border-dashed border-base-300 rounded-lg"
           >
-            No problems selected. <br />
-            <span class="text-xs"
-              >Click "Add" on the left to select problems.</span
-            >
+            {{ $t("teacher.homeworks.create.no_problems_selected") }} <br />
+            <span class="text-xs">{{
+              $t("teacher.homeworks.create.add_instruction")
+            }}</span>
           </div>
         </div>
       </div>
@@ -261,7 +281,7 @@ const createHomework = async () => {
           class="btn btn-primary w-full"
           :disabled="!hwForm.classroomId || selectedProblems.length === 0"
         >
-          Create Homework
+          {{ $t("teacher.homeworks.create.title") }}
         </button>
       </div>
     </div>

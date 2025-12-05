@@ -44,29 +44,40 @@ const closeDrawer = () => {
           </label>
         </div>
         <div class="flex-1 px-2 mx-2">
-          <NuxtLink to="/teacher" class="btn btn-ghost text-xl"
-            >AI Tutor - Teacher</NuxtLink
-          >
+          <NuxtLink to="/teacher" class="btn btn-ghost text-xl">{{
+            $t("teacher.layout.title")
+          }}</NuxtLink>
         </div>
         <div class="flex-none hidden lg:block">
           <ul class="menu menu-horizontal px-1">
             <!-- Navbar menu content here -->
             <li>
-              <NuxtLink to="/teacher/problems">Problems</NuxtLink>
+              <NuxtLink to="/teacher/problems">{{
+                $t("teacher.layout.problems")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/teacher/classrooms">Classrooms</NuxtLink>
+              <NuxtLink to="/teacher/classrooms">{{
+                $t("teacher.layout.classrooms")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/teacher/homeworks">Homeworks</NuxtLink>
+              <NuxtLink to="/teacher/homeworks">{{
+                $t("teacher.layout.homeworks")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/teacher/students_dashboard">Students</NuxtLink>
+              <NuxtLink to="/teacher/students_dashboard">{{
+                $t("teacher.layout.students")
+              }}</NuxtLink>
             </li>
             <li>
               <button @click="handleLogout" class="btn btn-secondary ml-2">
-                Logout
+                {{ $t("teacher.layout.logout") }}
               </button>
+            </li>
+            <li>
+              <LangSwitcher />
             </li>
           </ul>
         </div>
@@ -85,40 +96,47 @@ const closeDrawer = () => {
       <ul class="menu p-4 w-80 min-h-full bg-base-200">
         <!-- Sidebar content here -->
         <li class="mb-4">
-          <span class="text-xl font-bold px-4">Menu</span>
+          <span class="text-xl font-bold px-4">{{
+            $t("teacher.layout.menu")
+          }}</span>
         </li>
         <li>
-          <NuxtLink to="/teacher" @click="closeDrawer">Dashboard</NuxtLink>
+          <NuxtLink to="/teacher" @click="closeDrawer">{{
+            $t("teacher.layout.dashboard")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/teacher/problems" @click="closeDrawer"
-            >Manage Problems</NuxtLink
-          >
+          <NuxtLink to="/teacher/problems" @click="closeDrawer">{{
+            $t("teacher.layout.manage_problems")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/teacher/problems/create" @click="closeDrawer"
-            >Create Problem</NuxtLink
-          >
+          <NuxtLink to="/teacher/problems/create" @click="closeDrawer">{{
+            $t("teacher.layout.create_problem")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/teacher/classrooms" @click="closeDrawer"
-            >Classrooms</NuxtLink
-          >
+          <NuxtLink to="/teacher/classrooms" @click="closeDrawer">{{
+            $t("teacher.layout.classrooms")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/teacher/homeworks" @click="closeDrawer"
-            >Homeworks</NuxtLink
-          >
+          <NuxtLink to="/teacher/homeworks" @click="closeDrawer">{{
+            $t("teacher.layout.homeworks")
+          }}</NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/teacher/students_dashboard" @click="closeDrawer"
-            >Students</NuxtLink
-          >
+          <NuxtLink to="/teacher/students_dashboard" @click="closeDrawer">{{
+            $t("teacher.layout.students")
+          }}</NuxtLink>
         </li>
         <li class="mt-auto">
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
-            Logout
+            {{ $t("teacher.layout.logout") }}
           </button>
+        </li>
+        <li>
+          <LangSwitcher />
         </li>
       </ul>
     </div>

@@ -128,23 +128,25 @@ const removeHashtag = (index: number) => {
 
 const validateForm = () => {
   if (!props.modelValue.title.trim()) {
-    alert("Please enter a title");
+    alert(useNuxtApp().$i18n.t("teacher.problems.form.validation.title"));
     return false;
   }
   if (!props.modelValue.content.trim()) {
-    alert("Please enter problem content");
+    alert(useNuxtApp().$i18n.t("teacher.problems.form.validation.content"));
     return false;
   }
   if (props.modelValue.choices.length < 2) {
-    alert("Please add at least 2 choices");
+    alert(useNuxtApp().$i18n.t("teacher.problems.form.validation.min_choices"));
     return false;
   }
   if (props.modelValue.choices.some((c) => !c.text.trim())) {
-    alert("Please fill in all choice texts");
+    alert(useNuxtApp().$i18n.t("teacher.problems.form.validation.choice_text"));
     return false;
   }
   if (!props.modelValue.correctAnswer) {
-    alert("Please select a correct answer");
+    alert(
+      useNuxtApp().$i18n.t("teacher.problems.form.validation.correct_answer")
+    );
     return false;
   }
   return true;
@@ -161,7 +163,9 @@ const handleSubmit = () => {
   <form @submit.prevent="handleSubmit" class="space-y-4">
     <div class="grid grid-cols-2 gap-4">
       <div class="form-control">
-        <label class="label">Difficulty</label>
+        <label class="label">{{
+          $t("teacher.problems.form.difficulty")
+        }}</label>
         <select
           :value="modelValue.difficulty"
           @input="
@@ -172,14 +176,20 @@ const handleSubmit = () => {
           "
           class="select select-bordered"
         >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
+          <option value="easy">
+            {{ $t("teacher.problems.form.difficulty_options.easy") }}
+          </option>
+          <option value="medium">
+            {{ $t("teacher.problems.form.difficulty_options.medium") }}
+          </option>
+          <option value="hard">
+            {{ $t("teacher.problems.form.difficulty_options.hard") }}
+          </option>
         </select>
       </div>
 
       <div class="form-control">
-        <label class="label">Source</label>
+        <label class="label">{{ $t("teacher.problems.form.source") }}</label>
         <input
           :value="modelValue.source"
           @input="
@@ -193,7 +203,9 @@ const handleSubmit = () => {
 
     <div class="grid grid-cols-2 gap-4">
       <div class="form-control">
-        <label class="label mb-2">Title</label>
+        <label class="label mb-2">{{
+          $t("teacher.problems.form.title")
+        }}</label>
         <br />
         <input
           :value="modelValue.title"
@@ -206,21 +218,23 @@ const handleSubmit = () => {
         />
       </div>
       <div class="form-control">
-        <label class="label mb-2">Hashtags</label>
+        <label class="label mb-2">{{
+          $t("teacher.problems.form.hashtags")
+        }}</label>
         <div class="flex gap-2 mb-2">
           <input
             v-model="newHashtag"
             @keydown.enter.prevent="addHashtag"
             type="text"
             class="input input-bordered flex-1"
-            placeholder="Type a tag and press Enter"
+            :placeholder="$t('teacher.problems.form.hashtag_placeholder')"
           />
           <button
             type="button"
             @click="addHashtag"
             class="btn btn-secondary p-2"
           >
-            Add
+            {{ $t("teacher.problems.form.add_hashtag") }}
           </button>
         </div>
         <div class="flex flex-wrap gap-2">
@@ -243,7 +257,9 @@ const handleSubmit = () => {
     </div>
 
     <div class="form-control">
-      <label class="label mb-2">Content (Markdown supported)</label>
+      <label class="label mb-2">{{
+        $t("teacher.problems.form.content")
+      }}</label>
       <VisionTool @text-extracted="handleTextExtracted" />
       <div class="flex gap-2 mb-2">
         <FormatTool
@@ -269,7 +285,7 @@ const handleSubmit = () => {
     </div>
 
     <div class="form-control">
-      <label class="label mb-2">Image (Optional)</label>
+      <label class="label mb-2">{{ $t("teacher.problems.form.image") }}</label>
       <br />
       <input
         type="file"
@@ -280,7 +296,9 @@ const handleSubmit = () => {
     </div>
 
     <div class="form-control">
-      <label class="label mb-2">Choices</label>
+      <label class="label mb-2">{{
+        $t("teacher.problems.form.choices")
+      }}</label>
       <div
         v-for="(choice, index) in modelValue.choices"
         :key="index"
@@ -296,7 +314,7 @@ const handleSubmit = () => {
           "
           type="text"
           class="input input-bordered flex-1"
-          placeholder="Choice text"
+          :placeholder="$t('teacher.problems.form.choice_placeholder')"
           required
         />
         <input
@@ -321,12 +339,14 @@ const handleSubmit = () => {
         </button>
       </div>
       <button type="button" @click="addChoice" class="btn btn-sm btn-ghost">
-        + Add Choice
+        {{ $t("teacher.problems.form.add_choice") }}
       </button>
     </div>
 
     <div class="form-control">
-      <label class="label mb-2">Explanation</label>
+      <label class="label mb-2">{{
+        $t("teacher.problems.form.explanation")
+      }}</label>
       <br />
       <textarea
         :value="modelValue.explanation"
@@ -346,10 +366,10 @@ const handleSubmit = () => {
         class="btn btn-primary flex-1"
         :disabled="isUploading"
       >
-        {{ isUploading ? "Uploading..." : submitLabel }}
+        {{ isUploading ? $t("teacher.problems.form.uploading") : submitLabel }}
       </button>
       <button type="button" @click="$emit('cancel')" class="btn btn-ghost">
-        Cancel
+        {{ $t("teacher.problems.form.cancel") }}
       </button>
     </div>
   </form>

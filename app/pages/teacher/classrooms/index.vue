@@ -35,7 +35,7 @@ const createClassroom = async () => {
 <template>
   <div class="container mx-auto p-4 md:p-6">
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold">Classrooms</h1>
+      <h1 class="text-3xl font-bold">{{ $t("teacher.classrooms.title") }}</h1>
       <button class="btn btn-primary" @click="isCreating = true">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -51,33 +51,43 @@ const createClassroom = async () => {
             d="M12 4v16m8-8H4"
           />
         </svg>
-        Create Classroom
+        {{ $t("teacher.classrooms.create_button") }}
       </button>
     </div>
 
     <!-- Create Modal -->
     <dialog :class="{ 'modal-open': isCreating }" class="modal">
       <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">Create New Classroom</h3>
+        <h3 class="font-bold text-lg mb-4">
+          {{ $t("teacher.classrooms.create_modal.title") }}
+        </h3>
         <div class="form-control w-full">
           <label class="label">
-            <span class="label-text">Classroom Name</span>
+            <span class="label-text">{{
+              $t("teacher.classrooms.create_modal.name_label")
+            }}</span>
           </label>
           <input
             v-model="newClassroom.name"
             type="text"
-            placeholder="e.g. Physics 101"
+            :placeholder="
+              $t('teacher.classrooms.create_modal.name_placeholder')
+            "
             class="input input-bordered w-full"
           />
         </div>
         <div class="form-control w-full mt-4">
           <label class="label">
-            <span class="label-text">Description (Optional)</span>
+            <span class="label-text">{{
+              $t("teacher.classrooms.create_modal.desc_label")
+            }}</span>
           </label>
           <textarea
             v-model="newClassroom.description"
             class="textarea textarea-bordered h-24"
-            placeholder="Brief description of the class..."
+            :placeholder="
+              $t('teacher.classrooms.create_modal.desc_placeholder')
+            "
           ></textarea>
         </div>
         <div class="modal-action">
@@ -86,7 +96,7 @@ const createClassroom = async () => {
             @click="isCreating = false"
             :disabled="isSubmitting"
           >
-            Cancel
+            {{ $t("teacher.classrooms.create_modal.cancel") }}
           </button>
           <button
             class="btn btn-primary"
@@ -94,7 +104,7 @@ const createClassroom = async () => {
             :disabled="!newClassroom.name || isSubmitting"
           >
             <span v-if="isSubmitting" class="loading loading-spinner"></span>
-            Create
+            {{ $t("teacher.classrooms.create_modal.create") }}
           </button>
         </div>
       </div>
@@ -113,13 +123,15 @@ const createClassroom = async () => {
         <div class="card-body">
           <h2 class="card-title">{{ classroom.name }}</h2>
           <p class="text-sm opacity-70 line-clamp-2">
-            {{ classroom.description || "No description provided." }}
+            {{
+              classroom.description || $t("teacher.classrooms.no_description")
+            }}
           </p>
           <div class="card-actions justify-end mt-4">
             <NuxtLink
               :to="`/teacher/classrooms/${classroom.id}`"
               class="btn btn-sm btn-ghost"
-              >View Details</NuxtLink
+              >{{ $t("teacher.classrooms.view_details") }}</NuxtLink
             >
           </div>
         </div>
@@ -128,8 +140,10 @@ const createClassroom = async () => {
 
     <div v-else class="text-center py-20 opacity-50">
       <div class="text-6xl mb-4">🏫</div>
-      <h3 class="text-xl font-bold">No classrooms yet</h3>
-      <p>Create your first classroom to get started.</p>
+      <h3 class="text-xl font-bold">
+        {{ $t("teacher.classrooms.empty.title") }}
+      </h3>
+      <p>{{ $t("teacher.classrooms.empty.desc") }}</p>
     </div>
   </div>
 </template>

@@ -23,7 +23,7 @@ const handleSearch = (params: {
 };
 
 const deleteProblem = async (id: string) => {
-  if (!confirm("Are you sure you want to delete this problem?")) return;
+  if (!confirm(useNuxtApp().$i18n.t("teacher.problems.confirm_delete"))) return;
 
   try {
     await $fetch(`/api/teacher/problems/${id}`, {
@@ -32,7 +32,7 @@ const deleteProblem = async (id: string) => {
     refresh();
   } catch (error) {
     console.error("Failed to delete problem:", error);
-    alert("Failed to delete problem");
+    alert(useNuxtApp().$i18n.t("teacher.problems.delete_error"));
   }
 };
 </script>
@@ -45,19 +45,21 @@ const deleteProblem = async (id: string) => {
         <div
           class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
         >
-          <h1 class="text-3xl font-bold">Teacher Dashboard</h1>
+          <h1 class="text-3xl font-bold">
+            {{ $t("teacher.problems.page_title") }}
+          </h1>
           <div class="flex gap-2 w-full md:w-auto">
             <NuxtLink
               to="/teacher/homeworks/create"
               class="btn btn-secondary flex-1 md:flex-none"
             >
-              Create HW
+              {{ $t("teacher.problems.create_hw") }}
             </NuxtLink>
             <NuxtLink
               to="/teacher/problems/create"
               class="btn btn-primary flex-1 md:flex-none"
             >
-              Create New Problem
+              {{ $t("teacher.problems.create_new") }}
             </NuxtLink>
           </div>
         </div>
@@ -99,13 +101,13 @@ const deleteProblem = async (id: string) => {
                   :to="`/teacher/problems/${problem.id}/edit`"
                   class="btn btn-warning btn-sm"
                 >
-                  Edit
+                  {{ $t("teacher.problems.edit_button") }}
                 </NuxtLink>
                 <button
                   @click="deleteProblem(problem.id)"
                   class="btn btn-error btn-sm"
                 >
-                  Delete
+                  {{ $t("teacher.problems.delete") }}
                 </button>
               </div>
             </div>
@@ -120,7 +122,7 @@ const deleteProblem = async (id: string) => {
           v-if="problems && problems.length === 0"
           class="text-center py-10 text-base-content/70"
         >
-          No problems found matching your criteria.
+          {{ $t("teacher.problems.no_problems_found") }}
         </div>
       </div>
     </div>

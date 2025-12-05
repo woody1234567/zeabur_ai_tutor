@@ -23,81 +23,91 @@ definePageMeta({
           />
         </svg>
       </NuxtLink>
-      <h1 class="text-3xl font-bold">Problem Creation Help</h1>
+      <h1 class="text-3xl font-bold">
+        {{ $t("teacher.problems.help_page.title") }}
+      </h1>
     </div>
 
     <div class="space-y-8">
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl mb-4">How to Create a Problem</h2>
+          <h2 class="card-title text-2xl mb-4">
+            {{ $t("teacher.problems.help_page.how_to.title") }}
+          </h2>
 
           <div class="steps steps-vertical">
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Enter Problem Details</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step1.title") }}
+                </h3>
                 <p>
-                  Fill in the Title, and Difficulty level. You can also add a
-                  Source reference.
+                  {{ $t("teacher.problems.help_page.how_to.step1.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Add Hashtags</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step2.title") }}
+                </h3>
                 <p>
-                  Add hashtags to categorize the problem (e.g., #algebra,
-                  #geometry). Press Enter to add a tag.
+                  {{ $t("teacher.problems.help_page.how_to.step2.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Add Content</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step3.title") }}
+                </h3>
                 <p>
-                  Use the editor to add the problem content. You can use
-                  Markdown for formatting and latex for math equations. There
-                  are also some tools to help you create the content(OCR, AI
-                  formatting).
+                  {{ $t("teacher.problems.help_page.how_to.step3.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Upload Image (Optional)</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step4.title") }}
+                </h3>
                 <p>
-                  You can upload an image to accompany the problem. It will be
-                  displayed above the problem content.
+                  {{ $t("teacher.problems.help_page.how_to.step4.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Add Choices</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step5.title") }}
+                </h3>
                 <p>
-                  Add multiple choice options. Mark the correct answer using the
-                  radio button. You can add more choices as needed.
+                  {{ $t("teacher.problems.help_page.how_to.step5.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Provide Explanation</h3>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step6.title") }}
+                </h3>
                 <p>
-                  Write a detailed explanation for the solution. This will be
-                  shown to students after they attempt the problem.
+                  {{ $t("teacher.problems.help_page.how_to.step6.desc") }}
                 </p>
               </div>
             </div>
 
             <div class="step step-primary">
               <div class="text-left ml-4">
-                <h3 class="font-bold">Submit</h3>
-                <p>Click "Create Problem" to save it to the database.</p>
+                <h3 class="font-bold">
+                  {{ $t("teacher.problems.help_page.how_to.step7.title") }}
+                </h3>
+                <p>{{ $t("teacher.problems.help_page.how_to.step7.desc") }}</p>
               </div>
             </div>
           </div>
@@ -106,24 +116,30 @@ definePageMeta({
 
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl mb-4">Live Preview Feature</h2>
+          <h2 class="card-title text-2xl mb-4">
+            {{ $t("teacher.problems.help_page.preview.title") }}
+          </h2>
           <p>
-            As you type in the editor on the left, the Live Preview panel on the
-            right shows exactly how the problem will appear to students.
+            {{ $t("teacher.problems.help_page.preview.desc") }}
           </p>
           <ul class="list-disc list-inside space-y-2 mt-4">
             <li>
-              <span class="font-bold">Markdown Support:</span> Use standard
-              Markdown for formatting (bold, italic, lists, etc.).
+              <span class="font-bold">{{
+                $t("teacher.problems.help_page.preview.markdown_title")
+              }}</span>
+              {{ $t("teacher.problems.help_page.preview.markdown_desc") }}
             </li>
             <li>
-              <span class="font-bold">LaTeX Support:</span> Use
-              <code>$</code> for inline math and <code>$$</code> for block math
-              equations.
+              <span class="font-bold">{{
+                $t("teacher.problems.help_page.preview.latex_title")
+              }}</span>
+              {{ $t("teacher.problems.help_page.preview.latex_desc") }}
             </li>
             <li>
-              <span class="font-bold">Image Preview:</span> Uploaded images will
-              appear in the preview immediately.
+              <span class="font-bold">{{
+                $t("teacher.problems.help_page.preview.image_title")
+              }}</span>
+              {{ $t("teacher.problems.help_page.preview.image_desc") }}
             </li>
           </ul>
         </div>
