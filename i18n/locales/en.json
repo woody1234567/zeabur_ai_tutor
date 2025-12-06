@@ -578,8 +578,8 @@
         "view_performance": "View Performance"
       },
       "homework_header": {
-        "breadcrumbs_homeworks": "Homeworks",
-        "review_mode": "(Review)",
+        "homeworks": "Homeworks",
+        "review": "Review",
         "question": "Question"
       },
       "problem_card": {

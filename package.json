@@ -8,8 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:start": "docker start c488ed4bc7270d8db92b87d5d9b3f25e0716cfcaed89d499c6fd0baa8e06bc95",
-    "db:stop": "docker stop c488ed4bc7270d8db92b87d5d9b3f25e0716cfcaed89d499c6fd0baa8e06bc95",
+    "db:start": "docker desktop start",
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {

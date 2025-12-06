@@ -55,9 +55,23 @@ const getCircleClass = (problem: ProblemStatus, index: number) => {
       <div class="text-sm breadcrumbs">
         <ul>
           <li>
-            <NuxtLink :to="localePath('/student/homeworks')">{{
-              $t("components.student.homework_header.homeworks")
-            }}</NuxtLink>
+            <NuxtLink :to="localePath('/student/homeworks')">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              {{ $t("components.student.homework_header.homeworks") }}
+            </NuxtLink>
           </li>
           <li>
             {{ title }}

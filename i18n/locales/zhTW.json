@@ -578,8 +578,8 @@
         "view_performance": "查看表現"
       },
       "homework_header": {
-        "breadcrumbs_homeworks": "作業",
-        "review_mode": "(複習)",
+        "homeworks": "作業",
+        "review": "複習",
         "question": "題目"
       },
       "problem_card": {
