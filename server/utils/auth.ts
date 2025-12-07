@@ -37,6 +37,7 @@ export const auth = betterAuth({
   plugins: [admin()],
   trustedOrigins: [
     "https://preview.studywithwoody.site",
+    "https://staging.studywithwoody.site",
     "https://studywithwoody.site",
     "http://localhost:3000",
   ],

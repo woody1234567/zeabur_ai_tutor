@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Allow access to MCP routes
   console.log("Middleware checking path:", to.path);
-  if (to.path.includes("/mcp")) return;
+  // if (to.path.includes("/mcp")) return;
 
   const { data: session } = await authClient.getSession({
     fetchOptions: {
