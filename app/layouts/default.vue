@@ -52,6 +52,7 @@ const localePath = useLocalePath();
         </ul>
       </div>
       <div class="navbar-end gap-2">
+        <ThemeSwitcher />
         <LangSwitcher />
         <NuxtLink :to="localePath('/auth')" class="btn btn-primary">{{
           $t("auth.title")

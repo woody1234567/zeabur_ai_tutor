@@ -53,6 +53,9 @@ const closeDrawer = () => {
           <ul class="menu menu-horizontal px-1">
             <!-- Navbar menu content here -->
             <li>
+              <ThemeSwitcher />
+            </li>
+            <li>
               <LangSwitcher />
             </li>
             <li>
@@ -91,6 +94,9 @@ const closeDrawer = () => {
         </li>
         <li>
           <LangSwitcher />
+        </li>
+        <li>
+          <ThemeSwitcher />
         </li>
       </ul>
     </div>

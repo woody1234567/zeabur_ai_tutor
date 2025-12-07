@@ -19,6 +19,9 @@ const handleLogout = async () => {
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
           <li>
+            <ThemeSwitcher />
+          </li>
+          <li>
             <LangSwitcher />
           </li>
           <li>

@@ -95,6 +95,9 @@ const closeDrawer = () => {
             <li>
               <LangSwitcher />
             </li>
+            <li>
+              <ThemeSwitcher />
+            </li>
           </ul>
         </div>
       </div>

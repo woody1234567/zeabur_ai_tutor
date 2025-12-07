@@ -75,6 +75,9 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <ThemeSwitcher />
+            </li>
+            <li>
               <LangSwitcher />
             </li>
             <li>
@@ -150,6 +153,9 @@ const closeDrawer = () => {
         </li>
         <li>
           <LangSwitcher />
+        </li>
+        <li>
+          <ThemeSwitcher />
         </li>
       </ul>
     </div>
