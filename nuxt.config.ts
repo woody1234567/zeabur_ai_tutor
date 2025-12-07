@@ -15,7 +15,12 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
-  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/i18n", "@nuxtjs/mcp-toolkit"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@nuxtjs/i18n",
+    "@nuxtjs/mcp-toolkit",
+    "@nuxt/icon",
+  ],
   i18n: {
     locales: [
       { code: "en", file: "en.json", name: "English" },
