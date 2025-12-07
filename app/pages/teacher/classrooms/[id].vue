@@ -346,7 +346,7 @@ const deleteClassroom = async () => {
                       <td>
                         <NuxtLink
                           :to="localePath(`/teacher/homeworks/${hw.id}`)"
-                          class="btn btn-sm btn-primary"
+                          class="btn btn-primary btn-sm"
                         >
                           {{ $t("teacher.classrooms.view_hw") }}
                         </NuxtLink>

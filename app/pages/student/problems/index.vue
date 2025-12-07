@@ -66,7 +66,7 @@ const handleSearch = (params: {
           <div class="card-actions justify-end mt-4">
             <NuxtLink
               :to="localePath(`/student/problems/${problem.id}`)"
-              class="btn btn-primary btn-sm"
+              class="btn btn-ghost btn-sm"
             >
               {{ $t("student.problems.solve") }}
             </NuxtLink>
