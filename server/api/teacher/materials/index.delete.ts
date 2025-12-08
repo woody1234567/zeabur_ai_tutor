@@ -1,7 +1,7 @@
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { classMaterials } from "../../../../db/schema";
 import { db } from "../../../../server/utils/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import { classMaterialsR2 } from "../../../../server/utils/r2";
 
 export default defineEventHandler(async (event) => {
@@ -27,10 +27,10 @@ export default defineEventHandler(async (event) => {
   if (item.isFolder) {
     // Check for children
     const childrenRequest = await db
-      .selectCount()
+      .select({ count: count() })
       .from(classMaterials)
       .where(eq(classMaterials.parentId, id));
-    // drizzle selectCount returns array [{ count: number }]
+    // drizzle select({ count: count() }) returns array [{ count: number }]
     const hasChildren = childrenRequest[0]?.count > 0;
 
     if (hasChildren) {
