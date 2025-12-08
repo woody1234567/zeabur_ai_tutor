@@ -302,3 +302,21 @@ export const classroomMaterials = pgTable("classroom_materials", {
     .references(() => classMaterials.id), // Linking to the root folder/file being shared
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const posts = pgTable("posts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  classroomId: text("classroom_id")
+    .notNull()
+    .references(() => classrooms.id),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  studentId: text("student_id").references(() => user.id), // Optional
+  content: text("content"),
+  classDate: timestamp("class_date"),
+  classLength: integer("class_length"), // in minutes
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

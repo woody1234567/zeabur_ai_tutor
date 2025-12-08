@@ -22,6 +22,11 @@ const { data: homeworks } = await useFetch(
 // Fetch all students for the modal
 const { data: allStudents } = await useFetch("/api/teacher/students");
 
+// Fetch posts
+const { data: posts } = await useFetch(
+  `/api/teacher/classrooms/${classroomId}/posts`
+);
+
 const isAddingStudent = ref(false);
 const selectedStudentId = ref("");
 const isSubmitting = ref(false);
@@ -336,6 +341,60 @@ const deleteClassroom = async () => {
                 :classroom-id="classroomId"
                 user-type="teacher"
               />
+            </div>
+          </div>
+
+          <!-- Contact Book (Posts) Section -->
+          <div class="card bg-base-100 shadow-xl border border-base-200">
+            <div class="card-body">
+              <div class="flex w-full items-center justify-between">
+                <h2 class="card-title mb-4">
+                  {{ $t("teacher.classrooms.posts.title", "Contact Book") }}
+                </h2>
+                <NuxtLink
+                  :to="
+                    localePath(`/teacher/classrooms/${classroomId}/post/add`)
+                  "
+                  class="btn btn-primary justify-end mt-2 mr-2"
+                >
+                  <Icon
+                    name="heroicons-outline:plus"
+                    class="h-5 w-5 mr-2"
+                  ></Icon>
+                  {{ $t("teacher.classrooms.posts.add", "Add Post") }}
+                </NuxtLink>
+              </div>
+
+              <div v-if="posts && posts.length > 0" class="space-y-4">
+                <div
+                  v-for="post in posts"
+                  :key="post.id"
+                  class="card bg-base-200 p-4"
+                >
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <p class="font-bold">
+                        {{ new Date(post.classDate).toLocaleDateString() }}
+                        <span v-if="post.classLength">
+                          - {{ post.classLength }} min
+                        </span>
+                      </p>
+                      <p v-if="post.studentName" class="text-sm opacity-70">
+                        Student: {{ post.studentName }}
+                      </p>
+                    </div>
+                    <span class="text-xs opacity-50">
+                      {{ new Date(post.createdAt).toLocaleDateString() }}
+                    </span>
+                  </div>
+                  <p class="mt-2 whitespace-pre-wrap">{{ post.content }}</p>
+                </div>
+              </div>
+              <div v-else class="text-center py-10 opacity-50">
+                <p>
+                  {{ $t("teacher.classrooms.posts.no_posts", "No posts yet") }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
