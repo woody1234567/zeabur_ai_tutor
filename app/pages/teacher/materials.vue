@@ -39,6 +39,14 @@ function enterFolder(folder: any) {
   pathStack.value.push({ id: folder.id, name: folder.name });
 }
 
+function openItem(item: any) {
+  if (item.isFolder) {
+    enterFolder(item);
+  } else if (item.url) {
+    window.open(item.url, "_blank");
+  }
+}
+
 function navigateToBreadcrumb(index: number) {
   pathStack.value = pathStack.value.slice(0, index + 1);
 }
@@ -188,7 +196,7 @@ async function deleteItem(id: string) {
           v-for="item in materials"
           :key="item.id"
           class="group relative border border-base-200 rounded-lg p-4 hover:bg-base-200 transition-colors cursor-pointer flex flex-col items-center text-center"
-          @click="item.isFolder ? enterFolder(item) : null"
+          @click="openItem(item)"
         >
           <!-- Icon -->
           <div class="mb-2">
