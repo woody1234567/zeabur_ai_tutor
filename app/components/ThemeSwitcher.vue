@@ -2,13 +2,17 @@
 const theme = useState<string>("theme", () => "dark");
 
 onMounted(() => {
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  theme.value = savedTheme;
-  document.documentElement.setAttribute("data-theme", savedTheme);
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "retro") {
+    theme.value = "retro";
+  } else {
+    theme.value = "dark";
+  }
+  document.documentElement.setAttribute("data-theme", theme.value);
 });
 
 const toggleTheme = () => {
-  theme.value = theme.value === "dark" ? "bumblebee" : "dark";
+  theme.value = theme.value === "dark" ? "retro" : "dark";
   document.documentElement.setAttribute("data-theme", theme.value);
   localStorage.setItem("theme", theme.value);
 };
