@@ -1,0 +1,11 @@
+Model Information:
+* title:	Robot
+* source:	https://sketchfab.com/3d-models/robot-a2b68bd79e5a4156ab6f250d3e0220fc
+* author:	hugocantito (https://sketchfab.com/hugocantito)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Robot" (https://sketchfab.com/3d-models/robot-a2b68bd79e5a4156ab6f250d3e0220fc) by hugocantito (https://sketchfab.com/hugocantito) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -8,16 +8,22 @@ const localePath = useLocalePath();
 <template>
   <div class="bg-base-200">
     <!-- Hero Section -->
-    <div class="hero min-h-[70vh] bg-base-100">
-      <div class="hero-content text-center">
-        <div class="max-w-md">
-          <h1 class="text-5xl font-bold">{{ $t("landing.hero.title") }}</h1>
-          <p class="py-6">
-            {{ $t("landing.hero.description") }}
-          </p>
-          <NuxtLink :to="localePath('/auth')" class="btn btn-primary">{{
-            $t("landing.hero.get_started")
-          }}</NuxtLink>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="hero min-h-[70vh] bg-base-100 rounded-lg">
+        <common-robot />
+      </div>
+
+      <div class="hero min-h-[70vh] bg-base-100 rounded-lg">
+        <div class="hero-content text-center">
+          <div class="max-w-md">
+            <h1 class="text-5xl font-bold">{{ $t("landing.hero.title") }}</h1>
+            <p class="py-6">
+              {{ $t("landing.hero.description") }}
+            </p>
+            <NuxtLink :to="localePath('/auth')" class="btn btn-primary">{{
+              $t("landing.hero.get_started")
+            }}</NuxtLink>
+          </div>
         </div>
       </div>
     </div>
