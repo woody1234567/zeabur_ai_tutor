@@ -4,9 +4,10 @@ import {
   submissions,
   homeworks,
   hwRecords,
+  errorProblems,
 } from "../../../db/schema";
 import { auth } from "../../../server/utils/auth";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({
@@ -53,6 +54,36 @@ export default defineEventHandler(async (event) => {
     userAnswer: userAnswer,
     isCorrect: isCorrect,
   });
+
+  // Record in error_problems if incorrect
+  if (!isCorrect) {
+    const existingError = await db
+      .select()
+      .from(errorProblems)
+      .where(
+        and(
+          eq(errorProblems.userId, session.user.id),
+          eq(errorProblems.problemId, problemId)
+        )
+      )
+      .limit(1);
+
+    if (existingError.length > 0) {
+      await db
+        .update(errorProblems)
+        .set({
+          understood: false,
+          createdAt: new Date(), // Update timestamp to show recent error
+        })
+        .where(eq(errorProblems.id, existingError[0].id));
+    } else {
+      await db.insert(errorProblems).values({
+        userId: session.user.id,
+        problemId: problemId,
+        understood: false,
+      });
+    }
+  }
 
   // If homeworkId is provided, record it in hwRecords
   if (homeworkId) {

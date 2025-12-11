@@ -3,6 +3,7 @@ definePageMeta({
   layout: "student",
 });
 const localePath = useLocalePath();
+const { t } = useI18n();
 
 const searchParams = ref({
   title: "",
@@ -10,9 +11,12 @@ const searchParams = ref({
   hashtag: "",
 });
 
-const { data: problems, refresh } = await useFetch("/api/problems", {
-  query: searchParams,
-});
+const { data: problems, refresh } = await useFetch(
+  "/api/student/error-problems",
+  {
+    query: searchParams,
+  }
+);
 
 const handleSearch = (params: {
   title: string;
@@ -52,7 +56,9 @@ const toggleFavorite = async (problem: any) => {
 
 <template>
   <div class="container mx-auto p-4 max-w-7xl">
-    <h1 class="text-3xl font-bold mb-8">{{ $t("student.problems.title") }}</h1>
+    <h1 class="text-3xl font-bold mb-8">
+      {{ $t("student.error_problems.title", "Error Log") }}
+    </h1>
 
     <ProblemSearch @search="handleSearch" />
     <br />
@@ -92,7 +98,6 @@ const toggleFavorite = async (problem: any) => {
           <div class="card-actions justify-between mt-4 items-center gap-2">
             <div>
               <Icon
-                v-if="problem.isError"
                 name="heroicons:x-mark-20-solid"
                 class="w-6 h-6 text-red-500 font-bold"
                 title="Incorrectly answered"

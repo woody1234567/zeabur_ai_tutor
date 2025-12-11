@@ -10,7 +10,7 @@ const searchParams = ref({
   hashtag: "",
 });
 
-const { data: problems, refresh } = await useFetch("/api/problems", {
+const { data: problems, refresh } = await useFetch("/api/student/favorites", {
   query: searchParams,
 });
 
@@ -35,7 +35,18 @@ const toggleFavorite = async (problem: any) => {
         body: { problemId: problem.id },
       });
       problem.isFavorite = false;
+      // Optional: Remove from list immediately if we want
+      // problems.value = problems.value?.filter(p => p.id !== problem.id) || [];
+      // But refreshing might be better or just keeping it untoggled until refresh?
+      // User asked for "UI design like problems/index.vue".
+      // Keeping it consistent with problems page (just toggling state) might be less jarring than disappearing items.
+      // But usually favorites page removes items.
+      // Let's refresh to be accurate or remove it.
+      // Let's just toggle state for now to match problems page behavior, user can refresh to remove.
+      // Actually, standard behavior for favorites list is usually "remove from list" or "stay until reload".
+      // Let's stick to "stay until reload" but update state, so it's consistent.
     } else {
+      // Re-adding? (e.g. user toggled off then on again quickly)
       await $fetch("/api/favorite", {
         method: "POST",
         body: { problemId: problem.id },
@@ -52,7 +63,9 @@ const toggleFavorite = async (problem: any) => {
 
 <template>
   <div class="container mx-auto p-4 max-w-7xl">
-    <h1 class="text-3xl font-bold mb-8">{{ $t("student.problems.title") }}</h1>
+    <h1 class="text-3xl font-bold mb-8">
+      {{ $t("student.favorites.title", "My Favorites") }}
+    </h1>
 
     <ProblemSearch @search="handleSearch" />
     <br />
@@ -89,43 +102,33 @@ const toggleFavorite = async (problem: any) => {
               #{{ tag }}
             </div>
           </div>
-          <div class="card-actions justify-between mt-4 items-center gap-2">
-            <div>
+          <div class="card-actions justify-end mt-4 items-center gap-2">
+            <button
+              class="btn btn-ghost btn-circle btn-sm"
+              @click="toggleFavorite(problem)"
+              :disabled="loadingId === problem.id"
+            >
+              <span
+                v-if="loadingId === problem.id"
+                class="loading loading-spinner loading-xs"
+              ></span>
               <Icon
-                v-if="problem.isError"
-                name="heroicons:x-mark-20-solid"
-                class="w-6 h-6 text-red-500 font-bold"
-                title="Incorrectly answered"
+                v-else
+                :name="
+                  problem.isFavorite
+                    ? 'heroicons:heart-solid'
+                    : 'heroicons:heart'
+                "
+                class="w-5 h-5"
+                :class="{ 'text-red-500': problem.isFavorite }"
               />
-            </div>
-            <div class="flex gap-2 items-center">
-              <button
-                class="btn btn-ghost btn-circle btn-sm"
-                @click="toggleFavorite(problem)"
-                :disabled="loadingId === problem.id"
-              >
-                <span
-                  v-if="loadingId === problem.id"
-                  class="loading loading-spinner loading-xs"
-                ></span>
-                <Icon
-                  v-else
-                  :name="
-                    problem.isFavorite
-                      ? 'heroicons:heart-solid'
-                      : 'heroicons:heart'
-                  "
-                  class="w-5 h-5"
-                  :class="{ 'text-red-500': problem.isFavorite }"
-                />
-              </button>
-              <NuxtLink
-                :to="localePath(`/student/problems/${problem.id}`)"
-                class="btn btn-ghost btn-sm"
-              >
-                {{ $t("student.problems.solve") }}
-              </NuxtLink>
-            </div>
+            </button>
+            <NuxtLink
+              :to="localePath(`/student/problems/${problem.id}`)"
+              class="btn btn-ghost btn-sm"
+            >
+              {{ $t("student.problems.solve") }}
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -139,7 +142,7 @@ const toggleFavorite = async (problem: any) => {
       v-if="problems && problems.length === 0"
       class="text-center py-10 text-base-content/70"
     >
-      {{ $t("student.problems.no_problems") }}
+      {{ $t("student.favorites.no_favorites", "No favorite problems yet.") }}
     </div>
   </div>
 </template>

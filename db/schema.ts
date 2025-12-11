@@ -334,3 +334,30 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const favorites = pgTable("favorites", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  problemId: text("problem_id")
+    .notNull()
+    .references(() => problems.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const errorProblems = pgTable("error_problems", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  problemId: text("problem_id")
+    .notNull()
+    .references(() => problems.id),
+  understood: boolean("understood").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
