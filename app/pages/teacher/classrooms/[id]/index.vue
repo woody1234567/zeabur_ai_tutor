@@ -366,61 +366,12 @@ const deleteClassroom = async () => {
               </div>
 
               <div v-if="posts && posts.length > 0" class="space-y-4">
-                <div
+                <PostsCard
                   v-for="post in posts"
                   :key="post.id"
-                  class="card bg-base-200 p-4"
-                >
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <p class="font-bold">
-                        {{ post.classDate }} {{ post.classStartTime }} -
-                        {{ post.classEndTime }}
-                        <span v-if="post.classLength">
-                          - {{ Math.floor(post.classLength / 60) }}h
-                          {{ post.classLength % 60 }}m
-                        </span>
-                      </p>
-                      <!-- Display Attendees -->
-                      <div
-                        v-if="
-                          post.attendees &&
-                          post.attendees.length > 0 &&
-                          classroom
-                        "
-                        class="text-sm opacity-70 mt-1"
-                      >
-                        <span class="font-semibold">Attendees: </span>
-                        {{
-                          post.attendees
-                            .map(
-                              (id: string) =>
-                                classroom.students.find((s: any) => s.id === id)
-                                  ?.name
-                            )
-                            .filter(Boolean)
-                            .join(", ")
-                        }}
-                      </div>
-                      <div
-                        v-else-if="
-                          post.attendees && post.attendees.length === 0
-                        "
-                        class="text-sm opacity-50 mt-1"
-                      >
-                        No attendees selected
-                      </div>
-                    </div>
-                    <div class="flex flex-col items-end">
-                      <span class="text-xs opacity-50">
-                        Created:
-                        {{ new Date(post.createdAt).toLocaleDateString() }}
-                      </span>
-                    </div>
-                  </div>
-                  <div class="divider my-2"></div>
-                  <p class="whitespace-pre-wrap">{{ post.content }}</p>
-                </div>
+                  :post="post"
+                  :students="classroom.students"
+                />
               </div>
               <div v-else class="text-center py-10 opacity-50">
                 <p>

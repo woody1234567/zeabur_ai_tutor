@@ -18,6 +18,11 @@ const {
 const { data: homeworks } = await useFetch(
   `/api/student/classrooms/${classroomId}/homeworks`
 );
+
+// Fetch posts (Contact Book)
+const { data: posts } = await useFetch(
+  `/api/teacher/classrooms/${classroomId}/posts`
+);
 </script>
 
 <template>
@@ -155,6 +160,29 @@ const { data: homeworks } = await useFetch(
             :classroom-id="classroomId"
             user-type="student"
           />
+        </div>
+      </div>
+
+      <!-- Contact Book (Posts) Section -->
+      <div class="card bg-base-100 shadow-xl border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title mb-4">
+            {{ $t("teacher.classrooms.posts.title", "Contact Book") }}
+          </h2>
+
+          <div v-if="posts && posts.length > 0" class="space-y-4">
+            <PostsCard
+              v-for="post in posts"
+              :key="post.id"
+              :post="post"
+              :students="classroom.students"
+            />
+          </div>
+          <div v-else class="text-center py-10 opacity-50">
+            <p>
+              {{ $t("teacher.classrooms.posts.no_posts", "No posts yet") }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
