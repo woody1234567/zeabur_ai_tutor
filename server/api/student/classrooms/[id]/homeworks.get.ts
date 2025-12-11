@@ -1,5 +1,9 @@
-import { homeworks, classroomStudents } from "../../../../../db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import {
+  homeworks,
+  classroomStudents,
+  homeworkClassrooms,
+} from "../../../../../db/schema";
+import { eq, and, desc, or } from "drizzle-orm";
 import { auth } from "../../../../../server/utils/auth";
 
 export default defineEventHandler(async (event) => {
@@ -43,9 +47,27 @@ export default defineEventHandler(async (event) => {
 
   // Fetch homeworks
   const result = await useDrizzle()
-    .select()
+    .selectDistinct({
+      id: homeworks.id,
+      teacherId: homeworks.teacherId,
+      classroomId: homeworks.classroomId,
+      subject: homeworks.subject,
+      title: homeworks.title,
+      deadline: homeworks.deadline,
+      createdAt: homeworks.createdAt,
+      updatedAt: homeworks.updatedAt,
+    })
     .from(homeworks)
-    .where(eq(homeworks.classroomId, classroomId))
+    .leftJoin(
+      homeworkClassrooms,
+      eq(homeworks.id, homeworkClassrooms.homeworkId)
+    )
+    .where(
+      or(
+        eq(homeworks.classroomId, classroomId), //if we choose to save all the classrooms info in the homework_classrooms table, we don't have to include this line of code.
+        eq(homeworkClassrooms.classroomId, classroomId)
+      )
+    )
     .orderBy(desc(homeworks.createdAt));
 
   return result;

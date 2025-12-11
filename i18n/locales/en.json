@@ -293,6 +293,10 @@
         "danger_zone": "DANGER ZONE",
         "delete": "Delete Classroom"
       },
+      "posts": {
+        "title": "Contact Book",
+        "add": "Add Contact"
+      },
       "confirm_remove_student": "Are you sure you want to remove this student?",
       "confirm_delete_classroom": "Are you sure you want to delete this classroom? This action cannot be undone."
     },
