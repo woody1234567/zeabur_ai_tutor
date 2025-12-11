@@ -11,7 +11,7 @@ const localePath = useLocalePath();
 <template>
   <div class="bg-base-200">
     <!-- Hero Section -->
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="hero min-h-[70vh] bg-base-100 rounded-lg">
         <common-robot :theme="robotTheme" />
       </div>

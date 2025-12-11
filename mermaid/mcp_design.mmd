@@ -1,0 +1,13 @@
+flowchart TD
+    A[user ask question] --> |mcp prompts|G(problems_exercises) & H(reviewing_chapter)  --> B(AI tutor)
+    B --> C{Let me think}
+    C -->|if problems_exercises|D[problems_exercises]
+    C -->|if reviewing_chapter|E[reviewing_chapter]
+    D --> |tool|F[recommended problems]
+    D --> |resource|I[problems list]
+    E --> |tool|J[recommended class materials]
+    E --> |resource|K[class materials list]
+    F --> M[suggesting problems exercises]
+    I --> M[suggesting problems exercises]
+    J --> L[suggest reading class material]
+    K --> L[suggest reading class material]
