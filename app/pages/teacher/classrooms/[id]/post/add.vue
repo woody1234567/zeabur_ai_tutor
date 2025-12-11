@@ -14,7 +14,7 @@ const { data: classroom } = await useFetch(
 );
 
 const form = ref({
-  date: new Date().toISOString().split("T")[0],
+  date: new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Taipei" }),
   startTime: "09:00",
   endTime: "10:00",
   content: "",

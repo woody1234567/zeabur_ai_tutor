@@ -17,8 +17,8 @@ export default defineEventHandler(async (event) => {
       id: posts.id,
       content: posts.content,
       classDate: posts.classDate,
-      classStartTime: sql<string>`to_char(${posts.classStartTime}, 'HH24:MI')`,
-      classEndTime: sql<string>`to_char(${posts.classEndTime}, 'HH24:MI')`,
+      classStartTime: sql<string>`to_char(${posts.classStartTime} AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Taipei', 'HH24:MI')`,
+      classEndTime: sql<string>`to_char(${posts.classEndTime} AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Taipei', 'HH24:MI')`,
       classLength:
         sql<number>`EXTRACT(EPOCH FROM ${posts.classLength}) / 60`.mapWith(
           Number
