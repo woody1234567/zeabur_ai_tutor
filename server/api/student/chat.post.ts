@@ -87,33 +87,25 @@ export default defineEventHandler(async (event) => {
   // Append user message
   messages.push({ role: "user", content: message });
 
+  // Create messages for API call (including system context)
+  const apiMessages = [
+    {
+      role: "system",
+      content: `You are a helpful AI Tutor. Current Student ID: ${user.id}. Name: ${user.name}. When recommending materials, use the provided Student ID.`,
+    },
+    ...messages,
+  ];
+
   try {
-    const runner = openai.beta.chat.completions
-      .runTools({
-        model: "gpt-4o", // Or gpt-3.5-turbo if preferred/available
-        messages: messages,
-        tools: tools,
-      })
-      .on("message", (msg) => {
-        // We could stream this, but for MVP let's wait for completion
-        // If we want to capture tool calls we can introspect the runner context or result
-      });
-
-    // Handle tool calls manually if needed, or let runner handle them
-    // The runner.finalContent() will give us the final text.
-    // However, runner automatically calls the tools if we provide the tool implementation.
-    // Wait, the runner needs the function implementations.
-
-    // Let's use the standard loop instead of runner for better control/storage of tool calls
-    // Or configure runner with tool implementation.
+    // ... (keep commented out runner if it was there)
   } catch (e) {
-    // Fallback to standard loop for simplicity and explicit history storage
+    // ...
   }
 
   // Standard loop approach
   let response = await openai.chat.completions.create({
     model: "gpt-4o",
-    messages: messages,
+    messages: apiMessages,
     tools: tools,
     tool_choice: "auto",
   });
@@ -122,7 +114,8 @@ export default defineEventHandler(async (event) => {
 
   // Handle tool calls
   while (responseMessage.tool_calls) {
-    messages.push(responseMessage); // Add assistant message with tool calls
+    messages.push(responseMessage); // Add assistant message with tool calls to DB history
+    apiMessages.push(responseMessage); // Add to current context
 
     for (const toolCall of responseMessage.tool_calls) {
       if (toolCall.function.name === "search_problems") {
@@ -134,12 +127,14 @@ export default defineEventHandler(async (event) => {
           limit: 3,
         });
 
-        messages.push({
+        const toolMessage = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: "search_problems",
           content: JSON.stringify(searchResults),
-        });
+        };
+        messages.push(toolMessage);
+        apiMessages.push(toolMessage);
       } else if (toolCall.function.name === "recommend_materials") {
         const args = JSON.parse(toolCall.function.arguments);
         const recommendations = await recommendMaterials({
@@ -148,19 +143,21 @@ export default defineEventHandler(async (event) => {
           limit: args.limit,
         });
 
-        messages.push({
+        const toolMessage = {
           tool_call_id: toolCall.id,
           role: "tool",
           name: "recommend_materials",
           content: JSON.stringify(recommendations),
-        });
+        };
+        messages.push(toolMessage);
+        apiMessages.push(toolMessage);
       }
     }
 
     // Get next response
     response = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: messages,
+      messages: apiMessages,
       tools: tools,
       tool_choice: "auto", // Or none?
     });

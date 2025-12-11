@@ -12,7 +12,9 @@ const filteredMessages = computed(() => {
     (msg) =>
       msg.role === "user" ||
       msg.role === "assistant" ||
-      (msg.role === "tool" && (msg as any).name === "search_problems")
+      (msg.role === "tool" &&
+        ((msg as any).name === "search_problems" ||
+          (msg as any).name === "recommend_materials"))
   );
 });
 const userMessage = ref("");
@@ -164,6 +166,24 @@ async function sendMessage() {
                 v-for="problem in JSON.parse(msg.content)"
                 :key="problem.id"
                 :problem="problem"
+              />
+            </div>
+
+            <!-- Tool Output (Material Cards) -->
+            <div
+              v-else-if="msg.role === 'tool' && (msg as any).name === 'recommend_materials'"
+              class="grid grid-cols-1 gap-2"
+            >
+              <div
+                v-if="JSON.parse(msg.content).length === 0"
+                class="text-sm opacity-60"
+              >
+                No materials found.
+              </div>
+              <ClassMaterialCard
+                v-for="material in JSON.parse(msg.content)"
+                :key="material.id"
+                :material="material"
               />
             </div>
 

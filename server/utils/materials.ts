@@ -51,6 +51,8 @@ export const recommendMaterials = async (args: {
       subject: classMaterials.subject,
       description: classMaterials.subject, // Using subject as description proxy if needed
       className: classrooms.name,
+      classroomId: classrooms.id,
+      isFolder: classMaterials.isFolder,
       sharedAt: classroomMaterials.createdAt,
     })
     .from(classroomMaterials)
