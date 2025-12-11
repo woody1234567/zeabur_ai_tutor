@@ -3,6 +3,7 @@ import { db } from "../../../db";
 import { chatHistory } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import { searchProblems } from "../../utils/problems";
+import { recommendMaterials } from "../../utils/materials";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -25,7 +26,34 @@ const tools = [
       },
     },
   },
-] as const;
+  {
+    type: "function",
+    function: {
+      name: "recommend_materials",
+      description:
+        "Recommend class materials to a student based on their enrolled classrooms and optional search keywords.",
+      parameters: {
+        type: "object",
+        properties: {
+          studentId: {
+            type: "string",
+            description: "The ID of the student to recommend materials for",
+          },
+          keyword: {
+            type: "string",
+            description:
+              "Optional keyword to filter materials by name, subject, or hashtags",
+          },
+          limit: {
+            type: "number",
+            description: "Maximum number of recommendations to return",
+          },
+        },
+        required: ["studentId"],
+      },
+    },
+  },
+];
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -111,6 +139,20 @@ export default defineEventHandler(async (event) => {
           role: "tool",
           name: "search_problems",
           content: JSON.stringify(searchResults),
+        });
+      } else if (toolCall.function.name === "recommend_materials") {
+        const args = JSON.parse(toolCall.function.arguments);
+        const recommendations = await recommendMaterials({
+          studentId: args.studentId || user.id,
+          keyword: args.keyword,
+          limit: args.limit,
+        });
+
+        messages.push({
+          tool_call_id: toolCall.id,
+          role: "tool",
+          name: "recommend_materials",
+          content: JSON.stringify(recommendations),
         });
       }
     }
