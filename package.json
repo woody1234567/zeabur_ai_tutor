@@ -5,10 +5,10 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "migrate": "drizzle-kit migrate",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:start": "docker desktop start",
     "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
