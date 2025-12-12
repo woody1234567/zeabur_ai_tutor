@@ -389,3 +389,29 @@ export const problemsStatus = pgTable(
     };
   }
 );
+
+export const postsTemplate = pgTable(
+  "posts_template",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id),
+    classroomId: text("classroom_id")
+      .notNull()
+      .references(() => classrooms.id),
+    template: text("template").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      templateUnique: uniqueIndex("posts_template_user_classroom_unique").on(
+        table.userId,
+        table.classroomId
+      ),
+    };
+  }
+);

@@ -19,6 +19,10 @@ const { data: classroom } = await useFetch(
   `/api/teacher/classrooms/${classroomId}`
 );
 
+const { data: templateData } = await useFetch(
+  `/api/teacher/classrooms/${classroomId}/posts/template`
+);
+
 // Fetch post details
 const { data: postData, error: fetchError } = await useFetch(
   `/api/teacher/classrooms/${classroomId}/posts/${postId}`
@@ -36,7 +40,12 @@ const form = ref({
 
 const generating = ref(false);
 const isSubmitting = ref(false);
+const isUpdatingTemplate = ref(false);
 const error = ref("");
+
+const DEFAULT_TEMPLATE = `Topic: ...
+Homework: ...
+Key points: ...`;
 
 // Populate form when data is available
 watch(
@@ -69,6 +78,13 @@ watch(
   },
   { immediate: true }
 );
+
+// Initialize template
+if (templateData.value && templateData.value.template) {
+  form.value.template = templateData.value.template;
+} else {
+  form.value.template = DEFAULT_TEMPLATE;
+}
 
 const classLength = computed(() => {
   if (!form.value.startTime || !form.value.endTime) return 0;
@@ -105,6 +121,26 @@ const handleBender = async () => {
       "Failed to generate content with AI. Please try again or type manually.";
   } finally {
     generating.value = false;
+  }
+};
+
+const handleUpdateTemplate = async () => {
+  if (!form.value.template) return;
+
+  isUpdatingTemplate.value = true;
+  try {
+    await $fetch(`/api/teacher/classrooms/${classroomId}/posts/template`, {
+      method: "PUT",
+      body: {
+        template: form.value.template,
+      },
+    });
+    // Optional: Add success feedback
+  } catch (e) {
+    console.error("Failed to update template", e);
+    error.value = "Failed to update template";
+  } finally {
+    isUpdatingTemplate.value = false;
   }
 };
 
@@ -254,16 +290,26 @@ const toggleAllAttendees = () => {
             </div>
 
             <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Template</span>
-                <span class="label-text-alt text-base-content/70"
-                  >Define the structure</span
+              <label class="label justify-between">
+                <div class="flex flex-col">
+                  <span class="label-text font-medium">Template</span>
+                  <span class="label-text-alt text-base-content/70"
+                    >Define the structure</span
+                  >
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-xs btn-outline btn-primary"
+                  @click="handleUpdateTemplate"
+                  :disabled="isUpdatingTemplate"
                 >
+                  {{ isUpdatingTemplate ? "Updating..." : "Update Template" }}
+                </button>
               </label>
               <textarea
                 v-model="form.template"
                 class="textarea textarea-bordered h-32"
-                placeholder="Topic: ...&#10;Homework: ...&#10;Key points: ..."
+                :placeholder="DEFAULT_TEMPLATE"
               ></textarea>
             </div>
           </div>
