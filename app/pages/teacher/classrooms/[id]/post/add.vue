@@ -13,6 +13,10 @@ const { data: classroom } = await useFetch(
   `/api/teacher/classrooms/${classroomId}`
 );
 
+const { data: templateData } = await useFetch(
+  `/api/teacher/classrooms/${classroomId}/posts/template`
+);
+
 const form = ref({
   date: new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Taipei" }),
   startTime: "09:00",
@@ -25,7 +29,19 @@ const form = ref({
 
 const generating = ref(false);
 const isSubmitting = ref(false);
+const isUpdatingTemplate = ref(false);
 const error = ref("");
+
+const DEFAULT_TEMPLATE = `Topic: ...
+Homework: ...
+Key points: ...`;
+
+// Initialize template
+if (templateData.value && templateData.value.template) {
+  form.value.template = templateData.value.template;
+} else {
+  form.value.template = DEFAULT_TEMPLATE;
+}
 
 // Select all students by default when classroom loads
 watch(
@@ -73,6 +89,26 @@ const handleBender = async () => {
       "Failed to generate content with AI. Please try again or type manually.";
   } finally {
     generating.value = false;
+  }
+};
+
+const handleUpdateTemplate = async () => {
+  if (!form.value.template) return;
+
+  isUpdatingTemplate.value = true;
+  try {
+    await $fetch(`/api/teacher/classrooms/${classroomId}/posts/template`, {
+      method: "PUT",
+      body: {
+        template: form.value.template,
+      },
+    });
+    // Optional: Add success feedback
+  } catch (e) {
+    console.error("Failed to update template", e);
+    error.value = "Failed to update template";
+  } finally {
+    isUpdatingTemplate.value = false;
   }
 };
 
@@ -205,30 +241,45 @@ const toggleAllAttendees = () => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-medium">Class Summary</span>
-                <span class="label-text-alt text-base-content/70"
-                  >Briefly describe today's class</span
-                >
+                <div class="flex flex-col">
+                  <h2 class="label-text font-medium">Class Summary</h2>
+                  <span class="label-text-alt text-base-content/70"
+                    >Briefly describe today's class</span
+                  >
+                </div>
               </label>
+              <br />
               <textarea
                 v-model="form.summary"
                 class="textarea textarea-bordered h-32"
                 placeholder="e.g. Covered Chapter 3, assigned exercise 4..."
               ></textarea>
             </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Template</span>
-                <span class="label-text-alt text-base-content/70"
-                  >Define the structure</span
-                >
-              </label>
-              <textarea
-                v-model="form.template"
-                class="textarea textarea-bordered h-32"
-                placeholder="Topic: ...&#10;Homework: ...&#10;Key points: ..."
-              ></textarea>
+            <div class="flex flex-col gap-2">
+              <div class="form-control">
+                <label class="label">
+                  <div class="flex flex-col">
+                    <h2 class="label-text font-medium">Template</h2>
+                    <span class="label-text-alt text-base-content/70"
+                      >Define the structure</span
+                    >
+                  </div>
+                </label>
+                <br />
+                <textarea
+                  v-model="form.template"
+                  class="textarea textarea-bordered h-32"
+                  :placeholder="DEFAULT_TEMPLATE"
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                class="btn btn-xs btn-outline btn-primary"
+                @click="handleUpdateTemplate"
+                :disabled="isUpdatingTemplate"
+              >
+                {{ isUpdatingTemplate ? "Updating..." : "Update Template" }}
+              </button>
             </div>
           </div>
 
