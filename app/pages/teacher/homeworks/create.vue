@@ -64,7 +64,10 @@ const createHomework = async () => {
     await $fetch("/api/teacher/homeworks", {
       method: "POST",
       body: {
-        ...hwForm.value,
+        classroomIds: [hwForm.value.classroomId],
+        subject: hwForm.value.subject,
+        title: hwForm.value.title,
+        deadline: hwForm.value.deadline,
         problemIds: selectedProblems.value.map((p) => p.id),
       },
     });
