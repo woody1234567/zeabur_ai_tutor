@@ -1,0 +1,88 @@
+flowchart LR
+
+%% ============================
+%% CLIENT LAYER
+%% ============================
+subgraph Client["🖥️ Client (Nuxt Frontend)"]
+    UI["使用者介面<br/>學生/老師端"]
+    SendQuery["呼叫 /api/agent"]
+end
+
+%% ============================
+%% NUXT SERVER LAYER
+%% ============================
+subgraph NuxtServer["🟦 Nuxt Server (TS)"]
+    
+    subgraph MCP["🔧 MCP Tools Layer (Tools Provider)"]
+        DBTool["📘 DB Tool (Drizzle + Neon)"]
+        R2Tool["📁 File Tool (Cloudflare R2)"]
+        StateTool["🗂️ State Tool (Redis Cache)"]
+        LogTool["📝 Logging Tool"]
+        OtherTool["🔨 其他客製工具"]
+    end
+
+    APIProxy["/api/agent<br/>Proxy → LangGraph Python"]    
+end
+
+
+%% ============================
+%% LANGGRAPH AGENT LAYER
+%% ============================
+subgraph LangGraph["🟨 LangGraph Agent Layer (Python)"]
+
+    subgraph Workflow["🧠 Agent Workflow (State Machine)"]
+        Intent["Intent Parser<br/>理解學生需求"]
+        Planner["Teaching Planner<br/>規劃教學步驟"]
+        ToolRouter{"Tool Router<br/>決定使用哪個 MCP 工具"}
+        ToolNode["ToolNode<br/>呼叫 MCP Tool API"]
+        Generator["Output Generator<br/>生成教學內容"]
+        SaveState["Save Learning State"]
+    end
+
+end
+
+%% ============================
+%% DATA LAYER
+%% ============================
+subgraph Data["🗄️ External Data / Infra"]
+    Neon["🐘 Neon Postgres"]
+    R2["☁️ Cloudflare R2"]
+    Redis["⚡ Upstash Redis"]
+end
+
+
+%% ============================
+%% FLOWS
+%% ============================
+UI --> SendQuery --> APIProxy
+
+APIProxy --> Intent
+Intent --> Planner
+Planner --> ToolRouter
+
+%% Router decides if needs tool
+ToolRouter -->|需要資料或檔案| ToolNode
+
+%% ToolNode calls actual MCP tools
+ToolNode --> DBTool
+ToolNode --> R2Tool
+ToolNode --> StateTool
+ToolNode --> OtherTool
+
+%% Tools call data
+DBTool --> Neon
+R2Tool --> R2
+StateTool --> Redis
+
+%% Tool results feed back
+DBTool --> ToolNode
+R2Tool --> ToolNode
+StateTool --> ToolNode
+
+ToolRouter -->|不需要工具| Generator
+ToolNode --> Generator
+
+Generator --> SaveState
+SaveState --> Redis
+SaveState --> APIProxy --> UI
+
