@@ -103,7 +103,8 @@
       "homework": "Homework",
       "logout": "Logout",
       "menu": "Menu",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "materials": "Materials"
     },
     "classrooms": {
       "title": "My Classrooms",

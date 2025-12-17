@@ -98,6 +98,11 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <NuxtLink :to="localePath('/student/materials')">{{
+                $t("student.layout.materials")
+              }}</NuxtLink>
+            </li>
+            <li>
               <NuxtLink :to="localePath('/student/ai-chat')">AI Chat</NuxtLink>
             </li>
             <li>
