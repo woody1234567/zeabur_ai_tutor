@@ -19,6 +19,8 @@ const filteredMessages = computed(() => {
 });
 const userMessage = ref("");
 const isLoading = ref(false);
+const useTestbank = ref(false);
+const useClassMaterials = ref(false);
 
 const { data: chatHistoryList, refresh: refreshHistory } = await useFetch(
   "/api/student/chats"
@@ -61,6 +63,8 @@ async function sendMessage() {
       body: {
         message: msg,
         chatId: currentChatId.value,
+        includeTestbank: useTestbank.value,
+        includeClassMaterials: useClassMaterials.value,
       },
     });
 
@@ -200,7 +204,26 @@ async function sendMessage() {
       </div>
 
       <!-- Input Area -->
-      <div class="p-4 border-t border-base-300 bg-base-100">
+      <div class="px-4 py-2 bg-base-100 border-t border-base-300">
+        <label class="label cursor-pointer justify-start gap-2 w-fit">
+          <input
+            type="checkbox"
+            v-model="useTestbank"
+            class="checkbox checkbox-xs"
+          />
+          <span class="label-text text-xs">Use Testbank Resource</span>
+        </label>
+        <label class="label cursor-pointer justify-start gap-2 w-fit">
+          <input
+            type="checkbox"
+            v-model="useClassMaterials"
+            class="checkbox checkbox-xs"
+          />
+          <span class="label-text text-xs">Use Class Materials</span>
+        </label>
+      </div>
+
+      <div class="p-4 pt-0 border-t-0 bg-base-100">
         <div class="flex gap-2 max-w-4xl mx-auto">
           <input
             v-model="userMessage"
