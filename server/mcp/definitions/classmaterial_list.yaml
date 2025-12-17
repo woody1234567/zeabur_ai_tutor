@@ -1,0 +1,4 @@
+name: classmaterial_list
+description: List of available class materials with metadata (name, subject, chapter, source)
+uri: classmaterials://list
+mimeType: application/json

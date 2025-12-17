@@ -1,0 +1,22 @@
+[project]
+name = "ai-service"
+version = "0.1.0"
+description = "AI Chat Service with LangChain and LangGraph"
+authors = [
+    {name = "AI Tutor Team", email = "dev@example.com"},
+]
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "langchain>=0.1.0",
+    "langgraph>=0.0.10",
+    "langchain-openai>=0.0.5",
+    "pydantic>=2.0.0",
+    "httpx>=0.26.0",
+    "python-dotenv>=1.0.0"
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,14 @@
+name: search_problems
+description: Search for problems in the question bank by title, source, or hashtag.
+inputSchema:
+  type: object
+  properties:
+    title:
+      type: string
+      description: Filter by problem title
+    source:
+      type: string
+      description: Filter by problem source
+    hashtag:
+      type: string
+      description: Filter by hashtag

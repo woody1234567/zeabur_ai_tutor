@@ -1,0 +1,17 @@
+name: recommend_materials
+description: Recommend class materials to a student based on their enrolled classrooms and optional search keywords. Use this to find relevant reading materials, notes, or slides for the student.
+inputSchema:
+  type: object
+  properties:
+    studentId:
+      type: string
+      description: The ID of the student to recommend materials for
+    keyword:
+      type: string
+      description: Optional keyword to filter materials by name, subject, or hashtags
+    limit:
+      type: number
+      default: 5
+      description: Maximum number of recommendations to return
+  required:
+    - studentId

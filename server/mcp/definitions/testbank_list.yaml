@@ -1,0 +1,4 @@
+name: testbank_list
+description: List of all available problems in the test bank with metadata (title, source, hashtags, difficulty)
+uri: testbank://list
+mimeType: application/json

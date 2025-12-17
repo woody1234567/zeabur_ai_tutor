@@ -1,0 +1,78 @@
+flowchart TD
+    %% =====================
+    %% Client & Entry
+    %% =====================
+    A["Student Message"] --> B{"Intent Classifier<br/>LLM + few-shot"}
+
+    %% =====================
+    %% Intent Routing
+    %% =====================
+    B -->|concept_confusion| C["Concept Confusion Router"]
+    B -->|practice_request| D["Practice Request Router"]
+    B -->|material_lookup| E["Material Lookup Router"]
+    B -->|unclear / fallback| F["Fallback Node"]
+
+    %% =====================
+    %% Action Layer (LangGraph Nodes)
+    %% =====================
+    C --> C1["recommend_materials<br/>(existing tool)"]
+    C --> C2["search_problems<br/>(existing tool)"]
+
+    D --> D1["search_problems<br/>(hashtag / subject / limit)"]
+    D -->|need explanation| D2["read_problems<br/>(existing mcp resource)"]
+
+    E --> E1["read_class_materials<br/>(existing MCP resource)"]
+
+    %% =====================
+    %% Tool Layer (MCP Resources)
+    %% =====================
+    subgraph Tool_Layer ["MCP Resource Tools"]
+        T1["search_problems<br/>utils/problems.ts"]
+        T2["recommend_materials<br/>utils/materials.ts"]
+        T3["read_problems<br/>reuse filters + id/hashtag"]
+        T4["read_class_materials<br/>classroom scope + materialId/type"]
+    end
+
+    C1 --> T2
+    C2 --> T1
+    D1 --> T1
+    D2 --> T3
+    E1 --> T4
+
+    %% =====================
+    %% Data & Utilities
+    %% =====================
+    subgraph Shared_Utils ["Shared Query Utilities"]
+        U1["problems.ts<br/>filters / classroom scope"]
+        U2["materials.ts<br/>classroom visibility logic"]
+    end
+
+    T1 --> U1
+    T3 --> U1
+    T2 --> U2
+    T4 --> U2
+
+    %% =====================
+    %% Aggregation & Memory
+    %% =====================
+    C1 --> G["Merge Results"]
+    C2 --> G
+    G --> M["Conversation Memory<br/>buffer / DB log"]
+
+    D1 --> M
+    D2 --> M
+    E1 --> M
+
+    %% =====================
+    %% Failure Handling
+    %% =====================
+    T1 -->|empty / error| F
+    T2 -->|empty / error| F
+    T3 -->|empty / error| F
+    T4 -->|empty / error| F
+
+    %% =====================
+    %% Output
+    %% =====================
+    M --> O["JSON Response<br/>{type, items}"]
+    F --> O
