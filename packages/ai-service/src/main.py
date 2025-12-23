@@ -4,7 +4,17 @@ from typing import List, Optional, Any
 from langchain_core.messages import HumanMessage
 from src.graph.workflow import app_graph
 
-app = FastAPI(title="AI Tutor Chat Service")
+from contextlib import asynccontextmanager
+from src.tools.mcp_manager import mcp_manager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load MCP tools on startup
+    await mcp_manager.init_client()
+    yield
+    # Clean up if needed
+
+app = FastAPI(title="AI Tutor Chat Service", lifespan=lifespan)
 
 class ChatRequest(BaseModel):
     message: str

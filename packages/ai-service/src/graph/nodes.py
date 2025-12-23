@@ -2,18 +2,39 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.runnables import RunnableConfig
 from .state import AgentState
 
-# --- Mock Tools / Services for now ---
+from src.tools.mcp_manager import mcp_manager
+
+# --- Real MCP Tools Wrappers ---
+
 async def search_problems_tool(query: str, filters: dict = None):
-    return [{"id": "p1", "title": "Sample Problem", "content": "Integration logic..."}]
+    tool = mcp_manager.get_tool("search_problems")
+    if not tool:
+        return [{"error": "Tool 'search_problems' not available"}]
+    
+    # Map arguments to what the tool expects
+    # The tool likely expects a single string input or a specific schema.
+    # If the tool is structured, we might need to pass a dict.
+    # For now, let's assume it takes a query string.
+    # We might need to adjust this based on the actual tool definition.
+    return await tool.ainvoke({"query": query, "limit": filters.get("limit") if filters else 5})
 
 async def recommend_materials_tool(query: str):
-    return [{"id": "m1", "title": "Calculus Video", "url": "http://example.com"}]
+    tool = mcp_manager.get_tool("recommend_materials")
+    if not tool:
+        return [{"error": "Tool 'recommend_materials' not available"}]
+    return await tool.ainvoke({"studentId": "default-student", "limit": 5}) # Adjusted args based on typical usage
 
 async def read_class_materials_tool(query: str, classroom_id: str):
-    return [{"id": "cm1", "title": "Lecture Notes", "content": "Chapter 1..."}]
+    # This might use a resource or a tool. 
+    # If it is a tool:
+    # tool = mcp_manager.get_tool("read_class_materials")
+    # if tool: return await tool.ainvoke(...)
+    return [{"id": "cm1", "title": "Lecture Notes (Mock)", "content": "Real implementation pending resource integration."}]
 
 async def read_problems_tool(problem_ids: list):
-    return [{"id": "p1", "explanation": "Detailed explanation..."}]
+    # Pending resource implementation
+    return [{"id": "p1", "explanation": "Detailed explanation (Mock)..."}]
+
 
 
 # --- Nodes ---
