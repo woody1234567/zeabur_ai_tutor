@@ -336,7 +336,9 @@ const deleteClassroom = async () => {
           <!-- Class Materials Section -->
           <div class="card bg-base-100 shadow-xl border border-base-200">
             <div class="card-body">
-              <h2 class="card-title mb-4">Class Materials</h2>
+              <h2 class="card-title mb-4">
+                {{ $t("teacher.classrooms.materials.title") }}
+              </h2>
               <ClassroomMaterialsList
                 :classroom-id="classroomId"
                 user-type="teacher"
@@ -375,9 +377,7 @@ const deleteClassroom = async () => {
                 />
               </div>
               <div v-else class="text-center py-10 opacity-50">
-                <p>
-                  {{ $t("teacher.classrooms.posts.no_posts", "No posts yet") }}
-                </p>
+                {{ $t("teacher.classrooms.posts.no_posts") }}
               </div>
             </div>
           </div>

@@ -299,6 +299,14 @@
         "danger_zone": "危險區域",
         "delete": "刪除教室"
       },
+      "posts": {
+        "title": "聯絡簿",
+        "add": "新增貼文",
+        "no_posts": "尚無貼文"
+      },
+      "materials": {
+        "title": "課程教材"
+      },
       "confirm_remove_student": "您確定要移除此學生嗎？",
       "confirm_delete_classroom": "您確定要刪除此教室嗎？此動作無法復原。"
     },
