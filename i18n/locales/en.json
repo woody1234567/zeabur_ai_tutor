@@ -634,6 +634,19 @@
         "failed_save": "Failed to save event",
         "failed_delete": "Failed to delete event",
         "failed_update": "Failed to update event"
+      },
+      "materials_list": {
+        "home": "Home",
+        "no_materials": "No materials found",
+        "shared": "Shared"
+      },
+      "posts_card": {
+        "no_date": "No Date",
+        "edit": "Edit",
+        "no_time": "Time not specified",
+        "included": "Included",
+        "attendees": "Attendees",
+        "no_attendees": "No attendees"
       }
     },
     "admin": {

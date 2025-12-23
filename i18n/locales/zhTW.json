@@ -634,6 +634,19 @@
         "failed_save": "儲存行程失敗",
         "failed_delete": "刪除行程失敗",
         "failed_update": "更新行程失敗"
+      },
+      "materials_list": {
+        "home": "首頁",
+        "no_materials": "找不到教材",
+        "shared": "分享於"
+      },
+      "posts_card": {
+        "no_date": "無日期",
+        "edit": "編輯",
+        "no_time": "未指定時間",
+        "included": "公布日期",
+        "attendees": "出席者",
+        "no_attendees": "無出席者"
       }
     },
     "admin": {

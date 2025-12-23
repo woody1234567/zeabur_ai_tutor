@@ -61,7 +61,7 @@ function openItem(item: any) {
         <li>
           <a @click="navigateToBreadcrumb(-1)">
             <Icon name="heroicons:home" class="w-4 h-4 mr-1" />
-            Home
+            {{ $t("components.common.materials_list.home") }}
           </a>
         </li>
         <li v-for="(crumb, index) in currentPath" :key="crumb.id">
@@ -87,7 +87,7 @@ function openItem(item: any) {
       class="flex flex-col items-center justify-center p-8 bg-base-100 rounded-lg border border-dashed border-base-300 text-base-content/50"
     >
       <Icon name="heroicons:folder-open" class="w-12 h-12 mb-2 opacity-50" />
-      <p>No materials found</p>
+      <p>{{ $t("components.common.materials_list.no_materials") }}</p>
     </div>
 
     <!-- Grid -->
@@ -135,7 +135,8 @@ function openItem(item: any) {
             v-if="!currentFolderId && item.sharedAt"
             class="text-xs text-gray-400 mt-1"
           >
-            Shared {{ new Date(item.sharedAt).toLocaleDateString() }}
+            {{ $t("components.common.materials_list.shared") }}
+            {{ new Date(item.sharedAt).toLocaleDateString() }}
           </span>
         </div>
       </div>

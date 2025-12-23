@@ -65,7 +65,7 @@ const attendeeNames = computed(() => {
         <div class="flex-1">
           <div class="flex justify-between items-center">
             <h3 class="card-title text-lg font-bold">
-              {{ post.classDate || "No Date" }}
+              {{ post.classDate || $t("components.common.posts_card.no_date") }}
             </h3>
             <!-- Edit Button -->
             <NuxtLink
@@ -79,7 +79,7 @@ const attendeeNames = computed(() => {
               class="btn btn-ghost btn-xs text-info"
             >
               <Icon name="heroicons:pencil-square" class="size-4 mr-1" />
-              Edit
+              {{ $t("components.common.posts_card.edit") }}
             </NuxtLink>
           </div>
           <div
@@ -89,7 +89,7 @@ const attendeeNames = computed(() => {
             <span v-if="post.classStartTime && post.classEndTime">
               {{ post.classStartTime }} - {{ post.classEndTime }}
             </span>
-            <span v-else>Time not specified</span>
+            <span v-else>{{ $t("components.common.posts_card.no_time") }}</span>
 
             <span
               v-if="post.classLength"
@@ -101,7 +101,8 @@ const attendeeNames = computed(() => {
         </div>
         <!-- Created At -->
         <div class="text-xs opacity-50 whitespace-nowrap">
-          Included: {{ formatDate(post.createdAt) }}
+          {{ $t("components.common.posts_card.included") }}:
+          {{ formatDate(post.createdAt) }}
         </div>
       </div>
 
@@ -109,7 +110,9 @@ const attendeeNames = computed(() => {
 
       <!-- Attendees -->
       <div class="flex flex-wrap items-center gap-2 mb-3">
-        <span class="text-sm font-semibold opacity-70">Attendees:</span>
+        <span class="text-sm font-semibold opacity-70">
+          {{ $t("components.common.posts_card.attendees") }}:
+        </span>
         <template v-if="attendeeNames.length > 0">
           <div
             v-for="name in attendeeNames"
@@ -119,7 +122,9 @@ const attendeeNames = computed(() => {
             {{ name }}
           </div>
         </template>
-        <span v-else class="text-sm opacity-50 italic">No attendees</span>
+        <span v-else class="text-sm opacity-50 italic">
+          {{ $t("components.common.posts_card.no_attendees") }}
+        </span>
       </div>
 
       <!-- Content -->
