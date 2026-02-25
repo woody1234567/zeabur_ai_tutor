@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "langchain-architecture": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "0cdd844e5af5d2c47e3faf31ba9b9f1b86a611edecc72e2021688c0b6cce6938"
+    },
+    "langgraph-docs": {
+      "source": "langchain-ai/deepagents",
+      "sourceType": "github",
+      "computedHash": "00bb7db4700630b80a3526c430059ee03a0dade284756b114f2e36f99bf87776"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "9c87c315aed143ee3b34bec8117100f5035e0df09e6b23e1ecc772cff434c9ad"
+    }
+  }
+}
