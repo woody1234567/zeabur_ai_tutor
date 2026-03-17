@@ -1,6 +1,3 @@
-import { db } from "../../../db";
-import { problems } from "../../../db/schema";
-import { and, ilike, sql } from "drizzle-orm";
 import { z } from "zod";
 import { searchProblems } from "../../utils/problems";
 

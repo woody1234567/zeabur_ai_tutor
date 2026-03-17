@@ -5,9 +5,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const getRouteBaseName = useRouteBaseName();
   const routeBaseName = getRouteBaseName(to);
 
-  // Allow access to MCP routes
-  console.log("Middleware checking path:", to.path);
-  // if (to.path.includes("/mcp")) return;
+  // Nuxt route middleware only applies to app routes.
+  // Server-side MCP endpoints under /mcp are handled by Nitro directly.
 
   const { data: session } = await authClient.getSession({
     fetchOptions: {
@@ -18,9 +17,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const userRole = session?.user?.role;
 
   if (session) {
-    console.log("Full User Object:", session.user);
-    console.log("User Role:", userRole);
-
     if (userRole === "user") {
       try {
         const { hasRequestedRole } = await $fetch(
@@ -56,7 +52,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Admin routes
   if (typeof routeBaseName === "string" && routeBaseName.startsWith("admin")) {
-    console.log(userRole);
     if (userRole !== "admin") {
       return navigateTo(localePath("/unauthorized"));
     }
