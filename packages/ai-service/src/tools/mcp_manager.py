@@ -1,5 +1,5 @@
-import asyncio
-from typing import List, Optional, Any
+import os
+from typing import List, Optional
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.tools import BaseTool
 
@@ -18,10 +18,11 @@ class MCPManager:
         if self._client:
             return
 
-        print("🔌 Connecting to MCP Server...")
+        mcp_server_url = os.getenv("MCP_SERVER_URL", "http://localhost:3000/mcp")
+        print(f"🔌 Connecting to MCP Server: {mcp_server_url}")
         self._client = MultiServerMCPClient(connections={
             "nuxt-server": {
-                "url": "http://localhost:3000/mcp", 
+                "url": mcp_server_url,
                 "transport": "http"
             }
         })

@@ -33,7 +33,8 @@ export default defineEventHandler(async (event) => {
   setHeader(event, "Connection", "keep-alive");
 
   // Forward to Python microservice streaming endpoint
-  const pythonRes = await fetch("http://localhost:8000/chat/stream", {
+  const aiServiceBase = (process.env.AI_SERVICE_URL || "http://localhost:8000").replace(/\/$/, "");
+  const pythonRes = await fetch(`${aiServiceBase}/chat/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
