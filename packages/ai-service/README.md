@@ -2,6 +2,23 @@
 
 This service provides tutor chat streaming for the Nuxt app.
 
+## Environment variables
+
+Create `packages/ai-service/.env` from `.env.example`:
+
+```bash
+cd packages/ai-service
+cp .env.example .env
+```
+
+Required variables:
+
+- `OPENAI_API_KEY`: API key for LLM calls
+- `MCP_SERVER_URL`: Nuxt MCP endpoint
+  - local: `http://localhost:3000/mcp`
+  - Zeabur: `http://web:3000/mcp` (replace `web` with your Nuxt service name)
+- `PYTHONUNBUFFERED`: recommended `1` for real-time logs
+
 ## Run locally
 
 ```bash
