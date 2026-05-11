@@ -15,6 +15,174 @@
       "source": "supabase/agent-skills",
       "sourceType": "github",
       "computedHash": "9c87c315aed143ee3b34bec8117100f5035e0df09e6b23e1ecc772cff434c9ad"
+    },
+    "zeabur-auth": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-auth/SKILL.md",
+      "computedHash": "1c34a45a66ab22ae3ce01e79128b504e31e3a55f793cd344b439d56ccd2d1b92"
+    },
+    "zeabur-database": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-database/SKILL.md",
+      "computedHash": "790a195bf42b483c51c11502d7e883430023897a82222ac813f04e19a7d28cda"
+    },
+    "zeabur-deploy": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-deploy/SKILL.md",
+      "computedHash": "99de4f3212e204fbeece57150ca43460410fa818edf47709e949d337ea012428"
+    },
+    "zeabur-deployment-logs": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-deployment-logs/SKILL.md",
+      "computedHash": "1d94883289a2dcac1a773cf924bf838379728f5e521e7b332dd25e57ee87d23d"
+    },
+    "zeabur-dockerfile": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-dockerfile/SKILL.md",
+      "computedHash": "cf617f8d9a669c0af9262a92cd34ce0c47fc31dd5b890a3ba5e06fe19023e647"
+    },
+    "zeabur-domain-dns": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-domain-dns/SKILL.md",
+      "computedHash": "d005c1162bb9ff4fa5b429eac6ee4cf9fd22bf90eae16364d0a6b707993106be"
+    },
+    "zeabur-domain-register": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-domain-register/SKILL.md",
+      "computedHash": "e134d4ae27a96a4e5cb6128fe4a1d09ac5f5ec112b20ed761a09209d002d7e13"
+    },
+    "zeabur-domain-url": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-domain-url/SKILL.md",
+      "computedHash": "121645d1a89dcb9d0579ec35e224e60c9055fef248242697cb3d674b1044846a"
+    },
+    "zeabur-file": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-file/SKILL.md",
+      "computedHash": "9fad2bef8aab46e1f84be3e629cacd3e07c29443c40f6831349a2b4d42a2ec44"
+    },
+    "zeabur-migration": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-migration/SKILL.md",
+      "computedHash": "9ddd331adb3156eb91254a1309c936958fee51507b46e9d6fec2f8e0fcde6356"
+    },
+    "zeabur-object-storage": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-object-storage/SKILL.md",
+      "computedHash": "5cb7f3f629002377c0e91eed6df14c870600977c933a02872affd2a161982303"
+    },
+    "zeabur-port-mismatch": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-port-mismatch/SKILL.md",
+      "computedHash": "2367f6adb609dd45082f7e327bc7744af8ff2a79da64afe5e0a8492e2426445f"
+    },
+    "zeabur-project-create": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-project-create/SKILL.md",
+      "computedHash": "d52c59b606c6fb7440c4fa49cb7eb7068fda81e9c1209bf1dcb211b20fbc943b"
+    },
+    "zeabur-project-delete": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-project-delete/SKILL.md",
+      "computedHash": "e733b7eb380c5123325fae0cfab3bd3f800adbff25b2478eedfff6dd38db6be7"
+    },
+    "zeabur-restart": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-restart/SKILL.md",
+      "computedHash": "b59102aa73c6d55845644093b8488d2443802a4f3605a1a648d20e9947fbabeb"
+    },
+    "zeabur-server-catalog": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-server-catalog/SKILL.md",
+      "computedHash": "a3b269fb1ab3d5d96385d5d37a9de521efb7551c01970d82e5de2d77502edcf9"
+    },
+    "zeabur-server-list": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-server-list/SKILL.md",
+      "computedHash": "12cffb5c55fbc420231612f793ff09282586f1249d3c8d9c4ef6f18a95abbf0a"
+    },
+    "zeabur-server-rent": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-server-rent/SKILL.md",
+      "computedHash": "db72e5668e30056ad1b65d7c8f57ec0cbf8eb84127e7fb10b7b77bcb3d88d37e"
+    },
+    "zeabur-service-delete": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-service-delete/SKILL.md",
+      "computedHash": "aa4f2e2b9c4fcd15c2b0b705ed6d3d11e835bc1af269dc108f57c06159b53fed"
+    },
+    "zeabur-service-exec": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-service-exec/SKILL.md",
+      "computedHash": "c60a8b37083e0793112235b31a44401b033383c451d0ff9a2366de1ccdea6173"
+    },
+    "zeabur-service-list": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-service-list/SKILL.md",
+      "computedHash": "c65079163d3fb36255cda5642d71caee10a3de018b952f6fd8e0f54a1217eaf4"
+    },
+    "zeabur-service-metric": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-service-metric/SKILL.md",
+      "computedHash": "1008ad4fe5e3db7aa2177842a10ca6c321dbd5e7ff190a49744f5765aca51897"
+    },
+    "zeabur-startup-order": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-startup-order/SKILL.md",
+      "computedHash": "d55efe9dda7a1fe0bd1f9868726ca142a45063d784a4a6bbcf2d2cd0c85da195"
+    },
+    "zeabur-template": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-template/SKILL.md",
+      "computedHash": "9d6e24646d84c6cc1d1fa1590a814aaf8f2ba8b283d5963a36a0ea9db601e017"
+    },
+    "zeabur-template-backup": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-template-backup/SKILL.md",
+      "computedHash": "dac85cb85b27d9f1b9ae40a5df4329533bf3f9cfd1c93df99f530830a8ce885f"
+    },
+    "zeabur-template-publish": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-template-publish/SKILL.md",
+      "computedHash": "3686eae363e8a87ec5d23733f4b4c31c8d2f89d948e6332f9edb302fbc0ea399"
+    },
+    "zeabur-update-service": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-update-service/SKILL.md",
+      "computedHash": "e9fa135a8ce5b771ff2e67aec54321ba122ee3f8309420c62d9791d410a71ba0"
+    },
+    "zeabur-variables": {
+      "source": "zeabur/zeabur-claude-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/zeabur-variables/SKILL.md",
+      "computedHash": "2048f131ba838dd05575ae71779e40f09fd45b85c269e57ff3f1267bd6455707"
     }
   }
 }

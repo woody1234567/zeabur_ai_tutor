@@ -58,6 +58,7 @@ export default defineNuxtConfig({
     classMaterialsR2SecretAccessKey:
       process.env.CLASS_MATERIALS_R2_SECRET_ACCESS_KEY,
     classMaterialsR2PublicDomain: process.env.CLASS_MATERIALS_R2_PUBLIC_DOMAIN,
+    aiServiceUrl: process.env.AI_SERVICE_URL ?? "http://localhost:8000",
   },
   css: ["~/assets/css/main.css"],
 });
