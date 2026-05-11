@@ -69,4 +69,7 @@ async def chat_endpoint(req: ChatRequest):
 
 if __name__ == "__main__":
     import uvicorn
+    # 不過這個區塊只在本機直接執行 python src/main.py 時才會用到，生產環境是由
+    # Dockerfile CMD 的 uvicorn 指令啟動，不會走這裡。所以對部署沒有影響。
+    
     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
