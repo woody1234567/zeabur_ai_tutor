@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Zeabur Deployment
+
+- Project: `AI_tutor` — ID: `699d4f8c99e5a92f233f9077`
+- Nuxt app service (`ai-tutor-new`) — ID: `699d5917f134fffc31ddcc38`
+- AI microservice (`ai-service`) — ID: `6a02061ddd502f86055af4c6`
+- PostgreSQL — ID: `699d4f9699e5a92f233f9078`
+- Server: woody's server (Linode Singapore) — `server-697eaea70f19f38d75bddde3`
+
+To redeploy:
+```bash
+# Redeploy Nuxt app
+npx zeabur@latest deploy --project-id 699d4f8c99e5a92f233f9077 --service-id 699d5917f134fffc31ddcc38 --json
+
+# Redeploy AI microservice (run from packages/ai-service/)
+cd packages/ai-service && npx zeabur@latest deploy --project-id 699d4f8c99e5a92f233f9077 --service-id 6a02061ddd502f86055af4c6 --json
+```
+
 ## Commands
 
 ```bash
