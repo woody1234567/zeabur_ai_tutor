@@ -11,12 +11,19 @@ cd packages/ai-service
 cp .env.example .env
 ```
 
+Keep real secrets in `.env`. The committed `.env.example` file is only a
+template and is not loaded by the service.
+
 Required variables:
 
 - `OPENAI_API_KEY`: API key for LLM calls
 - `MCP_SERVER_URL`: Nuxt MCP endpoint
   - local: `http://localhost:3000/mcp`
   - Zeabur: `http://web:3000/mcp` (replace `web` with your Nuxt service name)
+- `MCP_CONNECT_MAX_ATTEMPTS`: startup discovery attempts (default: `8`)
+- `MCP_CONNECT_INITIAL_DELAY_SECONDS`: initial retry delay (default: `0.5`)
+- `MCP_CONNECT_MAX_DELAY_SECONDS`: retry delay cap (default: `5`)
+- `MCP_CONNECT_TIMEOUT_SECONDS`: timeout for each discovery attempt (default: `5`)
 - `PYTHONUNBUFFERED`: recommended `1` for real-time logs
 
 ## Run locally

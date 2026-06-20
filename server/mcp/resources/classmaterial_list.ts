@@ -1,4 +1,4 @@
-import { getClassMaterialsMetadata } from "../../utils/materials";
+import { getClassMaterialsMetadata } from "../../utils/materials";  
 
 export default defineMcpResource({
   name: "classmaterial_list",

@@ -56,6 +56,11 @@ async def stream_chat(
     classroom_id: Optional[str] = None,
 ) -> AsyncGenerator[str, None]:
     """Convert LangGraph astream_events to SSE-formatted strings."""
+    # Startup discovery may have exhausted its retries before Nuxt became ready.
+    # Retry once per chat so the service can recover without a process restart.
+    if not mcp_manager.is_ready:
+        await mcp_manager.init_client(max_attempts=1)
+
     history = convert_messages(messages)
     history.append(HumanMessage(content=message))
 

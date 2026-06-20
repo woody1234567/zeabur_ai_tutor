@@ -83,6 +83,11 @@
       "sourceType": "github",
       "computedHash": "fc617bfab9d06826cba1097def5c7775f4522a1dabdd1a0111472f9929b1b914"
     },
+    "manage-mcp": {
+      "source": "mcp-toolkit.nuxt.dev",
+      "sourceType": "well-known",
+      "computedHash": "8425398b750eeb8a61c976d5a95f47425fbdf521c0d09a619fc626bbdd627b06"
+    },
     "nuxt": {
       "source": "antfu/skills",
       "sourceType": "github",

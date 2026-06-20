@@ -1,10 +1,17 @@
 import json
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional, Any
+from dotenv import load_dotenv
 
 from contextlib import asynccontextmanager
+
+# Load local development settings before importing modules that construct
+# OpenAI clients. Existing process variables from Docker/Zeabur take priority.
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+
 from src.tools.mcp_manager import mcp_manager
 from src.graph.workflow import stream_chat
 

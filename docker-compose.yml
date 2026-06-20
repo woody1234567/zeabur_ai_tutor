@@ -10,8 +10,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      ai-service:
-        condition: service_started
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -36,6 +34,17 @@ services:
       CLASS_MATERIALS_R2_PUBLIC_DOMAIN: ${CLASS_MATERIALS_R2_PUBLIC_DOMAIN:-}
     ports:
       - "3000:3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/mcp',{method:'POST',headers:{'content-type':'application/json','accept':'application/json, text/event-stream'},body:'{"jsonrpc":"2.0","id":1,"method":"tools/list"}'}).then(async response=>{const body=await response.text();if(!response.ok||!body.includes('"tools"'))process.exit(1)}).catch(()=>process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
   db:
     image: postgres:16-alpine
@@ -64,10 +73,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      web:
+        condition: service_healthy
     environment:
       PYTHONUNBUFFERED: "1"
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      MCP_SERVER_URL: ${MCP_SERVER_URL:-http://web:3000/mcp}
+      MCP_SERVER_URL: http://web:3000/mcp
+      MCP_CONNECT_MAX_ATTEMPTS: ${MCP_CONNECT_MAX_ATTEMPTS:-8}
+      MCP_CONNECT_INITIAL_DELAY_SECONDS: ${MCP_CONNECT_INITIAL_DELAY_SECONDS:-0.5}
+      MCP_CONNECT_MAX_DELAY_SECONDS: ${MCP_CONNECT_MAX_DELAY_SECONDS:-5}
+      MCP_CONNECT_TIMEOUT_SECONDS: ${MCP_CONNECT_TIMEOUT_SECONDS:-5}
       # If ai-service needs DB in future, use this:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/ai_tutor
     ports:
