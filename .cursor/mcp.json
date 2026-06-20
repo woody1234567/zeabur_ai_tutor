@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "zeabur-ai-tutor": {
+      "url": "http://localhost:3000/mcp"
+    }
+  }
+}
