@@ -86,3 +86,174 @@ problems 表（改善後）
 ├── difficulty   ← 精確比對，標準化值（P2 改善）
 └── embedding    ← 向量相似度搜尋（P4 新增）
 ```
+
+---
+
+## P0 ~ P2 改善影響範圍（Codebase Impact Analysis）
+
+### P0：加 `content` 搜尋（無 schema 變動）
+
+只需改 1 個檔案，無前端變動。
+
+| 層級 | 檔案 | 變動說明 |
+|------|------|---------|
+| Service | `server/utils/problems.ts` | `searchProblems()` 新增 `ilike(problems.content, ...)` filter |
+
+其他消費者（MCP tool、AI tool、API routes）都透過 `searchProblems()` 搜尋，自動受益，不需改動。
+
+---
+
+### P1：加 `subject` + `chapter` 欄位
+
+#### DB 層
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `db/schema.ts` | `problems` 表新增 `subject: text("subject")` 和 `chapter: text("chapter")` |
+| `drizzle/` | 執行 `pnpm db:generate` 產生 migration，再 `pnpm db:migrate` |
+
+#### 後端 — 寫入（建立/編輯題目）
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `server/api/teacher/problems.post.ts` | body 解構新增 `subject`, `chapter`；insert values 新增這兩個欄位 |
+| `server/api/teacher/problems/[id].put.ts` | `updateProblemSchema` (zod) 新增 `subject`, `chapter` 欄位；`.set()` 加入 |
+| `server/mcp/tools/create_problem.ts` | `inputSchema` 新增 `subject`, `chapter`；insert values 新增 |
+
+#### 後端 — 讀取/搜尋
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `server/utils/problems.ts` | `SearchProblemsCriteria` type 加 `subject?`, `chapter?`；`searchProblems()` 加對應 filter；select 欄位加 `subject`, `chapter` |
+| `server/api/problems/index.get.ts` | query params 新增 `subject`, `chapter`；filter 邏輯新增；select 欄位新增 |
+| `server/api/problems/[id].get.ts` | select 欄位新增 `subject`, `chapter` |
+| `server/api/teacher/problems/[id].get.ts` | select `*` 已覆蓋（需確認） |
+| `server/api/student/favorites.get.ts` | select 欄位加 `subject`, `chapter`；filter 新增 |
+| `server/api/student/error-problems.get.ts` | select 欄位加 `subject`, `chapter`；filter 新增 |
+| `server/api/student/homeworks/[id].get.ts` | select 欄位加 `subject`, `chapter`（顯示用） |
+| `server/api/student/homeworks/[id]/review.get.ts` | select 欄位加 `subject`, `chapter` |
+| `server/api/teacher/homeworks/[id].get.ts` | select 欄位加 `subject`, `chapter` |
+| `server/utils/testbank.ts` | `getTestbankMetadata()` select 加 `subject`, `chapter` |
+
+#### 後端 — AI / MCP 工具
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `server/utils/ai-tools/search-problems.ts` | inputSchema 加 `subject`, `chapter` 參數；description 更新 |
+| `server/mcp/tools/search_problems.ts` | inputSchema 加 `subject`, `chapter` 參數 |
+| `server/mcp/resources/testbank_list.ts` | 自動受益（呼叫 `getTestbankMetadata()`），不需改 |
+
+#### 前端 — 表單（建立/編輯題目）
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `app/components/teacher/ProblemForm.vue` | `ProblemData` interface 加 `subject`, `chapter`；template 加兩個表單欄位（select / input） |
+| `app/pages/teacher/problems/create.vue` | `ProblemData` interface 加 `subject`, `chapter`；`formData` 初始值加 `subject: ""`, `chapter: ""`；`submitProblem` body 加入 |
+| `app/pages/teacher/problems/[id]/edit.vue` | 同 create，加載既有 problem 資料時映射新欄位 |
+
+#### 前端 — 搜尋元件
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `app/components/ProblemSearch.vue` | `filters` 新增 `subject`, `chapter`；emit type 更新；template 加兩個搜尋輸入框 |
+
+#### 前端 — 顯示元件（題目卡片）
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `app/components/student/ProblemSummaryCard.vue` | `problem` prop type 加 `subject?`, `chapter?`；template 顯示 badge |
+| `app/components/ProblemCard.vue` | `Problem` interface 加 `subject`, `chapter`；template 顯示 |
+| `app/components/student/ProblemCard.vue` | 視內容決定是否需要加 |
+| `app/components/teacher/ProblemPreview.vue` | 預覽區顯示 subject / chapter |
+
+#### 前端 — 使用搜尋的頁面
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `app/pages/teacher/problems/index.vue` | `searchParams` 加 `subject`, `chapter`；`handleSearch` 更新；卡片顯示新欄位 |
+| `app/pages/teacher/homeworks/[id]/add.vue` | `searchParams` 加 `subject`, `chapter`；`handleSearch` 更新 |
+| `app/pages/teacher/homeworks/create.vue` | 若有搜尋功能，同上 |
+| `app/pages/student/problems/index.vue` | 搜尋參數更新；卡片顯示新欄位 |
+| `app/pages/student/favorites.vue` | 卡片顯示新欄位 |
+| `app/pages/student/wrong.vue` | 卡片顯示新欄位 |
+
+#### i18n
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `i18n/locales/en.json` | 部分 key 已存在（`subject_label`, `chapter_label` 等），需確認完整性並補齊 |
+| `i18n/locales/zhTW.json` | 對應新增中文翻譯 |
+
+---
+
+### P2：加 `grade` 欄位 + 標準化 `difficulty`
+
+影響範圍與 P1 相同，額外加上：
+
+#### DB 層
+
+| 檔案 | 變動說明 |
+|------|---------|
+| `db/schema.ts` | 新增 `grade: text("grade")`；`difficulty` 保持 text 但在應用層約束 enum |
+| `drizzle/` | migration：新增 grade 欄位；（可選）UPDATE 現有 difficulty 資料統一為 `easy`/`medium`/`hard` |
+
+#### 後端
+
+與 P1 同批檔案，差異在：
+- 所有 insert/update 路徑新增 `grade`
+- 所有 select 路徑新增 `grade`
+- `searchProblems()` 加 `grade` filter
+- `updateProblemSchema` 中 `difficulty` 已經是 `z.enum(["easy", "medium", "hard"])`（現有 `[id].put.ts` 已實作），需確認 `problems.post.ts` 也統一
+
+#### 前端
+
+與 P1 同批檔案，差異在：
+- `ProblemForm.vue` 加 `grade` select 下拉
+- `ProblemSearch.vue` 加 `grade` 篩選
+- 所有卡片元件顯示 grade badge
+- `difficulty` 顯示已有 badge mapping（`easy` → green, `medium` → yellow, `hard` → red），不需改
+
+---
+
+### 總覽：依檔案分類
+
+```
+改動量統計（P0 + P1 + P2 合計）
+
+db/schema.ts                                          ← 1 次改動
+drizzle/                                              ← 2 次 migration
+
+server/utils/problems.ts                              ← P0 + P1 + P2 累進改動
+server/utils/testbank.ts                              ← P1
+server/utils/ai-tools/search-problems.ts              ← P1
+server/api/problems/index.get.ts                      ← P1 + P2
+server/api/problems/[id].get.ts                       ← P1 + P2
+server/api/teacher/problems.post.ts                   ← P1 + P2
+server/api/teacher/problems/[id].put.ts               ← P1 + P2
+server/api/teacher/problems/[id].get.ts               ← P1 + P2
+server/api/teacher/homeworks/[id].get.ts              ← P1
+server/api/student/favorites.get.ts                   ← P1 + P2
+server/api/student/error-problems.get.ts              ← P1 + P2
+server/api/student/homeworks/[id].get.ts              ← P1
+server/api/student/homeworks/[id]/review.get.ts       ← P1
+server/mcp/tools/search_problems.ts                   ← P1 + P2
+server/mcp/tools/create_problem.ts                    ← P1 + P2
+
+app/components/ProblemSearch.vue                      ← P1 + P2
+app/components/ProblemCard.vue                        ← P1 + P2
+app/components/teacher/ProblemForm.vue                ← P1 + P2
+app/components/teacher/ProblemPreview.vue              ← P1
+app/components/student/ProblemSummaryCard.vue          ← P1 + P2
+app/pages/teacher/problems/create.vue                 ← P1 + P2
+app/pages/teacher/problems/[id]/edit.vue              ← P1 + P2
+app/pages/teacher/problems/index.vue                  ← P1 + P2
+app/pages/teacher/homeworks/[id]/add.vue              ← P1
+app/pages/student/problems/index.vue                  ← P1 + P2
+app/pages/student/favorites.vue                       ← P1
+app/pages/student/wrong.vue                           ← P1
+
+i18n/locales/en.json                                  ← P1 + P2
+i18n/locales/zhTW.json                                ← P1 + P2
+```
+
+後端 ~16 檔、前端 ~12 檔、i18n 2 檔、DB 1 檔 = **約 31 個檔案**需要改動。
