@@ -15,6 +15,13 @@
       "when": 1782063466854,
       "tag": "0001_classy_lady_ursula",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782066215897,
+      "tag": "0002_right_phantom_reporter",
+      "breakpoints": true
     }
   ]
 }

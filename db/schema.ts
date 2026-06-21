@@ -272,6 +272,21 @@ export const chatHistory = pgTable("chat_history", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const teacherChatHistory = pgTable("teacher_chat_history", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  title: text("title"),
+  messages: jsonb("messages")
+    .$type<{ role: "user" | "assistant"; content: string }[]>()
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const classMaterials = pgTable(
   "class_materials",
   {

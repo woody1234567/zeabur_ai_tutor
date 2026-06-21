@@ -80,6 +80,11 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <NuxtLink :to="localePath('/teacher/ai-chat')">{{
+                $t("teacher.layout.ai_chat")
+              }}</NuxtLink>
+            </li>
+            <li>
               <ThemeSwitcher />
             </li>
             <li>
@@ -128,6 +133,13 @@ const closeDrawer = () => {
             :to="localePath('/teacher/problems/create')"
             @click="closeDrawer"
             >{{ $t("teacher.layout.create_problem") }}</NuxtLink
+          >
+        </li>
+        <li>
+          <NuxtLink
+            :to="localePath('/teacher/ai-chat')"
+            @click="closeDrawer"
+            >{{ $t("teacher.layout.ai_chat") }}</NuxtLink
           >
         </li>
         <li>

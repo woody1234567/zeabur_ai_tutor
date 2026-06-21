@@ -94,6 +94,12 @@
       "skillPath": "skills/nuxt/SKILL.md",
       "computedHash": "9e8237ec92083db9a6f4c77d5e5bf4b1d9873d670671235bc75455ee1ca39c74"
     },
+    "openai-docs": {
+      "source": "openai/skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/openai-docs/SKILL.md",
+      "computedHash": "0436b5a4e330b85cc5468c772b49f185daa6cd7a8d2b5ff9f6c97df10c5ab373"
+    },
     "pnpm": {
       "source": "antfu/skills",
       "sourceType": "github",

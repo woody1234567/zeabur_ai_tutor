@@ -325,7 +325,18 @@
       "menu": "選單",
       "dashboard": "儀表板",
       "manage_problems": "管理題目",
-      "create_problem": "建立題目"
+      "create_problem": "建立題目",
+      "ai_chat": "AI 助手"
+    },
+    "chat": {
+      "new_chat": "新對話",
+      "placeholder": "描述你想建立的題目...",
+      "send": "送出",
+      "start_prompt": "開始與 AI 討論並建立題目",
+      "header_ai": "AI 助手",
+      "header_user": "你",
+      "error_response": "發生錯誤，請重試。",
+      "tool_running": "正在執行工具"
     },
     "classrooms": {
       "title": "教室",

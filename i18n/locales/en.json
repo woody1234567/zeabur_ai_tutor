@@ -325,7 +325,18 @@
       "menu": "Menu",
       "dashboard": "Dashboard",
       "manage_problems": "Manage Problems",
-      "create_problem": "Create Problem"
+      "create_problem": "Create Problem",
+      "ai_chat": "AI Assistant"
+    },
+    "chat": {
+      "new_chat": "New Chat",
+      "placeholder": "Describe the problem you want to create...",
+      "send": "Send",
+      "start_prompt": "Start a conversation to create or discuss problems with AI",
+      "header_ai": "AI Assistant",
+      "header_user": "You",
+      "error_response": "An error occurred, please try again.",
+      "tool_running": "Running tool"
     },
     "classrooms": {
       "title": "Classrooms",

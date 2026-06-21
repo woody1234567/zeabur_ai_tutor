@@ -3,7 +3,7 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 import { getOpenAITools, executeAiTool } from "./ai-tools";
 import type { AiToolContext } from "./ai-tools/types";
 
-function buildSystemPrompt(userId: string, classroomId?: string | null): string {
+function buildStudentSystemPrompt(userId: string, classroomId?: string | null): string {
   return `You are a helpful AI Tutor assistant.
 Student ID: ${userId}
 ${classroomId ? `Classroom ID: ${classroomId}` : ""}
@@ -13,11 +13,30 @@ Always respond in the same language the student uses.
 When recommending resources, briefly explain why they're relevant.`;
 }
 
+function buildTeacherSystemPrompt(userId: string): string {
+  return `You are an AI assistant that helps teachers create and manage exam problems.
+Teacher ID: ${userId}
+
+Your capabilities:
+- Search existing problems in the question bank for reference or to avoid duplicates.
+- Create new multiple-choice problems and save them to the database.
+
+Workflow:
+1. Discuss the problem topic, content, and difficulty with the teacher.
+2. Help draft the question stem, choices, correct answer, and explanation.
+3. Only call the create_problem tool AFTER the teacher confirms the problem content is ready.
+4. After creating, report the result and ask if they want to create more.
+
+Always respond in the same language the teacher uses.
+When drafting problems, use clear and precise language suitable for the target grade level.`;
+}
+
 export type StreamChatOptions = {
   message: string;
   userId: string;
   history: ChatCompletionMessageParam[];
   classroomId?: string | null;
+  role?: "student" | "teacher";
 };
 
 export async function* streamChat(
@@ -29,12 +48,15 @@ export async function* streamChat(
     apiKey: config.aiApiKey || "",
   });
 
-  const tools = getOpenAITools();
+  const role = options.role ?? "student";
+  const tools = getOpenAITools(role);
   const toolContext: AiToolContext = {
     userId: options.userId,
     classroomId: options.classroomId,
   };
-  const systemPrompt = buildSystemPrompt(options.userId, options.classroomId);
+  const systemPrompt = role === "teacher"
+    ? buildTeacherSystemPrompt(options.userId)
+    : buildStudentSystemPrompt(options.userId, options.classroomId);
 
   const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt },
