@@ -7,4 +7,21 @@ export default defineMcpHandler({
   name: "teacher",
   tools: [searchProblems, createProblem],
   resources: [classMaterials, testbank],
+  middleware: async (event) => {
+    if (event.context.mcpPrincipal) return;
+
+    try {
+      const session = await requireAuthSession(event);
+      if (session?.user) {
+        event.context.mcpPrincipal = {
+          id: session.user.id,
+          email: session.user.email,
+          role: session.user.role ?? "teacher",
+          scope: "teacher" as const,
+        };
+      }
+    } catch {
+      // Soft auth — let enabled guards on tools handle unauthorized access
+    }
+  },
 });
