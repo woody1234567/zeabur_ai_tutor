@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { problems } from "../../db/schema";
-import { and, ilike, sql } from "drizzle-orm";
+import { and, or, ilike, sql } from "drizzle-orm";
 
 export type SearchProblemsCriteria = {
   title?: string;
@@ -13,7 +13,12 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
   const filters = [];
 
   if (criteria.title) {
-    filters.push(ilike(problems.title, `%${criteria.title}%`));
+    filters.push(
+      or(
+        ilike(problems.title, `%${criteria.title}%`),
+        ilike(problems.content, `%${criteria.title}%`)
+      )
+    );
   }
   if (criteria.source) {
     filters.push(ilike(problems.source, `%${criteria.source}%`));
