@@ -45,7 +45,7 @@ def create_agent(user_id: str, classroom_id: Optional[str] = None):
     return create_react_agent(
         model=llm,
         tools=tools,
-        state_modifier=system,
+        prompt=system,
     )
 
 

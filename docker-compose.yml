@@ -32,6 +32,8 @@ services:
       CLASS_MATERIALS_R2_SECRET_ACCESS_KEY: ${CLASS_MATERIALS_R2_SECRET_ACCESS_KEY:-}
       CLASS_MATERIALS_R2_BUCKET_NAME: ${CLASS_MATERIALS_R2_BUCKET_NAME:-}
       CLASS_MATERIALS_R2_PUBLIC_DOMAIN: ${CLASS_MATERIALS_R2_PUBLIC_DOMAIN:-}
+      NUXT_MCP_STUDENT_GATEWAY_TOKEN: ${NUXT_MCP_STUDENT_GATEWAY_TOKEN:-}
+      NUXT_MCP_TEACHER_GATEWAY_TOKEN: ${NUXT_MCP_TEACHER_GATEWAY_TOKEN:-}
     ports:
       - "3000:3000"
     healthcheck:
@@ -40,7 +42,7 @@ services:
         - node
         - -e
         - >-
-          fetch('http://127.0.0.1:3000/mcp',{method:'POST',headers:{'content-type':'application/json','accept':'application/json, text/event-stream'},body:'{"jsonrpc":"2.0","id":1,"method":"tools/list"}'}).then(async response=>{const body=await response.text();if(!response.ok||!body.includes('"tools"'))process.exit(1)}).catch(()=>process.exit(1))
+          fetch('http://127.0.0.1:3000/').then(response=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))
       interval: 5s
       timeout: 5s
       retries: 12

@@ -5,10 +5,24 @@ inputSchema:
   properties:
     title:
       type: string
+      maxLength: 200
       description: Filter by problem title
     source:
       type: string
+      maxLength: 200
       description: Filter by problem source
     hashtag:
       type: string
+      maxLength: 100
       description: Filter by hashtag
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 20
+      default: 10
+      description: Maximum number of problems to return
+annotations:
+  readOnlyHint: true
+  destructiveHint: false
+  idempotentHint: true
+  openWorldHint: false

@@ -1,4 +1,5 @@
 import { getTestbankMetadata } from "../../utils/testbank";
+import { getMcpPrincipal } from "../../utils/mcp-auth";
 
 export default defineMcpResource({
   name: "testbank_list",
@@ -7,9 +8,17 @@ export default defineMcpResource({
   uri: "testbank://list",
   metadata: {
     mimeType: "application/json",
+    annotations: {
+      audience: ["assistant"],
+      priority: 0.7,
+    },
   },
   handler: async () => {
-    const allProblems = await getTestbankMetadata();
+    getMcpPrincipal({
+      allowedRoles: ["teacher", "admin"],
+      scope: "teacher",
+    });
+    const allProblems = await getTestbankMetadata(100);
 
     return {
       contents: [

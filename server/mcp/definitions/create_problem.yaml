@@ -1,0 +1,42 @@
+name: create_problem
+description: Create a new question-bank problem. Available only to authenticated teachers.
+inputSchema:
+  type: object
+  properties:
+    title:
+      type: string
+      minLength: 1
+      maxLength: 200
+    content:
+      type: string
+      minLength: 1
+      maxLength: 20000
+    choices:
+      type: object
+      minProperties: 2
+      additionalProperties:
+        type: string
+    correctAnswer:
+      type: string
+      description: Key of the correct choice, such as A
+    explanation:
+      type: string
+    difficulty:
+      type: string
+      enum: [easy, medium, hard]
+    source:
+      type: string
+    imageUrl:
+      type: string
+      format: uri
+    hashtags:
+      type: array
+      maxItems: 20
+      items:
+        type: string
+  required: [title, content, choices, correctAnswer]
+annotations:
+  readOnlyHint: false
+  destructiveHint: false
+  idempotentHint: false
+  openWorldHint: false

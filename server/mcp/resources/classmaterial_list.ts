@@ -1,4 +1,5 @@
-import { getClassMaterialsMetadata } from "../../utils/materials";  
+import { getClassMaterialsMetadata } from "../../utils/materials";
+import { getMcpPrincipal } from "../../utils/mcp-auth";
 
 export default defineMcpResource({
   name: "classmaterial_list",
@@ -7,10 +8,20 @@ export default defineMcpResource({
   uri: "classmaterials://list",
   metadata: {
     mimeType: "application/json",
+    annotations: {
+      audience: ["assistant"],
+      priority: 0.8,
+    },
   },
   handler: async () => {
-    // Fetch all materials (generic access)
-    const materials = await getClassMaterialsMetadata();
+    const principal = getMcpPrincipal({
+      allowedRoles: ["student", "teacher", "admin"],
+    });
+    const materials = await getClassMaterialsMetadata({
+      studentId: principal.scope === "student" ? principal.id : undefined,
+      teacherId: principal.scope === "teacher" ? principal.id : undefined,
+      limit: 100,
+    });
 
     return {
       contents: [

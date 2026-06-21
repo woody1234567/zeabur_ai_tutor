@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { problems } from "../../db/schema";
 
-export async function getTestbankMetadata() {
+export async function getTestbankMetadata(limit = 100) {
   return await db
     .select({
       title: problems.title,
@@ -9,5 +9,6 @@ export async function getTestbankMetadata() {
       hashtags: problems.hashtags,
       difficulty: problems.difficulty,
     })
-    .from(problems);
+    .from(problems)
+    .limit(Math.min(Math.max(limit, 1), 100));
 }

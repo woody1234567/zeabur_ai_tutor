@@ -1,22 +1,39 @@
 import { z } from "zod";
 import { searchProblems } from "../../utils/problems";
+import { getMcpPrincipal } from "../../utils/mcp-auth";
 
 export default defineMcpTool({
   name: "search_problems",
   description:
     "Search for problems in the question bank by title, source, or hashtag.",
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   inputSchema: {
-    title: z.string().optional().describe("Filter by problem title"),
-    source: z.string().optional().describe("Filter by problem source"),
-    hashtag: z.string().optional().describe("Filter by hashtag"),
+    title: z.string().max(200).optional().describe("Filter by problem title"),
+    source: z.string().max(200).optional().describe("Filter by problem source"),
+    hashtag: z.string().max(100).optional().describe("Filter by hashtag"),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .default(10)
+      .describe("Maximum number of problems to return"),
   },
   handler: async (args) => {
     try {
+      getMcpPrincipal({
+        allowedRoles: ["student", "teacher", "admin"],
+      });
       const results = await searchProblems({
         title: args.title,
         source: args.source,
         hashtag: args.hashtag,
-        limit: 10,
+        limit: args.limit,
       });
 
       return {

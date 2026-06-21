@@ -58,6 +58,16 @@ export default defineNuxtConfig({
     classMaterialsR2SecretAccessKey:
       process.env.CLASS_MATERIALS_R2_SECRET_ACCESS_KEY,
     classMaterialsR2PublicDomain: process.env.CLASS_MATERIALS_R2_PUBLIC_DOMAIN,
+    mcpStudentGatewayToken: "",
+    mcpTeacherGatewayToken: "",
+  },
+  mcp: {
+    name: "Study With Woody",
+  },
+  nitro: {
+    experimental: {
+      asyncContext: true,
+    },
   },
   css: ["~/assets/css/main.css"],
 });
