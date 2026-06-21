@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event);
-  const { message, chatId } = body;
+  const { message, chatId, imageUrl } = body;
 
   if (!message) {
     throw createError({ statusCode: 400, statusMessage: "Message is required" });
@@ -35,10 +35,18 @@ export default defineEventHandler(async (event) => {
 
   const history: ChatCompletionMessageParam[] = dbMessages
     .filter((m) => m.role === "user" || (m.role === "assistant" && m.content))
-    .map((m) => ({
-      role: m.role as "user" | "assistant",
-      content: m.content,
-    }));
+    .map((m) => {
+      if (m.role === "user" && m.imageUrl) {
+        return {
+          role: "user" as const,
+          content: [
+            { type: "text" as const, text: m.content },
+            { type: "image_url" as const, image_url: { url: m.imageUrl, detail: "high" as const } },
+          ],
+        };
+      }
+      return { role: m.role as "user" | "assistant", content: m.content };
+    });
 
   setHeader(event, "Content-Type", "text/event-stream");
   setHeader(event, "Cache-Control", "no-cache");
@@ -51,6 +59,7 @@ export default defineEventHandler(async (event) => {
       try {
         for await (const chunk of streamChat({
           message,
+          imageUrl,
           userId: user.id,
           history,
           role: "teacher",
@@ -67,7 +76,7 @@ export default defineEventHandler(async (event) => {
           controller.enqueue(new TextEncoder().encode(chunk));
         }
 
-        const userMsg = { role: "user", content: message };
+        const userMsg = { role: "user", content: message, ...(imageUrl && { imageUrl }) };
         const assistantMsg = { role: "assistant", content: finalContent };
         const updatedMessages = [...dbMessages, userMsg, assistantMsg];
 

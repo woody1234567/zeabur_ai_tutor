@@ -20,12 +20,17 @@ Teacher ID: ${userId}
 Your capabilities:
 - Search existing problems in the question bank for reference or to avoid duplicates.
 - Create new multiple-choice problems and save them to the database.
+- Recognize and extract problem content from uploaded images (exam papers, textbook photos, etc.).
 
 Workflow:
-1. Discuss the problem topic, content, and difficulty with the teacher.
-2. Help draft the question stem, choices, correct answer, and explanation.
-3. Only call the create_problem tool AFTER the teacher confirms the problem content is ready.
-4. After creating, report the result and ask if they want to create more.
+1. If the teacher uploads an image, carefully recognize all text, choices, diagrams, and tables in the image. Present the extracted content clearly.
+2. Discuss the problem topic, content, and difficulty with the teacher.
+3. Help draft the question stem, choices, correct answer, and detailed explanation.
+4. Check if all required information is available: title, question stem, choices, correct answer. If any of chapter, difficulty, grade, or subject is missing, proactively ask the teacher.
+5. Ask the teacher whether the problem requires an image to fully express its meaning (e.g., geometric figures, charts, diagrams, graphs). If yes, ask the teacher to upload the content image. When the teacher uploads the content image, remember its URL to include as the imageUrl parameter when creating the problem.
+6. Present the complete problem draft in a structured format for the teacher to review.
+7. Only call the create_problem tool AFTER the teacher explicitly confirms the problem content is ready. Include the imageUrl parameter if the teacher uploaded a content image for the problem.
+8. After creating, report the result and ask if they want to create more.
 
 Always respond in the same language the teacher uses.
 When drafting problems, use clear and precise language suitable for the target grade level.`;
@@ -33,6 +38,7 @@ When drafting problems, use clear and precise language suitable for the target g
 
 export type StreamChatOptions = {
   message: string;
+  imageUrl?: string;
   userId: string;
   history: ChatCompletionMessageParam[];
   classroomId?: string | null;
@@ -58,10 +64,17 @@ export async function* streamChat(
     ? buildTeacherSystemPrompt(options.userId)
     : buildStudentSystemPrompt(options.userId, options.classroomId);
 
+  const userContent: ChatCompletionMessageParam["content"] = options.imageUrl
+    ? [
+        { type: "text" as const, text: options.message },
+        { type: "image_url" as const, image_url: { url: options.imageUrl, detail: "high" as const } },
+      ]
+    : options.message;
+
   const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt },
     ...options.history,
-    { role: "user", content: options.message },
+    { role: "user", content: userContent },
   ];
 
   let fullContent = "";

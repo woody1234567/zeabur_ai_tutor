@@ -3,10 +3,17 @@ definePageMeta({
   layout: "teacher",
 });
 
+interface ChatMessage {
+  role: string;
+  content: string;
+  imageUrl?: string;
+  name?: string;
+}
+
 const { t } = useI18n();
 const chats = ref([]);
 const currentChatId = ref<string | null>(null);
-const messages = ref<{ role: string; content: string; name?: string }[]>([]);
+const messages = ref<ChatMessage[]>([]);
 const filteredMessages = computed(() => {
   return messages.value.filter(
     (msg) =>
@@ -19,6 +26,13 @@ const userMessage = ref("");
 const isLoading = ref(false);
 const streamingContent = ref("");
 const toolStatus = ref("");
+
+const pendingImage = ref<File | null>(null);
+const pendingImagePreview = ref<string | null>(null);
+const isUploading = ref(false);
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 
 const { data: chatHistoryList, refresh: refreshHistory } = await useFetch(
   "/api/teacher/chats"
@@ -47,16 +61,72 @@ async function startNewChat() {
   messages.value = [];
 }
 
-async function sendMessage() {
-  if (!userMessage.value.trim() || isLoading.value) return;
+function onFileSelect(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
 
-  const msg = userMessage.value;
+  if (file.size > MAX_IMAGE_SIZE) {
+    alert(t("teacher.chat.image_too_large"));
+    input.value = "";
+    return;
+  }
+
+  pendingImage.value = file;
+  pendingImagePreview.value = URL.createObjectURL(file);
+  input.value = "";
+}
+
+function removeImage() {
+  if (pendingImagePreview.value) {
+    URL.revokeObjectURL(pendingImagePreview.value);
+  }
+  pendingImage.value = null;
+  pendingImagePreview.value = null;
+}
+
+async function uploadImageToR2(file: File): Promise<string | null> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await $fetch<{ imageUrl: string }>("/api/teacher/upload", {
+      method: "POST",
+      body: formData,
+    });
+    return res.imageUrl;
+  } catch (e) {
+    console.error("Image upload failed:", e);
+    return null;
+  }
+}
+
+async function sendMessage() {
+  if ((!userMessage.value.trim() && !pendingImage.value) || isLoading.value) return;
+
+  const msg = userMessage.value || t("teacher.chat.image_attached");
   userMessage.value = "";
   isLoading.value = true;
   streamingContent.value = "";
   toolStatus.value = "";
 
-  messages.value.push({ role: "user", content: msg });
+  let imageUrl: string | undefined;
+
+  if (pendingImage.value) {
+    isUploading.value = true;
+    const uploaded = await uploadImageToR2(pendingImage.value);
+    isUploading.value = false;
+
+    if (!uploaded) {
+      alert(t("teacher.chat.upload_failed"));
+      isLoading.value = false;
+      return;
+    }
+    imageUrl = uploaded;
+    removeImage();
+  }
+
+  messages.value.push({ role: "user", content: msg, ...(imageUrl && { imageUrl }) });
 
   const aiMsgIndex = messages.value.length;
   messages.value.push({ role: "assistant", content: "" });
@@ -68,6 +138,7 @@ async function sendMessage() {
       body: JSON.stringify({
         message: msg,
         chatId: currentChatId.value,
+        ...(imageUrl && { imageUrl }),
       }),
     });
 
@@ -183,6 +254,12 @@ async function sendMessage() {
                 : 'chat-bubble-secondary'
             "
           >
+            <img
+              v-if="msg.imageUrl"
+              :src="msg.imageUrl"
+              alt="Uploaded image"
+              class="rounded-lg max-h-64 object-contain mb-2"
+            />
             <MarkdownRenderer
               v-if="msg.role === 'assistant'"
               :content="msg.content"
@@ -212,7 +289,48 @@ async function sendMessage() {
 
       <!-- Input Area -->
       <div class="p-4 border-t border-base-300 bg-base-100">
+        <!-- Image Preview -->
+        <div
+          v-if="pendingImagePreview"
+          class="max-w-4xl mx-auto mb-2 flex items-center gap-2"
+        >
+          <div class="relative inline-block">
+            <img
+              :src="pendingImagePreview"
+              alt="Preview"
+              class="rounded-lg max-h-32 object-contain border border-base-300"
+            />
+            <button
+              class="btn btn-circle btn-xs btn-error absolute -top-2 -right-2"
+              @click="removeImage"
+              :title="$t('teacher.chat.remove_image')"
+            >
+              X
+            </button>
+          </div>
+          <span class="text-sm text-base-content/60">
+            {{ $t("teacher.chat.image_attached") }}
+          </span>
+        </div>
+
         <div class="flex gap-2 max-w-4xl mx-auto">
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            class="hidden"
+            @change="onFileSelect"
+          />
+          <button
+            class="btn btn-ghost btn-square"
+            @click="fileInputRef?.click()"
+            :disabled="isLoading"
+            :title="$t('teacher.chat.upload_image')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </button>
           <input
             v-model="userMessage"
             @keyup.enter="sendMessage"
@@ -224,9 +342,10 @@ async function sendMessage() {
           <button
             class="btn btn-primary"
             @click="sendMessage"
-            :disabled="isLoading"
+            :disabled="isLoading || isUploading"
           >
-            {{ $t("teacher.chat.send") }}
+            <span v-if="isUploading">{{ $t("teacher.chat.uploading") }}</span>
+            <span v-else>{{ $t("teacher.chat.send") }}</span>
           </button>
         </div>
       </div>

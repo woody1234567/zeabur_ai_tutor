@@ -79,6 +79,8 @@ export const problems = pgTable("problems", {
   source: text("source"),
   imageUrl: text("image_url"),
   hashtags: jsonb("hashtags").$type<string[]>().default([]),
+  aiGenerated: boolean("ai_generated").default(false),
+  createdBy: text("created_by").references(() => user.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

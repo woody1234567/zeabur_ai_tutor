@@ -164,7 +164,7 @@ const handleSubmit = () => {
 
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-4">
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
       <div class="form-control">
         <label class="label">{{
           $t("teacher.problems.form.subject")
@@ -309,7 +309,6 @@ const handleSubmit = () => {
         $t("teacher.problems.form.content")
       }}</label>
       <VisionTool @text-extracted="handleTextExtracted" />
-      <div class="flex gap-2 mb-2">
         <FormatTool
           :current-content="modelValue.content"
           @content-formatted="handleContentFormatted"
@@ -320,7 +319,6 @@ const handleSubmit = () => {
           @options-generated="handleOptionsGenerated"
           class="flex-1"
         />
-      </div>
       <br />
       <textarea
         :value="modelValue.content"

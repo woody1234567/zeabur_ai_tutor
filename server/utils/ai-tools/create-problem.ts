@@ -30,6 +30,7 @@ const inputSchema = z.object({
   chapter: z.string().max(200).optional().describe("章節，如 第三章、二次方程式"),
   grade: z.string().max(50).optional().describe("年級，如 國一、高二"),
   source: z.string().max(500).optional().describe("來源（選填）"),
+  imageUrl: z.string().max(2_000).optional().describe("題目內容圖片的 URL（若題目需要圖片才能完整表達）"),
   hashtags: z
     .array(z.string().min(1).max(50))
     .max(20)
@@ -42,7 +43,7 @@ export const createProblemTool = {
   description:
     "將討論好的題目寫入題庫。請在老師確認題目內容（標題、題幹、選項、正確答案）後才呼叫此工具。choices 格式為 {\"A\":\"...\",\"B\":\"...\"}，correctAnswer 為正確選項的 key（如 \"A\"）。",
   parameters: z.toJSONSchema(inputSchema),
-  handler: async (args) => {
+  handler: async (args, context) => {
     const parsed = inputSchema.parse(args);
 
     if (!(parsed.correctAnswer in parsed.choices)) {
@@ -64,7 +65,10 @@ export const createProblemTool = {
         chapter: parsed.chapter,
         grade: parsed.grade,
         source: parsed.source,
+        imageUrl: parsed.imageUrl,
         hashtags: parsed.hashtags,
+        aiGenerated: true,
+        createdBy: context.userId,
       })
       .returning({
         id: problems.id,

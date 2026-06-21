@@ -336,7 +336,13 @@
       "header_ai": "AI 助手",
       "header_user": "你",
       "error_response": "發生錯誤，請重試。",
-      "tool_running": "正在執行工具"
+      "tool_running": "正在執行工具",
+      "upload_image": "上傳圖片",
+      "uploading": "上傳中...",
+      "upload_failed": "圖片上傳失敗",
+      "image_too_large": "圖片須小於 20MB",
+      "remove_image": "移除圖片",
+      "image_attached": "已附加圖片"
     },
     "classrooms": {
       "title": "教室",

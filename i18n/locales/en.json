@@ -336,7 +336,13 @@
       "header_ai": "AI Assistant",
       "header_user": "You",
       "error_response": "An error occurred, please try again.",
-      "tool_running": "Running tool"
+      "tool_running": "Running tool",
+      "upload_image": "Upload Image",
+      "uploading": "Uploading...",
+      "upload_failed": "Image upload failed",
+      "image_too_large": "Image must be under 20MB",
+      "remove_image": "Remove image",
+      "image_attached": "Image attached"
     },
     "classrooms": {
       "title": "Classrooms",
@@ -842,10 +848,11 @@
           "title": "AI Formatting Tool",
           "hide": "Hide",
           "show": "Show",
+          "hint": "Use this tool to quickly format your content into clean Markdown with LaTeX math equations. Just paste your unformatted text and let the AI do the work!",
           "description": "Use AI to format your content into clean Markdown with LaTeX math equations.",
           "description_small": "(Converts text to $...$ for inline math and $$...$$ for block math)",
-          "button_formatting": "Formatting...",
-          "button_format": "Format Current Content",
+          "formatting": "Formatting...",
+          "format_button": "Format Current Content",
           "alert_enter_content": "Please enter some content to format first.",
           "alert_failed": "Failed to format content. Please try again."
         },
@@ -854,8 +861,8 @@
           "hide": "Hide",
           "show": "Show",
           "description": "Use AI to automatically generate options and explanation based on the problem content.",
-          "button_generating": "Generating...",
-          "button_generate": "Generate Options & Explanation",
+          "generating": "Generating...",
+          "generate_button": "Generate Options & Explanation",
           "alert_enter_content": "Please enter problem content first.",
           "alert_failed": "Failed to generate options. Please try again."
         },
@@ -865,8 +872,9 @@
           "show": "Show",
           "upload_placeholder": "Upload an image or paste from clipboard (Ctrl+V) to extract text",
           "remove_image": "Remove image",
-          "button_extracting": "Extracting Text...",
-          "button_extract": "Extract Text to Content",
+          "upload_hint": "Supports handwritten or printed text. Max size 20MB.",
+          "extracting": "Extracting Text...",
+          "extract_button": "Extract Text to Content",
           "alert_no_text": "No text found in the image.",
           "alert_failed": "Failed to extract text. Please try again."
         }
