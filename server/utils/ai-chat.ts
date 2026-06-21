@@ -1,75 +1,16 @@
 import OpenAI from "openai";
-import { z } from "zod";
-import type {
-  ChatCompletionMessageParam,
-  ChatCompletionTool,
-} from "openai/resources/chat/completions";
-
-import searchProblemsDef from "../mcp/tools/search_problems";
-import recommendMaterialsDef from "../mcp/tools/recommend_materials";
-
-type McpToolDef = {
-  name: string;
-  description: string;
-  inputSchema: Record<string, z.ZodType>;
-  handler: (args: any) => Promise<any>;
-};
-
-const studentToolDefs: McpToolDef[] = [
-  searchProblemsDef as unknown as McpToolDef,
-  recommendMaterialsDef as unknown as McpToolDef,
-];
-
-function buildOpenAITools(defs: McpToolDef[]): ChatCompletionTool[] {
-  return defs.map((def) => {
-    const { $schema, ...parameters } = z.toJSONSchema(z.object(def.inputSchema));
-    return {
-      type: "function" as const,
-      function: {
-        name: def.name,
-        description: def.description,
-        parameters,
-      },
-    };
-  });
-}
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { getOpenAITools, executeAiTool } from "./ai-tools";
+import type { AiToolContext } from "./ai-tools/types";
 
 function buildSystemPrompt(userId: string, classroomId?: string | null): string {
   return `You are a helpful AI Tutor assistant.
 Student ID: ${userId}
 ${classroomId ? `Classroom ID: ${classroomId}` : ""}
 
-You can:
-- Search for practice problems (use search_problems tool)
-- Recommend class materials (use recommend_materials tool)
-- Explain concepts and problem solutions in detail
-- Answer questions about course content
-
+You can search for practice problems and recommend class materials.
 Always respond in the same language the student uses.
 When recommending resources, briefly explain why they're relevant.`;
-}
-
-async function executeTool(
-  toolName: string,
-  args: Record<string, unknown>
-): Promise<string> {
-  const def = studentToolDefs.find((d) => d.name === toolName);
-  if (!def) {
-    return JSON.stringify({ error: `Unknown tool: ${toolName}` });
-  }
-
-  try {
-    const result = await def.handler(args);
-    if (typeof result === "string") return result;
-    if (result?.content) {
-      return result.content
-        .map((c: any) => c.text ?? JSON.stringify(c))
-        .join("\n");
-    }
-    return JSON.stringify(result);
-  } catch (error: any) {
-    return JSON.stringify({ error: error.message });
-  }
 }
 
 export type StreamChatOptions = {
@@ -88,7 +29,11 @@ export async function* streamChat(
     apiKey: config.aiApiKey || "",
   });
 
-  const tools = buildOpenAITools(studentToolDefs);
+  const tools = getOpenAITools();
+  const toolContext: AiToolContext = {
+    userId: options.userId,
+    classroomId: options.classroomId,
+  };
   const systemPrompt = buildSystemPrompt(options.userId, options.classroomId);
 
   const messages: ChatCompletionMessageParam[] = [
@@ -163,7 +108,7 @@ export async function* streamChat(
             parsedArgs = JSON.parse(tc.arguments);
           } catch {}
 
-          const result = await executeTool(tc.name, parsedArgs);
+          const result = await executeAiTool(tc.name, parsedArgs, toolContext);
 
           messages.push({
             role: "tool",
