@@ -8,6 +8,13 @@
       "when": 1765528035675,
       "tag": "0000_large_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782063466854,
+      "tag": "0001_classy_lady_ursula",
+      "breakpoints": true
     }
   ]
 }

@@ -16,6 +16,10 @@ const { data: homeworkData, refresh: refreshHomework } = await useFetch(
 // Search State
 const searchParams = ref({
   title: "",
+  subject: "",
+  chapter: "",
+  grade: "",
+  difficulty: "",
   source: "",
   hashtag: "",
 });
@@ -45,6 +49,10 @@ const stagedProblemIds = computed(() => {
 
 const handleSearch = (params: {
   title: string;
+  subject: string;
+  chapter: string;
+  grade: string;
+  difficulty: string;
   source: string;
   hashtag: string;
 }) => {
@@ -141,6 +149,21 @@ const saveChanges = async () => {
                     'badge-error': problem.difficulty === 'hard',
                   }"
                   >{{ problem.difficulty }}</span
+                >
+                <span
+                  v-if="problem.subject"
+                  class="badge badge-info badge-outline badge-xs"
+                  >{{ problem.subject }}</span
+                >
+                <span
+                  v-if="problem.chapter"
+                  class="badge badge-ghost badge-xs"
+                  >{{ problem.chapter }}</span
+                >
+                <span
+                  v-if="problem.grade"
+                  class="badge badge-ghost badge-outline badge-xs"
+                  >{{ problem.grade }}</span
                 >
                 <span
                   v-if="problem.source"

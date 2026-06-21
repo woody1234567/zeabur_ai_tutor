@@ -1,11 +1,15 @@
 import { db } from "../../db";
 import { problems } from "../../db/schema";
-import { and, or, ilike, sql } from "drizzle-orm";
+import { and, or, eq, ilike, sql } from "drizzle-orm";
 
 export type SearchProblemsCriteria = {
   title?: string;
   source?: string;
   hashtag?: string;
+  subject?: string;
+  chapter?: string;
+  grade?: string;
+  difficulty?: string;
   limit?: number;
 };
 
@@ -28,6 +32,18 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
       sql`${problems.hashtags} @> ${JSON.stringify([criteria.hashtag])}`
     );
   }
+  if (criteria.subject) {
+    filters.push(eq(problems.subject, criteria.subject));
+  }
+  if (criteria.chapter) {
+    filters.push(ilike(problems.chapter, `%${criteria.chapter}%`));
+  }
+  if (criteria.grade) {
+    filters.push(eq(problems.grade, criteria.grade));
+  }
+  if (criteria.difficulty) {
+    filters.push(eq(problems.difficulty, criteria.difficulty));
+  }
 
   try {
     const results = await db
@@ -35,6 +51,9 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
         id: problems.id,
         title: problems.title,
         difficulty: problems.difficulty,
+        subject: problems.subject,
+        chapter: problems.chapter,
+        grade: problems.grade,
         source: problems.source,
         hashtags: problems.hashtags,
         content: problems.content,

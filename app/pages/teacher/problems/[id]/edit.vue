@@ -22,6 +22,9 @@ interface ProblemData {
   correctAnswer: string;
   explanation: string;
   difficulty: "easy" | "medium" | "hard";
+  subject: string;
+  chapter: string;
+  grade: string;
   source: string;
   imageFile: File | null;
   imagePreviewUrl: string | null;
@@ -36,6 +39,9 @@ interface FetchedProblem {
   correctAnswer: string;
   explanation: string | null;
   difficulty: "easy" | "medium" | "hard";
+  subject: string | null;
+  chapter: string | null;
+  grade: string | null;
   source: string | null;
   imageUrl: string | null;
   hashtags: string[] | null;
@@ -48,6 +54,9 @@ const formData = ref<ProblemData>({
   correctAnswer: "",
   explanation: "",
   difficulty: "medium",
+  subject: "",
+  chapter: "",
+  grade: "",
   source: "",
   imageFile: null,
   imagePreviewUrl: null,
@@ -80,6 +89,9 @@ watchEffect(() => {
       correctAnswer: problem.value.correctAnswer,
       explanation: problem.value.explanation || "",
       difficulty: problem.value.difficulty,
+      subject: problem.value.subject || "",
+      chapter: problem.value.chapter || "",
+      grade: problem.value.grade || "",
       source: problem.value.source || "",
       imageFile: null,
       imagePreviewUrl: problem.value.imageUrl || null,
@@ -123,6 +135,9 @@ const updateProblem = async () => {
         correctAnswer: formData.value.correctAnswer,
         explanation: formData.value.explanation,
         difficulty: formData.value.difficulty,
+        subject: formData.value.subject,
+        chapter: formData.value.chapter,
+        grade: formData.value.grade,
         source: formData.value.source,
         imageUrl,
         hashtags: formData.value.hashtags,

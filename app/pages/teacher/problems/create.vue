@@ -19,6 +19,9 @@ interface ProblemData {
   correctAnswer: string;
   explanation: string;
   difficulty: "easy" | "medium" | "hard";
+  subject: string;
+  chapter: string;
+  grade: string;
   source: string;
   imageFile: File | null;
   imagePreviewUrl: string | null;
@@ -37,6 +40,9 @@ const formData = ref<ProblemData>({
   correctAnswer: "",
   explanation: "",
   difficulty: "medium",
+  subject: "",
+  chapter: "",
+  grade: "",
   source: "",
   imageFile: null,
   imagePreviewUrl: null,
@@ -78,6 +84,9 @@ const submitProblem = async () => {
         correctAnswer: formData.value.correctAnswer,
         explanation: formData.value.explanation,
         difficulty: formData.value.difficulty,
+        subject: formData.value.subject,
+        chapter: formData.value.chapter,
+        grade: formData.value.grade,
         source: formData.value.source,
         imageUrl,
         hashtags: formData.value.hashtags,

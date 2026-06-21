@@ -34,6 +34,9 @@ export default defineEventHandler(async (event) => {
       content: problems.content,
       choices: problems.choices,
       difficulty: problems.difficulty,
+      subject: problems.subject,
+      chapter: problems.chapter,
+      grade: problems.grade,
       source: problems.source,
       imageUrl: problems.imageUrl,
       // We don't select correctAnswer or explanation here to prevent cheating?

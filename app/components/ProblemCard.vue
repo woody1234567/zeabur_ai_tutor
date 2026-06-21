@@ -3,6 +3,9 @@ interface Problem {
   id: number;
   title: string;
   difficulty: string;
+  subject?: string | null;
+  chapter?: string | null;
+  grade?: string | null;
   source: string;
 }
 
@@ -40,6 +43,11 @@ const difficultyColor = (difficulty: string) => {
           {{ problem.difficulty }}
         </div>
       </h3>
+      <div class="flex gap-1 flex-wrap mt-1">
+        <span v-if="problem.subject" class="badge badge-info badge-outline badge-xs">{{ problem.subject }}</span>
+        <span v-if="problem.chapter" class="badge badge-ghost badge-xs">{{ problem.chapter }}</span>
+        <span v-if="problem.grade" class="badge badge-ghost badge-outline badge-xs">{{ problem.grade }}</span>
+      </div>
       <p class="text-xs text-base-content/70">Source: {{ problem.source }}</p>
       <div class="card-actions justify-end mt-2">
         <NuxtLink

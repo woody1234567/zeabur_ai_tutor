@@ -6,6 +6,10 @@ const localePath = useLocalePath();
 
 const searchParams = ref({
   title: "",
+  subject: "",
+  chapter: "",
+  grade: "",
+  difficulty: "",
   source: "",
   hashtag: "",
 });
@@ -18,6 +22,10 @@ const { data: classrooms } = await useFetch("/api/teacher/classrooms");
 
 const handleSearch = (params: {
   title: string;
+  subject: string;
+  chapter: string;
+  grade: string;
+  difficulty: string;
   source: string;
   hashtag: string;
 }) => {

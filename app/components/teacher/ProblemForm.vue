@@ -11,6 +11,9 @@ interface ProblemData {
   correctAnswer: string;
   explanation: string;
   difficulty: "easy" | "medium" | "hard";
+  subject: string;
+  chapter: string;
+  grade: string;
   source: string;
   imageFile: File | null;
   imagePreviewUrl: string | null;
@@ -161,7 +164,52 @@ const handleSubmit = () => {
 
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-4">
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div class="form-control">
+        <label class="label">{{
+          $t("teacher.problems.form.subject")
+        }}</label>
+        <input
+          :value="modelValue.subject"
+          @input="
+            updateField('subject', ($event.target as HTMLInputElement).value)
+          "
+          type="text"
+          class="input input-bordered"
+          :placeholder="$t('teacher.problems.form.subject_placeholder')"
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">{{
+          $t("teacher.problems.form.chapter")
+        }}</label>
+        <input
+          :value="modelValue.chapter"
+          @input="
+            updateField('chapter', ($event.target as HTMLInputElement).value)
+          "
+          type="text"
+          class="input input-bordered"
+          :placeholder="$t('teacher.problems.form.chapter_placeholder')"
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">{{
+          $t("teacher.problems.form.grade")
+        }}</label>
+        <input
+          :value="modelValue.grade"
+          @input="
+            updateField('grade', ($event.target as HTMLInputElement).value)
+          "
+          type="text"
+          class="input input-bordered"
+          :placeholder="$t('teacher.problems.form.grade_placeholder')"
+        />
+      </div>
+
       <div class="form-control">
         <label class="label">{{
           $t("teacher.problems.form.difficulty")

@@ -36,6 +36,21 @@ export default defineMcpTool({
       .enum(["easy", "medium", "hard"])
       .optional()
       .describe("Problem difficulty"),
+    subject: z
+      .string()
+      .max(100)
+      .optional()
+      .describe("Subject area (e.g. Math, Science, English)"),
+    chapter: z
+      .string()
+      .max(200)
+      .optional()
+      .describe("Chapter or unit (e.g. Chapter 3, Quadratic Equations)"),
+    grade: z
+      .string()
+      .max(50)
+      .optional()
+      .describe("Grade level (e.g. Grade 7, Grade 10)"),
     source: z
       .string()
       .max(500)
@@ -74,6 +89,9 @@ export default defineMcpTool({
         correctAnswer: args.correctAnswer,
         explanation: args.explanation,
         difficulty: args.difficulty,
+        subject: args.subject,
+        chapter: args.chapter,
+        grade: args.grade,
         source: args.source,
         imageUrl: args.imageUrl,
         hashtags: args.hashtags,

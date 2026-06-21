@@ -1,17 +1,35 @@
 <script setup lang="ts">
 const filters = reactive({
   keyword: "",
+  subject: "",
+  chapter: "",
+  grade: "",
+  difficulty: "",
   source: "",
   hashtag: "",
 });
 
 const emit = defineEmits<{
-  search: [params: { title: string; source: string; hashtag: string }];
+  search: [
+    params: {
+      title: string;
+      subject: string;
+      chapter: string;
+      grade: string;
+      difficulty: string;
+      source: string;
+      hashtag: string;
+    },
+  ];
 }>();
 
 const handleSearch = () => {
   emit("search", {
     title: filters.keyword,
+    subject: filters.subject,
+    chapter: filters.chapter,
+    grade: filters.grade,
+    difficulty: filters.difficulty,
     source: filters.source,
     hashtag: filters.hashtag,
   });
@@ -19,6 +37,10 @@ const handleSearch = () => {
 
 const clearFilters = () => {
   filters.keyword = "";
+  filters.subject = "";
+  filters.chapter = "";
+  filters.grade = "";
+  filters.difficulty = "";
   filters.source = "";
   filters.hashtag = "";
   handleSearch();
@@ -57,6 +79,72 @@ const clearFilters = () => {
               />
             </div>
           </div>
+        </div>
+
+        <!-- Subject Filter -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">{{
+              $t("components.common.search.subject_label")
+            }}</span>
+          </label>
+          <input
+            v-model="filters.subject"
+            type="text"
+            :placeholder="$t('components.common.search.subject_placeholder')"
+            class="input input-bordered w-full"
+            @keyup.enter="handleSearch"
+          />
+        </div>
+
+        <!-- Chapter Filter -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">{{
+              $t("components.common.search.chapter_label")
+            }}</span>
+          </label>
+          <input
+            v-model="filters.chapter"
+            type="text"
+            :placeholder="$t('components.common.search.chapter_placeholder')"
+            class="input input-bordered w-full"
+            @keyup.enter="handleSearch"
+          />
+        </div>
+
+        <!-- Grade Filter -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">{{
+              $t("components.common.search.grade_label")
+            }}</span>
+          </label>
+          <input
+            v-model="filters.grade"
+            type="text"
+            :placeholder="$t('components.common.search.grade_placeholder')"
+            class="input input-bordered w-full"
+            @keyup.enter="handleSearch"
+          />
+        </div>
+
+        <!-- Difficulty Filter -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">{{
+              $t("components.common.search.difficulty_label")
+            }}</span>
+          </label>
+          <select
+            v-model="filters.difficulty"
+            class="select select-bordered w-full"
+          >
+            <option value="">{{ $t("components.common.search.all") }}</option>
+            <option value="easy">{{ $t("components.common.search.difficulty_easy") }}</option>
+            <option value="medium">{{ $t("components.common.search.difficulty_medium") }}</option>
+            <option value="hard">{{ $t("components.common.search.difficulty_hard") }}</option>
+          </select>
         </div>
 
         <!-- Source Filter -->

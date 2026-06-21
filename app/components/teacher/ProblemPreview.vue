@@ -6,6 +6,9 @@ interface ProblemData {
   correctAnswer: string;
   explanation: string;
   difficulty: string;
+  subject: string;
+  chapter: string;
+  grade: string;
   source: string;
   imagePreviewUrl: string | null;
 }
@@ -31,11 +34,19 @@ defineProps<{
             <div class="badge badge-outline">{{ problem.difficulty }}</div>
           </div>
         </div>
-        <div v-if="problem.source" class="badge badge-ghost">
-          <span class="badge badge-outline">{{
-            $t("teacher.problems.preview.source")
-          }}</span>
-          {{ problem.source }}
+        <div class="flex gap-2 flex-wrap mt-2">
+          <div v-if="problem.subject" class="badge badge-info badge-outline">
+            {{ problem.subject }}
+          </div>
+          <div v-if="problem.chapter" class="badge badge-ghost">
+            {{ problem.chapter }}
+          </div>
+          <div v-if="problem.grade" class="badge badge-ghost badge-outline">
+            {{ problem.grade }}
+          </div>
+          <div v-if="problem.source" class="badge badge-ghost">
+            {{ problem.source }}
+          </div>
         </div>
 
         <!-- Problem Content -->

@@ -1,7 +1,7 @@
 import { db } from "../../../db";
 import { problems, problemsStatus } from "../../../db/schema";
 import { auth } from "../../../server/utils/auth";
-import { and, ilike, sql, eq } from "drizzle-orm";
+import { and, eq, ilike, sql } from "drizzle-orm";
 import { updateProblemStatus } from "../../../server/utils/problemStatus";
 
 export default defineEventHandler(async (event) => {
@@ -20,14 +20,21 @@ export default defineEventHandler(async (event) => {
   const title = query.title as string;
   const source = query.source as string;
   const hashtag = query.hashtag as string;
+  const subject = query.subject as string;
+  const chapter = query.chapter as string;
+  const grade = query.grade as string;
+  const difficulty = query.difficulty as string;
 
   const filters = [];
   if (title) filters.push(ilike(problems.title, `%${title}%`));
   if (source) filters.push(ilike(problems.source, `%${source}%`));
   if (hashtag) {
-    // Check if the JSONB array contains the hashtag
     filters.push(sql`${problems.hashtags} @> ${JSON.stringify([hashtag])}`);
   }
+  if (subject) filters.push(eq(problems.subject, subject));
+  if (chapter) filters.push(ilike(problems.chapter, `%${chapter}%`));
+  if (grade) filters.push(eq(problems.grade, grade));
+  if (difficulty) filters.push(eq(problems.difficulty, difficulty));
 
   // Sync status first
   await updateProblemStatus(session.user.id);
@@ -37,6 +44,9 @@ export default defineEventHandler(async (event) => {
       id: problems.id,
       title: problems.title,
       difficulty: problems.difficulty,
+      subject: problems.subject,
+      chapter: problems.chapter,
+      grade: problems.grade,
       source: problems.source,
       hashtags: problems.hashtags,
       isFavorite: problemsStatus.isFavorite,

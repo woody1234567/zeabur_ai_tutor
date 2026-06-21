@@ -58,10 +58,13 @@ export default defineEventHandler(async (event) => {
       content: problems.content,
       choices: problems.choices,
       difficulty: problems.difficulty,
+      subject: problems.subject,
+      chapter: problems.chapter,
+      grade: problems.grade,
       source: problems.source,
       imageUrl: problems.imageUrl,
-      correctAnswer: problems.correctAnswer, // Include answer
-      explanation: problems.explanation, // Include explanation
+      correctAnswer: problems.correctAnswer,
+      explanation: problems.explanation,
     })
     .from(homeworkProblems)
     .innerJoin(problems, eq(homeworkProblems.problemId, problems.id))
