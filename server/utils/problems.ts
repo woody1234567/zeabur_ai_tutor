@@ -68,7 +68,7 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
           choices: problems.choices,
           correctAnswer: problems.correctAnswer,
           explanation: problems.explanation,
-          similarity: sql<number>`1 - ${distance}`,
+          similarity: sql<number>`1 - (${distance})`,
         })
         .from(problems)
         .where(filters.length > 0 ? and(...filters) : undefined)
