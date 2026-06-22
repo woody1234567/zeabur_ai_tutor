@@ -19,27 +19,5 @@ services:
       timeout: 5s
       retries: 10
 
-  ai-service:
-    build:
-      context: ./packages/ai-service
-      dockerfile: Dockerfile
-    container_name: ai-tutor-ai-service
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PYTHONUNBUFFERED: "1"
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      MCP_SERVER_URL: ${MCP_SERVER_URL:-http://host.docker.internal:3000/mcp}
-      MCP_CONNECT_MAX_ATTEMPTS: ${MCP_CONNECT_MAX_ATTEMPTS:-8}
-      MCP_CONNECT_INITIAL_DELAY_SECONDS: ${MCP_CONNECT_INITIAL_DELAY_SECONDS:-0.5}
-      MCP_CONNECT_MAX_DELAY_SECONDS: ${MCP_CONNECT_MAX_DELAY_SECONDS:-5}
-      MCP_CONNECT_TIMEOUT_SECONDS: ${MCP_CONNECT_TIMEOUT_SECONDS:-5}
-      # If ai-service needs DB in future, use this:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/ai_tutor
-    ports:
-      - "8000:8000"
-
 volumes:
   pgdata:

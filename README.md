@@ -39,11 +39,8 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
 - better-auth
 - Cloudflare R2 (S3-compatible)
 
-### AI service (`packages/ai-service`)
-- FastAPI
-- LangGraph + LangChain
-- OpenAI
-- MCP adapters (`langchain-mcp-adapters`)
+### AI service (`packages/ai-service`) — **Legacy**
+> This microservice is no longer actively used. AI features are now handled directly by the Nuxt server.
 
 ---
 
@@ -54,7 +51,7 @@ app/                    # Nuxt app (pages/components/layouts/middleware)
 server/                 # API routes, utils, MCP tools/resources
 db/                     # Drizzle schema and DB client
 drizzle/                # Generated migrations and snapshots
-packages/ai-service/    # Python FastAPI + LangGraph AI microservice
+packages/ai-service/    # (Legacy) Python FastAPI + LangGraph AI microservice
 i18n/locales/           # Translation files (en.json, zhTW.json)
 ```
 
@@ -65,7 +62,6 @@ i18n/locales/           # Translation files (en.json, zhTW.json)
 - Node.js 20+
 - pnpm 9+
 - Docker (for local PostgreSQL)
-- Python 3.10+ and `uv` (for AI service)
 
 ---
 
@@ -134,15 +130,6 @@ pnpm dev
 
 Nuxt runs at: <http://localhost:3000>
 
-### 5) Start AI service (separate terminal)
-
-```bash
-cd packages/ai-service
-uv run uvicorn src.main:app --reload --port 8000
-```
-
-AI service runs at: <http://localhost:8000>
-
 ---
 
 ## Available Scripts
@@ -176,10 +163,8 @@ pnpm db:studio    # Open Drizzle Studio
 
 1. Frontend calls `POST /api/student/chat`
 2. Nuxt route validates session, loads prior chat history
-3. Nuxt route streams to Python `POST /chat/stream`
-4. Python LangGraph agent uses MCP tools (served by Nuxt `/mcp`)
-5. Streamed tokens are forwarded back to frontend
-6. Final assistant message is persisted into `chat_history`
+3. AI features are handled directly by the Nuxt server (OpenAI API)
+4. Assistant message is persisted into `chat_history`
 
 ---
 

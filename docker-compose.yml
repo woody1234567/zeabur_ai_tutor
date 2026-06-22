@@ -17,7 +17,6 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-replace-with-a-strong-random-secret}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
       NUXT_BASE_URL: ${NUXT_BASE_URL:-http://localhost:3000}
-      AI_SERVICE_URL: ${AI_SERVICE_URL:-http://ai-service:8000}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GOOGLE_VISION_API_KEY: ${GOOGLE_VISION_API_KEY:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
@@ -65,30 +64,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  ai-service:
-    build:
-      context: ./packages/ai-service
-      dockerfile: Dockerfile
-    container_name: ai-tutor-ai-service
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-      web:
-        condition: service_healthy
-    environment:
-      PYTHONUNBUFFERED: "1"
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      MCP_SERVER_URL: http://web:3000/mcp
-      MCP_CONNECT_MAX_ATTEMPTS: ${MCP_CONNECT_MAX_ATTEMPTS:-8}
-      MCP_CONNECT_INITIAL_DELAY_SECONDS: ${MCP_CONNECT_INITIAL_DELAY_SECONDS:-0.5}
-      MCP_CONNECT_MAX_DELAY_SECONDS: ${MCP_CONNECT_MAX_DELAY_SECONDS:-5}
-      MCP_CONNECT_TIMEOUT_SECONDS: ${MCP_CONNECT_TIMEOUT_SECONDS:-5}
-      # If ai-service needs DB in future, use this:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/ai_tutor
-    ports:
-      - "8000:8000"
 
 volumes:
   pgdata:
