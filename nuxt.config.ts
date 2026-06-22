@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     embeddingModel: process.env.EMBEDDING_MODEL || "text-embedding-3-small",
     embeddingApiKey:
       process.env.EMBEDDING_API_KEY || process.env.OPENAI_API_KEY,
+    tavilyApiKey: process.env.TAVILY_API_KEY,
     mcpStudentGatewayToken: "",
     mcpTeacherGatewayToken: "",
   },

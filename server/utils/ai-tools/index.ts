@@ -3,9 +3,10 @@ import { toOpenAITool, type AiToolDefinition, type AiToolContext } from "./types
 import { searchProblemsTool } from "./search-problems";
 import { recommendMaterialsTool } from "./recommend-materials";
 import { createProblemTool } from "./create-problem";
+import { webSearchTool } from "./web-search";
 
-const studentTools: AiToolDefinition[] = [searchProblemsTool, recommendMaterialsTool];
-const teacherTools: AiToolDefinition[] = [searchProblemsTool, createProblemTool];
+const studentTools: AiToolDefinition[] = [searchProblemsTool, recommendMaterialsTool, webSearchTool];
+const teacherTools: AiToolDefinition[] = [searchProblemsTool, createProblemTool, webSearchTool];
 
 export function getOpenAITools(role: "student" | "teacher" = "student"): ChatCompletionTool[] {
   const tools = role === "teacher" ? teacherTools : studentTools;

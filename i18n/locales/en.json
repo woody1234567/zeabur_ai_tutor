@@ -224,7 +224,8 @@
       "placeholder": "Type your message...",
       "send": "Send",
       "error_response": "Sorry, I encountered an error. Please try again.",
-      "tool_running": "Using tool"
+      "tool_running": "Using tool",
+      "web_search": "Web Search"
     }
   },
   "calendar_help": {
@@ -354,6 +355,7 @@
       "header_user": "You",
       "error_response": "An error occurred, please try again.",
       "tool_running": "Running tool",
+      "web_search": "Web Search",
       "upload_image": "Upload Image",
       "uploading": "Uploading...",
       "upload_failed": "Image upload failed",

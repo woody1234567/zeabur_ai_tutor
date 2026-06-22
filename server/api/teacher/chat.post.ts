@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event);
-  const { message, chatId, imageUrl, projectId } = body;
+  const { message, chatId, imageUrl, projectId, useWebSearch } = body;
 
   if (!message) {
     throw createError({ statusCode: 400, statusMessage: "Message is required" });
@@ -64,6 +64,7 @@ export default defineEventHandler(async (event) => {
           history,
           role: "teacher",
           projectId: projectId ?? null,
+          useWebSearch: !!useWebSearch,
         })) {
           if (chunk.startsWith("data: ")) {
             try {

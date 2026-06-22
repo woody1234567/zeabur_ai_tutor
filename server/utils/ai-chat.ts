@@ -47,6 +47,7 @@ export type StreamChatOptions = {
   classroomId?: string | null;
   role?: "student" | "teacher";
   projectId?: string | null;
+  useWebSearch?: boolean;
 };
 
 export async function* streamChat(
@@ -75,6 +76,10 @@ export async function* streamChat(
     if (project?.systemPrompt) {
       systemPrompt += `\n\n--- Project Instructions ---\n${project.systemPrompt}`;
     }
+  }
+
+  if (options.useWebSearch) {
+    systemPrompt += `\n\nThe user has requested a web search. You MUST use the web_search tool at least once to answer this query. Search the web first, then incorporate the results into your response.`;
   }
 
   const userContent: ChatCompletionMessageParam["content"] = options.imageUrl

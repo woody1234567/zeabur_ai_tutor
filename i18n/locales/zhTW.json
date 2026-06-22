@@ -224,7 +224,8 @@
       "placeholder": "輸入您的訊息...",
       "send": "傳送",
       "error_response": "抱歉，發生錯誤。請再試一次。",
-      "tool_running": "使用工具中"
+      "tool_running": "使用工具中",
+      "web_search": "網路搜尋"
     }
   },
   "calendar_help": {
@@ -354,6 +355,7 @@
       "header_user": "你",
       "error_response": "發生錯誤，請重試。",
       "tool_running": "正在執行工具",
+      "web_search": "網路搜尋",
       "upload_image": "上傳圖片",
       "uploading": "上傳中...",
       "upload_failed": "圖片上傳失敗",
