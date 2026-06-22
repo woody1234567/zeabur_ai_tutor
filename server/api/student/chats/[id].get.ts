@@ -1,6 +1,5 @@
 import { db } from "../../../../db";
 import { chatHistory } from "../../../../db/schema";
-
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
@@ -15,23 +14,16 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  try {
-    const chat = await db.query.chatHistory.findFirst({
-      where: and(eq(chatHistory.id, id), eq(chatHistory.studentId, user.id)),
-    });
+  const chat = await db.query.chatHistory.findFirst({
+    where: and(eq(chatHistory.id, id), eq(chatHistory.studentId, user.id)),
+  });
 
-    if (!chat) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "Chat not found",
-      });
-    }
-
-    return chat;
-  } catch (error: any) {
+  if (!chat) {
     throw createError({
-      statusCode: 500,
-      statusMessage: `Error fetching chat: ${error.message}`,
+      statusCode: 404,
+      statusMessage: "Chat not found",
     });
   }
+
+  return chat;
 });

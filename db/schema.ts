@@ -298,7 +298,7 @@ export const chatHistory = pgTable("chat_history", {
   }),
   title: text("title"),
   messages: jsonb("messages")
-    .$type<{ role: "user" | "assistant"; content: string }[]>()
+    .$type<import("ai").UIMessage[]>()
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -316,7 +316,7 @@ export const teacherChatHistory = pgTable("teacher_chat_history", {
   }),
   title: text("title"),
   messages: jsonb("messages")
-    .$type<{ role: "user" | "assistant"; content: string }[]>()
+    .$type<import("ai").UIMessage[]>()
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

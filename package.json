@@ -16,6 +16,8 @@
     "db:backfill-embeddings": "npx tsx scripts/backfill-embeddings.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.74",
+    "@ai-sdk/vue": "^3.0.208",
     "@aws-sdk/client-s3": "^3.937.0",
     "@aws-sdk/s3-request-presigner": "^3.937.0",
     "@fullcalendar/core": "^6.1.19",
@@ -44,6 +46,7 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@ai-sdk/devtools": "^0.0.20",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/heroicons-outline": "^1.2.1",
     "@iconify-json/heroicons-solid": "^1.2.1",

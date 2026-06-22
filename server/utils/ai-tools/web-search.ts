@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { AiToolDefinition } from "./types";
+import { tool } from "ai";
 
 const inputSchema = z.object({
   query: z.string().max(500).describe("搜尋查詢關鍵字"),
@@ -17,13 +17,11 @@ const inputSchema = z.object({
     .describe("搜尋結果數量上限"),
 });
 
-export const webSearchTool = {
-  name: "web_search",
+export const webSearchTool = tool({
   description:
     "搜尋網路上的資訊。適合用於查詢概念解釋、時事新聞、參考資料、或題庫中找不到的知識。回傳搜尋結果包含標題、網址與內容摘要。",
-  parameters: z.toJSONSchema(inputSchema),
-  handler: async (args) => {
-    const parsed = inputSchema.parse(args);
+  inputSchema,
+  execute: async (input) => {
     const config = useRuntimeConfig();
 
     if (!config.tavilyApiKey) {
@@ -37,9 +35,9 @@ export const webSearchTool = {
       method: "POST",
       body: {
         api_key: config.tavilyApiKey,
-        query: parsed.query,
-        topic: parsed.topic ?? "general",
-        max_results: parsed.maxResults,
+        query: input.query,
+        topic: input.topic ?? "general",
+        max_results: input.maxResults,
         include_answer: true,
       },
     });
@@ -55,4 +53,4 @@ export const webSearchTool = {
 
     return JSON.stringify(formatted, null, 2);
   },
-} satisfies AiToolDefinition;
+});

@@ -1,14 +1,11 @@
 <script setup lang="ts">
+import { Chat } from "@ai-sdk/vue";
+import { DefaultChatTransport, isToolUIPart } from "ai";
+import type { UIMessage, FileUIPart } from "ai";
+
 definePageMeta({
   layout: "teacher",
 });
-
-interface ChatMessage {
-  role: string;
-  content: string;
-  imageUrl?: string;
-  name?: string;
-}
 
 interface Project {
   id: string;
@@ -18,32 +15,17 @@ interface Project {
 }
 
 const { t } = useI18n();
-const chats = ref<any[]>([]);
-const currentChatId = ref<string | null>(null);
+const chatId = ref(crypto.randomUUID());
 const currentProjectId = ref<string | null>(null);
-const messages = ref<ChatMessage[]>([]);
-const filteredMessages = computed(() => {
-  return messages.value.filter(
-    (msg) =>
-      msg.role === "user" ||
-      (msg.role === "assistant" && msg.content) ||
-      msg.role === "tool_status"
-  );
-});
-const userMessage = ref("");
-const isLoading = ref(false);
-const streamingContent = ref("");
-const toolStatus = ref("");
 const useWebSearch = ref(false);
+const userMessage = ref("");
 
 const pendingImage = ref<File | null>(null);
 const pendingImagePreview = ref<string | null>(null);
 const isUploading = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
-
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 
-// Project state
 const projects = ref<Project[]>([]);
 const showProjectDialog = ref(false);
 const editingProject = ref<Project | null>(null);
@@ -57,6 +39,7 @@ const { data: projectList, refresh: refreshProjects } = await useFetch(
   "/api/teacher/projects"
 );
 
+const chats = ref<any[]>([]);
 watch(
   chatHistoryList,
   (newList) => {
@@ -64,7 +47,6 @@ watch(
   },
   { immediate: true }
 );
-
 watch(
   projectList,
   (newList) => {
@@ -73,27 +55,85 @@ watch(
   { immediate: true }
 );
 
+const chat = new Chat({
+  transport: new DefaultChatTransport({
+    api: "/api/teacher/chat",
+    body: () => ({
+      chatId: chatId.value,
+      projectId: currentProjectId.value,
+      useWebSearch: useWebSearch.value,
+    }),
+  }),
+  onFinish: () => {
+    refreshHistory();
+  },
+  onError: (error) => {
+    console.error("Chat error:", error);
+  },
+});
+
+const messages = computed(() => chat.messages);
+const isLoading = computed(() => chat.status !== "ready");
+
+function getTextContent(msg: UIMessage): string {
+  return msg.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map((p) => p.text)
+    .join("");
+}
+
+function getImageUrl(msg: UIMessage): string | null {
+  const filePart = msg.parts.find(
+    (p): p is FileUIPart => p.type === "file" && !!p.mediaType?.startsWith("image/")
+  );
+  return filePart?.url ?? null;
+}
+
+function getActiveToolName(msg: UIMessage): string | null {
+  for (const part of msg.parts) {
+    if (isToolUIPart(part) && "state" in part) {
+      if (part.state !== "output-available" && part.state !== "output-error") {
+        return "toolName" in part ? (part as any).toolName : part.type.replace(/^tool-/, "");
+      }
+    }
+  }
+  return null;
+}
+
+const activeToolStatus = computed(() => {
+  const lastMsg = messages.value.at(-1);
+  if (!lastMsg || lastMsg.role !== "assistant") return null;
+  return getActiveToolName(lastMsg);
+});
+
+const displayMessages = computed(() =>
+  messages.value.filter(
+    (msg) =>
+      msg.role === "user" ||
+      (msg.role === "assistant" && getTextContent(msg))
+  )
+);
+
 async function loadChat(id: string) {
-  currentChatId.value = id;
-  const chat = chats.value.find((c) => c.id === id);
-  if (chat) currentProjectId.value = chat.projectId ?? null;
-  const { data: chatData } = await useFetch(`/api/teacher/chats/${id}`);
-  if (chatData.value) {
-    messages.value = chatData.value.messages as any;
+  chatId.value = id;
+  const chatData = chats.value.find((c) => c.id === id);
+  if (chatData) currentProjectId.value = chatData.projectId ?? null;
+  const { data } = await useFetch(`/api/teacher/chats/${id}`);
+  if (data.value) {
+    chat.messages = (data.value as any).messages as UIMessage[];
   }
 }
 
-async function startNewChat(projectId?: string | null) {
-  currentChatId.value = null;
+function startNewChat(projectId?: string | null) {
+  chatId.value = crypto.randomUUID();
   currentProjectId.value = projectId ?? null;
-  messages.value = [];
+  chat.messages = [];
 }
 
 function selectProject(projectId: string | null) {
   currentProjectId.value = projectId;
 }
 
-// Project CRUD
 function openCreateProject() {
   editingProject.value = null;
   showProjectDialog.value = true;
@@ -126,9 +166,8 @@ async function handleDeleteProject(id: string) {
   await Promise.all([refreshProjects(), refreshHistory()]);
 }
 
-// Move chat
-function openMoveChat(chatId: string) {
-  movingChatId.value = chatId;
+function openMoveChat(chatMoveId: string) {
+  movingChatId.value = chatMoveId;
   showMoveChatDialog.value = true;
 }
 
@@ -146,8 +185,8 @@ const currentProject = computed(() =>
 );
 
 const movingChatProjectId = computed(() => {
-  const chat = chats.value.find((c) => c.id === movingChatId.value);
-  return chat?.projectId ?? null;
+  const c = chats.value.find((c) => c.id === movingChatId.value);
+  return c?.projectId ?? null;
 });
 
 // Image handling
@@ -178,7 +217,6 @@ function removeImage() {
 async function uploadImageToR2(file: File): Promise<string | null> {
   const formData = new FormData();
   formData.append("file", file);
-
   try {
     const res = await $fetch<{ imageUrl: string }>("/api/teacher/upload", {
       method: "POST",
@@ -196,9 +234,6 @@ async function sendMessage() {
 
   const msg = userMessage.value || t("teacher.chat.image_attached");
   userMessage.value = "";
-  isLoading.value = true;
-  streamingContent.value = "";
-  toolStatus.value = "";
 
   let imageUrl: string | undefined;
 
@@ -209,78 +244,20 @@ async function sendMessage() {
 
     if (!uploaded) {
       alert(t("teacher.chat.upload_failed"));
-      isLoading.value = false;
       return;
     }
     imageUrl = uploaded;
     removeImage();
   }
 
-  messages.value.push({ role: "user", content: msg, ...(imageUrl && { imageUrl }) });
+  const fileParts: FileUIPart[] = imageUrl
+    ? [{ type: "file", mediaType: "image/jpeg", url: imageUrl }]
+    : [];
 
-  const aiMsgIndex = messages.value.length;
-  messages.value.push({ role: "assistant", content: "" });
-
-  try {
-    const res = await fetch("/api/teacher/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: msg,
-        chatId: currentChatId.value,
-        projectId: currentProjectId.value,
-        useWebSearch: useWebSearch.value,
-        ...(imageUrl && { imageUrl }),
-      }),
-    });
-
-    if (!res.ok || !res.body) {
-      messages.value[aiMsgIndex].content = t("teacher.chat.error_response");
-      return;
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-
-          if (data.type === "token") {
-            messages.value[aiMsgIndex].content += data.content;
-          } else if (data.type === "tool_start") {
-            toolStatus.value = `${t("teacher.chat.tool_running")}: ${data.tool}`;
-          } else if (data.type === "tool_result") {
-            toolStatus.value = "";
-          } else if (data.type === "done") {
-            messages.value[aiMsgIndex].content = data.content;
-            toolStatus.value = "";
-          } else if (data.type === "chat_id") {
-            currentChatId.value = data.chatId;
-            await refreshHistory();
-          }
-        } catch {
-          // ignore malformed events
-        }
-      }
-    }
-  } catch (e) {
-    console.error(e);
-    messages.value[aiMsgIndex].content = t("teacher.chat.error_response");
-  } finally {
-    isLoading.value = false;
-    toolStatus.value = "";
-  }
+  await chat.sendMessage({
+    text: msg,
+    files: fileParts,
+  });
 }
 </script>
 
@@ -290,7 +267,7 @@ async function sendMessage() {
     <ChatProjectSidebar
       :projects="projects"
       :chats="chats"
-      :current-chat-id="currentChatId"
+      :current-chat-id="chatId"
       :current-project-id="currentProjectId"
       @load-chat="loadChat"
       @start-new-chat="startNewChat"
@@ -320,15 +297,15 @@ async function sendMessage() {
       <!-- Messages -->
       <div class="flex-1 overflow-y-auto p-4 space-y-4">
         <div
-          v-if="filteredMessages.length === 0"
+          v-if="displayMessages.length === 0"
           class="text-center text-base-content/50 mt-10"
         >
           {{ $t("teacher.chat.start_prompt") }}
         </div>
 
         <div
-          v-for="(msg, index) in filteredMessages"
-          :key="index"
+          v-for="msg in displayMessages"
+          :key="msg.id"
           class="chat"
           :class="msg.role === 'user' ? 'chat-end' : 'chat-start'"
         >
@@ -348,30 +325,30 @@ async function sendMessage() {
             "
           >
             <img
-              v-if="msg.imageUrl"
-              :src="msg.imageUrl"
+              v-if="getImageUrl(msg)"
+              :src="getImageUrl(msg)!"
               alt="Uploaded image"
               class="rounded-lg max-h-64 object-contain mb-2"
             />
             <MarkdownRenderer
               v-if="msg.role === 'assistant'"
-              :content="msg.content"
+              :content="getTextContent(msg)"
             />
-            <div v-else>{{ msg.content }}</div>
+            <div v-else>{{ getTextContent(msg) }}</div>
           </div>
         </div>
 
         <!-- Tool status indicator while streaming -->
-        <div v-if="toolStatus" class="chat chat-start">
+        <div v-if="activeToolStatus" class="chat chat-start">
           <div class="chat-bubble chat-bubble-ghost text-sm opacity-60">
             <span class="loading loading-dots loading-xs mr-2"></span>
-            {{ toolStatus }}
+            {{ $t("teacher.chat.tool_running") }}: {{ activeToolStatus }}
           </div>
         </div>
 
-        <!-- Loading indicator (before first token arrives) -->
+        <!-- Loading indicator -->
         <div
-          v-if="isLoading && !messages.some((m) => m.role === 'assistant' && m.content)"
+          v-if="isLoading && displayMessages.length === 0"
           class="chat chat-start"
         >
           <div class="chat-bubble chat-bubble-secondary">

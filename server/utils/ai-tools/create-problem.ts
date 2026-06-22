@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { tool } from "ai";
 import { db } from "../../../db";
 import { problems } from "../../../db/schema";
-import type { AiToolDefinition } from "./types";
+import type { AiToolContext } from "./types";
 
 const inputSchema = z.object({
   title: z.string().min(1).max(200).describe("題目標題"),
@@ -38,15 +39,14 @@ const inputSchema = z.object({
     .describe("標籤，如 [\"三角函數\", \"高一\"]"),
 });
 
-export const createProblemTool = {
-  name: "create_problem",
+export const createProblemTool = tool({
   description:
     "將討論好的題目寫入題庫。請在老師確認題目內容（標題、題幹、選項、正確答案）後才呼叫此工具。choices 格式為 {\"A\":\"...\",\"B\":\"...\"}，correctAnswer 為正確選項的 key（如 \"A\"）。",
-  parameters: z.toJSONSchema(inputSchema),
-  handler: async (args, context) => {
-    const parsed = inputSchema.parse(args);
+  inputSchema,
+  execute: async (input, { experimental_context }) => {
+    const context = experimental_context as AiToolContext;
 
-    if (!(parsed.correctAnswer in parsed.choices)) {
+    if (!(input.correctAnswer in input.choices)) {
       return JSON.stringify({
         error: "correctAnswer 必須是 choices 中的其中一個 key",
       });
@@ -55,18 +55,18 @@ export const createProblemTool = {
     const [problem] = await db
       .insert(problems)
       .values({
-        title: parsed.title,
-        content: parsed.content,
-        choices: parsed.choices,
-        correctAnswer: parsed.correctAnswer,
-        explanation: parsed.explanation,
-        difficulty: parsed.difficulty,
-        subject: parsed.subject,
-        chapter: parsed.chapter,
-        grade: parsed.grade,
-        source: parsed.source,
-        imageUrl: parsed.imageUrl,
-        hashtags: parsed.hashtags,
+        title: input.title,
+        content: input.content,
+        choices: input.choices,
+        correctAnswer: input.correctAnswer,
+        explanation: input.explanation,
+        difficulty: input.difficulty,
+        subject: input.subject,
+        chapter: input.chapter,
+        grade: input.grade,
+        source: input.source,
+        imageUrl: input.imageUrl,
+        hashtags: input.hashtags,
         aiGenerated: true,
         createdBy: context.userId,
       })
@@ -77,13 +77,13 @@ export const createProblemTool = {
       });
 
     generateAndStoreEmbedding(problem!.id, {
-      title: parsed.title,
-      content: parsed.content,
-      explanation: parsed.explanation,
-      subject: parsed.subject,
-      chapter: parsed.chapter,
-      grade: parsed.grade,
-      hashtags: parsed.hashtags,
+      title: input.title,
+      content: input.content,
+      explanation: input.explanation,
+      subject: input.subject,
+      chapter: input.chapter,
+      grade: input.grade,
+      hashtags: input.hashtags,
     });
 
     return JSON.stringify({
@@ -92,4 +92,4 @@ export const createProblemTool = {
       problem,
     });
   },
-} satisfies AiToolDefinition;
+});

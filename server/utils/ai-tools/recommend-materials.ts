@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { tool } from "ai";
 import { recommendMaterials } from "../materials";
-import type { AiToolDefinition } from "./types";
+import type { AiToolContext } from "./types";
 
 const inputSchema = z.object({
   keyword: z
@@ -11,19 +12,18 @@ const inputSchema = z.object({
   limit: z.number().int().min(1).max(20).default(5).describe("推薦數量上限"),
 });
 
-export const recommendMaterialsTool = {
-  name: "recommend_materials",
+export const recommendMaterialsTool = tool({
   description:
     "根據學生已加入的班級，推薦相關教材。適合學生詢問某主題有什麼資源可看時使用。",
-  parameters: z.toJSONSchema(inputSchema),
-  handler: async (args, context) => {
-    const parsed = inputSchema.parse(args);
+  inputSchema,
+  execute: async (input, { experimental_context }) => {
+    const context = experimental_context as AiToolContext;
     const materials = await recommendMaterials({
       studentId: context.userId,
-      keyword: parsed.keyword,
-      limit: parsed.limit,
+      keyword: input.keyword,
+      limit: input.limit,
     });
     if (materials.length === 0) return "目前沒有找到相關教材。";
     return JSON.stringify(materials, null, 2);
   },
-} satisfies AiToolDefinition;
+});

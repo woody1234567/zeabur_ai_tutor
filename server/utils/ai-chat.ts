@@ -1,6 +1,7 @@
-import OpenAI from "openai";
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { getOpenAITools, executeAiTool } from "./ai-tools";
+import { streamText, convertToModelMessages, stepCountIs } from "ai";
+import type { UIMessage } from "ai";
+import { getAIModel } from "./ai-provider";
+import { getTools } from "./ai-tools";
 import type { AiToolContext } from "./ai-tools/types";
 import { db } from "../../db";
 import { chatProjects } from "../../db/schema";
@@ -40,31 +41,23 @@ When drafting problems, use clear and precise language suitable for the target g
 }
 
 export type StreamChatOptions = {
-  message: string;
-  imageUrl?: string;
+  messages: UIMessage[];
   userId: string;
-  history: ChatCompletionMessageParam[];
   classroomId?: string | null;
   role?: "student" | "teacher";
   projectId?: string | null;
   useWebSearch?: boolean;
 };
 
-export async function* streamChat(
-  options: StreamChatOptions
-): AsyncGenerator<string> {
-  const config = useRuntimeConfig();
-  const client = new OpenAI({
-    baseURL: config.aiBaseUrl,
-    apiKey: config.aiApiKey || "",
-  });
-
+export async function createChatStream(options: StreamChatOptions) {
+  const model = await getAIModel();
   const role = options.role ?? "student";
-  const tools = getOpenAITools(role);
+  const tools = getTools(role);
   const toolContext: AiToolContext = {
     userId: options.userId,
     classroomId: options.classroomId,
   };
+
   let systemPrompt = role === "teacher"
     ? buildTeacherSystemPrompt(options.userId)
     : buildStudentSystemPrompt(options.userId, options.classroomId);
@@ -82,131 +75,34 @@ export async function* streamChat(
     systemPrompt += `\n\nThe user has requested a web search. You MUST use the web_search tool at least once to answer this query. Search the web first, then incorporate the results into your response.`;
   }
 
-  const userContent: ChatCompletionMessageParam["content"] = options.imageUrl
-    ? [
-        { type: "text" as const, text: options.message },
-        { type: "image_url" as const, image_url: { url: options.imageUrl, detail: "high" as const } },
-      ]
-    : options.message;
+  const modelMessages = await convertToModelMessages(options.messages);
 
-  const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: systemPrompt },
-    ...options.history,
-    { role: "user", content: userContent },
-  ];
+  return streamText({
+    model,
+    system: systemPrompt,
+    messages: modelMessages,
+    tools,
+    stopWhen: stepCountIs(5),
+    experimental_context: toolContext,
+    experimental_onToolCallFinish(event) {
+      const lastUserMsg = options.messages.findLast(m => m.role === "user");
+      const userText = lastUserMsg?.parts
+        ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+        .map(p => p.text)
+        .join(" ") ?? "";
 
-  let fullContent = "";
-  const MAX_TOOL_ROUNDS = 5;
-
-  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const stream = await client.chat.completions.create({
-      model: config.aiModel,
-      messages,
-      tools: tools.length > 0 ? tools : undefined,
-      stream: true,
-    });
-
-    let roundContent = "";
-    const toolCalls: Map<
-      number,
-      { id: string; name: string; arguments: string }
-    > = new Map();
-
-    for await (const chunk of stream) {
-      const choice = chunk.choices[0];
-      if (!choice) continue;
-
-      if (choice.delta?.content) {
-        roundContent += choice.delta.content;
-        yield `data: ${JSON.stringify({ type: "token", content: choice.delta.content })}\n\n`;
-      }
-
-      if (choice.delta?.tool_calls) {
-        for (const tc of choice.delta.tool_calls) {
-          const existing = toolCalls.get(tc.index);
-          if (existing) {
-            existing.arguments += tc.function?.arguments ?? "";
-          } else {
-            toolCalls.set(tc.index, {
-              id: tc.id ?? "",
-              name: tc.function?.name ?? "",
-              arguments: tc.function?.arguments ?? "",
-            });
-          }
-        }
-      }
-
-      if (choice.finish_reason === "stop") {
-        fullContent += roundContent;
-        yield `data: ${JSON.stringify({ type: "done", content: fullContent })}\n\n`;
-        return;
-      }
-
-      if (choice.finish_reason === "tool_calls") {
-        messages.push({
-          role: "assistant",
-          content: roundContent || null,
-          tool_calls: Array.from(toolCalls.values()).map((tc) => ({
-            id: tc.id,
-            type: "function" as const,
-            function: { name: tc.name, arguments: tc.arguments },
-          })),
-        });
-
-        for (const tc of toolCalls.values()) {
-          yield `data: ${JSON.stringify({ type: "tool_start", tool: tc.name })}\n\n`;
-
-          let parsedArgs: Record<string, unknown> = {};
-          try {
-            parsedArgs = JSON.parse(tc.arguments);
-          } catch {}
-
-          const startTime = Date.now();
-          let result: string;
-          let toolError: string | undefined;
-
-          try {
-            result = await executeAiTool(tc.name, parsedArgs, toolContext);
-          } catch (err: any) {
-            toolError = err.message;
-            result = JSON.stringify({ error: err.message });
-          }
-
-          const durationMs = Date.now() - startTime;
-
-          logAiToolCall({
-            userId: options.userId,
-            userRole: role,
-            toolName: tc.name,
-            userMessage: options.message,
-            args: parsedArgs,
-            result,
-            durationMs,
-            error: toolError,
-            classroomId: options.classroomId,
-            projectId: options.projectId,
-          });
-
-          messages.push({
-            role: "tool",
-            tool_call_id: tc.id,
-            content: result,
-          });
-
-          yield `data: ${JSON.stringify({ type: "tool_result", tool: tc.name })}\n\n`;
-        }
-
-        fullContent += roundContent;
-        break;
-      }
-    }
-
-    if (toolCalls.size === 0) {
-      fullContent += roundContent;
-      yield `data: ${JSON.stringify({ type: "done", content: fullContent })}\n\n`;
-      return;
-    }
-  }
-
-  yield `data: ${JSON.stringify({ type: "done", content: fullContent })}\n\n`;
+      logAiToolCall({
+        userId: options.userId,
+        userRole: role,
+        toolName: event.toolCall.toolName,
+        userMessage: userText,
+        args: event.toolCall.input as Record<string, unknown>,
+        result: event.success ? String(event.output) : JSON.stringify({ error: String(event.error) }),
+        durationMs: event.durationMs,
+        error: event.success ? undefined : String(event.error),
+        classroomId: options.classroomId,
+        projectId: options.projectId,
+      });
+    },
+  });
 }

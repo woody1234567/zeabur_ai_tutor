@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const chat = await db.query.teacherChatHistory.findFirst({
     where: and(
       eq(teacherChatHistory.id, id),
-      eq(teacherChatHistory.teacherId, user.id)
+      eq(teacherChatHistory.teacherId, user.id),
     ),
   });
 

@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { tool } from "ai";
 import { searchProblems } from "../problems";
-import type { AiToolDefinition } from "./types";
+import type { AiToolContext } from "./types";
 
 const inputSchema = z.object({
   query: z.string().max(500).optional().describe("語意搜尋，用自然語言描述想找的題目類型或概念（如：「計算三角形面積的應用題」）"),
@@ -14,14 +15,12 @@ const inputSchema = z.object({
   limit: z.number().int().min(1).max(20).default(10).describe("回傳數量上限"),
 });
 
-export const searchProblemsTool = {
-  name: "search_problems",
+export const searchProblemsTool = tool({
   description:
     "搜尋題庫中的練習題。支援語意搜尋（用自然語言描述想找什麼）以及關鍵字、科目、章節、年級、難度、來源、標籤篩選。用於學生想找特定主題的題目練習時。",
-  parameters: z.toJSONSchema(inputSchema),
-  handler: async (args) => {
-    const parsed = inputSchema.parse(args);
-    const results = await searchProblems(parsed);
+  inputSchema,
+  execute: async (input) => {
+    const results = await searchProblems(input);
     return JSON.stringify(results, null, 2);
   },
-} satisfies AiToolDefinition;
+});

@@ -1,35 +1,20 @@
-import type { ChatCompletionTool } from "openai/resources/chat/completions";
-import { toOpenAITool, type AiToolDefinition, type AiToolContext } from "./types";
 import { searchProblemsTool } from "./search-problems";
 import { recommendMaterialsTool } from "./recommend-materials";
 import { createProblemTool } from "./create-problem";
 import { webSearchTool } from "./web-search";
 
-const studentTools: AiToolDefinition[] = [searchProblemsTool, recommendMaterialsTool, webSearchTool];
-const teacherTools: AiToolDefinition[] = [searchProblemsTool, createProblemTool, webSearchTool];
+export const studentTools = {
+  search_problems: searchProblemsTool,
+  recommend_materials: recommendMaterialsTool,
+  web_search: webSearchTool,
+};
 
-export function getOpenAITools(role: "student" | "teacher" = "student"): ChatCompletionTool[] {
-  const tools = role === "teacher" ? teacherTools : studentTools;
-  return tools.map(toOpenAITool);
+export const teacherTools = {
+  search_problems: searchProblemsTool,
+  create_problem: createProblemTool,
+  web_search: webSearchTool,
+};
+
+export function getTools(role: "student" | "teacher" = "student") {
+  return role === "teacher" ? teacherTools : studentTools;
 }
-
-export async function executeAiTool(
-  name: string,
-  args: Record<string, unknown>,
-  context: AiToolContext
-): Promise<string> {
-  const allTools = [
-    ...new Map(
-      [...studentTools, ...teacherTools].map((t) => [t.name, t])
-    ).values(),
-  ];
-  const tool = allTools.find((t) => t.name === name);
-  if (!tool) return JSON.stringify({ error: `Unknown tool: ${name}` });
-
-  try {
-    return await tool.handler(args, context);
-  } catch (error: any) {
-    return JSON.stringify({ error: error.message });
-  }
-}
-

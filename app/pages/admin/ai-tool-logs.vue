@@ -92,6 +92,8 @@ const toolBadgeClass = (name: string) => {
       return "badge badge-success";
     case "recommend_materials":
       return "badge badge-warning";
+    case "web_search":
+      return "badge badge-accent";
     default:
       return "badge badge-ghost";
   }
@@ -135,6 +137,7 @@ onMounted(() => {
         <option value="search_problems">search_problems</option>
         <option value="create_problem">create_problem</option>
         <option value="recommend_materials">recommend_materials</option>
+        <option value="web_search">web_search</option>
       </select>
       <select v-model="userRoleFilter" class="select select-bordered">
         <option value="">{{ $t("admin.ai_tool_logs.all_roles") }}</option>
