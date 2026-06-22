@@ -50,7 +50,11 @@
   "auth": {
     "title": "立即登入！",
     "description": "使用 AI 學習助手，開始解決問題並獲得智慧解析。",
-    "google_login": "使用 Google 登入"
+    "google_login": "使用 Google 登入",
+    "setup_title": "歡迎！設定您的平台",
+    "setup_description": "目前尚無任何帳號。第一位登入的使用者將成為平台管理員。",
+    "setup_badge": "初始設定",
+    "setup_google_login": "使用 Google 登入成為管理員"
   },
   "login_success": {
     "title": "登入成功！",

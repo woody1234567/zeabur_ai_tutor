@@ -50,7 +50,11 @@
   "auth": {
     "title": "Login now!",
     "description": "Access the AI Learning Assistant to start solving problems and getting smart explanations.",
-    "google_login": "Login with Google"
+    "google_login": "Login with Google",
+    "setup_title": "Welcome! Set Up Your Platform",
+    "setup_description": "No accounts exist yet. The first person to sign in will become the platform administrator.",
+    "setup_badge": "Initial Setup",
+    "setup_google_login": "Sign in with Google to become Admin"
   },
   "login_success": {
     "title": "Login Successful!",

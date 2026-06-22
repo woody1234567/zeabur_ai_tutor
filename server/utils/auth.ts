@@ -3,7 +3,7 @@ import type { H3Event } from "h3";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../db";
 import * as schema from "../../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { admin } from "better-auth/plugins";
 
@@ -23,6 +23,21 @@ export const auth = betterAuth({
   },
 
   databaseHooks: {
+    user: {
+      create: {
+        after: async (newUser) => {
+          const result = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(schema.user);
+          if (result[0]?.count === 1) {
+            await db
+              .update(schema.user)
+              .set({ role: "admin" })
+              .where(eq(schema.user.id, newUser.id));
+          }
+        },
+      },
+    },
     session: {
       create: {
         after: async (session) => {

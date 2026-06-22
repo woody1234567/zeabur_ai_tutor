@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { signIn } from "../../lib/auth-client";
 
+const { data: setupStatus } = await useFetch("/api/auth/setup-status");
+const isSetup = computed(() => !setupStatus.value?.hasUsers);
+
 const handleGoogleLogin = async () => {
   await signIn.social({
     provider: "google",
-    callbackURL: "/login-success",
-  });
-};
-
-const handleLineLogin = async () => {
-  await signIn.social({
-    provider: "line",
     callbackURL: "/login-success",
   });
 };
@@ -18,13 +14,23 @@ const handleLineLogin = async () => {
 
 <template>
   <div class="hero min-h-screen bg-base-200">
-    <!-- Changed to flex-col and text-center for vertical layout -->
     <div class="hero-content flex-col text-center">
       <div class="max-w-md">
-        <h1 class="text-5xl font-bold">{{ $t("auth.title") }}</h1>
-        <p class="py-6">
-          {{ $t("auth.description") }}
-        </p>
+        <template v-if="isSetup">
+          <h1 class="text-5xl font-bold">{{ $t("auth.setup_title") }}</h1>
+          <p class="py-6">
+            {{ $t("auth.setup_description") }}
+          </p>
+          <div class="badge badge-primary badge-lg mb-4">
+            {{ $t("auth.setup_badge") }}
+          </div>
+        </template>
+        <template v-else>
+          <h1 class="text-5xl font-bold">{{ $t("auth.title") }}</h1>
+          <p class="py-6">
+            {{ $t("auth.description") }}
+          </p>
+        </template>
       </div>
       <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
         <div class="card-body">
@@ -58,14 +64,8 @@ const handleLineLogin = async () => {
                   />
                 </g>
               </svg>
-              {{ $t("auth.google_login") }}
+              {{ isSetup ? $t("auth.setup_google_login") : $t("auth.google_login") }}
             </button>
-            <!-- <button
-              @click="handleLineLogin"
-              class="btn btn-primary bg-[#06C755] hover:bg-[#05b34c] border-[#06C755] hover:border-[#05b34c] text-white"
-            >
-              Login with Line
-            </button> -->
           </div>
         </div>
       </div>
