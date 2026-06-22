@@ -27,6 +27,7 @@
     "@types/katex": "^0.16.7",
     "@types/marked": "^6.0.0",
     "AI_tutor_mvp": "link:",
+    "ai": "^6.0.208",
     "better-auth": "^1.4.1",
     "dompurify": "^3.3.0",
     "drizzle-orm": "^0.44.7",
