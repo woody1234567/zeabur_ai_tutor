@@ -54,7 +54,20 @@
     "setup_title": "Welcome! Set Up Your Platform",
     "setup_description": "No accounts exist yet. The first person to sign in will become the platform administrator.",
     "setup_badge": "Initial Setup",
-    "setup_google_login": "Sign in with Google to become Admin"
+    "setup_google_login": "Sign in with Google to become Admin",
+    "tab_login": "Login",
+    "tab_signup": "Sign Up",
+    "name_label": "Name",
+    "name_placeholder": "e.g. John Doe",
+    "email_label": "Email",
+    "email_placeholder": "e.g. john{'@'}example.com",
+    "password_label": "Password",
+    "password_placeholder": "Minimum 8 characters",
+    "login_button": "Login",
+    "signup_button": "Sign Up",
+    "setup_signup_button": "Sign Up as Admin",
+    "or_divider": "OR",
+    "error_generic": "An error occurred. Please try again."
   },
   "login_success": {
     "title": "Login Successful!",

@@ -54,7 +54,20 @@
     "setup_title": "歡迎！設定您的平台",
     "setup_description": "目前尚無任何帳號。第一位登入的使用者將成為平台管理員。",
     "setup_badge": "初始設定",
-    "setup_google_login": "使用 Google 登入成為管理員"
+    "setup_google_login": "使用 Google 登入成為管理員",
+    "tab_login": "登入",
+    "tab_signup": "註冊",
+    "name_label": "姓名",
+    "name_placeholder": "例如：王小明",
+    "email_label": "電子郵件",
+    "email_placeholder": "例如：wang{'@'}example.com",
+    "password_label": "密碼",
+    "password_placeholder": "至少 8 個字元",
+    "login_button": "登入",
+    "signup_button": "註冊",
+    "setup_signup_button": "註冊成為管理員",
+    "or_divider": "或",
+    "error_generic": "發生錯誤，請再試一次。"
   },
   "login_success": {
     "title": "登入成功！",
