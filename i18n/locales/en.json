@@ -806,7 +806,9 @@
         "hashtag_label": "Hashtag",
         "hashtag_placeholder": "e.g. math, physics...",
         "clear": "Clear",
-        "search": "Search"
+        "search": "Search",
+        "per_page": "Per page",
+        "showing_results": "Showing {from}-{to} of {total} results"
       },
       "calendar": {
         "modal_title_edit": "Edit Event",

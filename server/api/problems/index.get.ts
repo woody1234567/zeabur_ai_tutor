@@ -24,6 +24,8 @@ export default defineEventHandler(async (event) => {
   const chapter = query.chapter as string;
   const grade = query.grade as string;
   const difficulty = query.difficulty as string;
+  const page = Math.max(1, parseInt(query.page as string) || 1);
+  const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize as string) || 12));
 
   const filters = [];
   if (title) filters.push(ilike(problems.title, `%${title}%`));
@@ -36,45 +38,55 @@ export default defineEventHandler(async (event) => {
   if (grade) filters.push(eq(problems.grade, grade));
   if (difficulty) filters.push(eq(problems.difficulty, difficulty));
 
+  const whereClause = filters.length > 0 ? and(...filters) : undefined;
+
   // Sync status first
   await updateProblemStatus(session.user.id);
 
-  const allProblems = await db
-    .select({
-      id: problems.id,
-      title: problems.title,
-      difficulty: problems.difficulty,
-      subject: problems.subject,
-      chapter: problems.chapter,
-      grade: problems.grade,
-      source: problems.source,
-      hashtags: problems.hashtags,
-      isFavorite: problemsStatus.isFavorite,
-      isWrong: problemsStatus.isWrong,
-      understood: problemsStatus.understood,
-    })
-    .from(problems)
-    .leftJoin(
-      problemsStatus,
-      and(
-        eq(problemsStatus.problemId, problems.id),
-        eq(problemsStatus.userId, session.user.id)
+  const [countResult, allProblems] = await Promise.all([
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(problems)
+      .where(whereClause),
+    db
+      .select({
+        id: problems.id,
+        title: problems.title,
+        difficulty: problems.difficulty,
+        subject: problems.subject,
+        chapter: problems.chapter,
+        grade: problems.grade,
+        source: problems.source,
+        hashtags: problems.hashtags,
+        isFavorite: problemsStatus.isFavorite,
+        isWrong: problemsStatus.isWrong,
+        understood: problemsStatus.understood,
+      })
+      .from(problems)
+      .leftJoin(
+        problemsStatus,
+        and(
+          eq(problemsStatus.problemId, problems.id),
+          eq(problemsStatus.userId, session.user.id)
+        )
       )
-    )
-    .where(and(...filters));
+      .where(whereClause)
+      .limit(pageSize)
+      .offset((page - 1) * pageSize),
+  ]);
 
-  return allProblems.map((p) => ({
-    ...p,
-    // Map nulls (if no status record found) to false
-    isFavorite: p.isFavorite ?? false,
-    isWrong: p.isWrong ?? false,
-    understood: p.understood ?? false,
-    // Frontend expects isError for the X mark. We map isWrong to isError.
-    // And if implied understood is false? User said "understood follows error_problems".
-    // If isWrong is true, understood might be true or false.
-    // Existing logic was: isError = (in error_problems AND understood=false).
-    // New logic: isWrong comes from error_problems. understood comes from error_problems.
-    // So isError = isWrong && !understood?
-    // isError: (p.isWrong && !p.understood) ?? false,
-  }));
+  const total = Number(countResult[0].count);
+
+  return {
+    data: allProblems.map((p) => ({
+      ...p,
+      isFavorite: p.isFavorite ?? false,
+      isWrong: p.isWrong ?? false,
+      understood: p.understood ?? false,
+    })),
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
 });

@@ -806,7 +806,9 @@
         "hashtag_label": "標籤",
         "hashtag_placeholder": "例如：數學、物理...",
         "clear": "清除",
-        "search": "搜尋"
+        "search": "搜尋",
+        "per_page": "每頁顯示",
+        "showing_results": "顯示第 {from}-{to} 筆，共 {total} 筆"
       },
       "calendar": {
         "modal_title_edit": "編輯行程",

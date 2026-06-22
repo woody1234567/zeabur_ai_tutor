@@ -9,6 +9,10 @@ const filters = reactive({
   hashtag: "",
 });
 
+const pageSize = defineModel<number>("pageSize", { default: 12 });
+
+const pageSizeOptions = [12, 24, 48, 96];
+
 const emit = defineEmits<{
   search: [
     params: {
@@ -187,15 +191,32 @@ const clearFilters = () => {
         </div>
       </div>
 
-      <div class="card-actions justify-end mt-6 gap-3">
-        <button class="btn btn-ghost" @click="clearFilters">
-          <Icon name="heroicons:x-mark" class="w-5 h-5 mr-2" />
-          {{ $t("components.common.search.clear") }}
-        </button>
-        <button class="btn btn-primary" @click="handleSearch">
-          <Icon name="heroicons:funnel" class="w-5 h-5 mr-2" />
-          {{ $t("components.common.search.search") }}
-        </button>
+      <div class="card-actions justify-between items-center mt-6">
+        <div class="form-control">
+          <div class="flex items-center gap-2">
+            <span class="label-text font-medium whitespace-nowrap">{{
+              $t("components.common.search.per_page")
+            }}</span>
+            <select
+              v-model.number="pageSize"
+              class="select select-bordered select-sm"
+            >
+              <option v-for="opt in pageSizeOptions" :key="opt" :value="opt">
+                {{ opt }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn btn-ghost" @click="clearFilters">
+            <Icon name="heroicons:x-mark" class="w-5 h-5 mr-2" />
+            {{ $t("components.common.search.clear") }}
+          </button>
+          <button class="btn btn-primary" @click="handleSearch">
+            <Icon name="heroicons:funnel" class="w-5 h-5 mr-2" />
+            {{ $t("components.common.search.search") }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

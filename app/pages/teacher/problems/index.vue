@@ -14,9 +14,10 @@ const searchParams = ref({
   hashtag: "",
 });
 
-const { data: problems, refresh } = await useFetch("/api/problems", {
+const { data: result, refresh } = await useFetch("/api/problems", {
   query: searchParams,
 });
+const problems = computed(() => result.value?.data ?? []);
 
 const handleSearch = (params: {
   title: string;
@@ -76,7 +77,14 @@ const deleteProblem = async (id: string) => {
         <ProblemSearch @search="handleSearch" />
 
         <br />
-        <div v-if="problems" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div v-if="result && result.total > 0" class="text-sm text-base-content/60 mb-4">
+          {{ $t("components.common.search.showing_results", {
+            from: ((result.page - 1) * result.pageSize) + 1,
+            to: Math.min(result.page * result.pageSize, result.total),
+            total: result.total,
+          }) }}
+        </div>
+        <div v-if="problems.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="problem in problems"
             :key="problem.id"
@@ -133,12 +141,12 @@ const deleteProblem = async (id: string) => {
           </div>
         </div>
 
-        <div v-else class="text-center py-10">
+        <div v-if="!result" class="text-center py-10">
           <span class="loading loading-spinner loading-lg"></span>
         </div>
 
         <div
-          v-if="problems && problems.length === 0"
+          v-if="result && problems.length === 0"
           class="text-center py-10 text-base-content/70"
         >
           {{ $t("teacher.problems.no_problems_found") }}

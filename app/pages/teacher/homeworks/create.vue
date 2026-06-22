@@ -14,9 +14,10 @@ const searchParams = ref({
   hashtag: "",
 });
 
-const { data: problems, refresh } = await useFetch("/api/problems", {
+const { data: result, refresh } = await useFetch("/api/problems", {
   query: searchParams,
 });
+const problems = computed(() => result.value?.data ?? []);
 
 const { data: classrooms } = await useFetch("/api/teacher/classrooms");
 
@@ -109,7 +110,7 @@ const createHomework = async () => {
         <ProblemSearch @search="handleSearch" />
 
         <div
-          v-if="problems"
+          v-if="problems.length > 0"
           class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 mt-6"
         >
           <div
@@ -153,12 +154,12 @@ const createHomework = async () => {
           </div>
         </div>
 
-        <div v-else class="text-center py-10">
+        <div v-if="!result" class="text-center py-10">
           <span class="loading loading-spinner loading-lg"></span>
         </div>
 
         <div
-          v-if="problems && problems.length === 0"
+          v-if="result && problems.length === 0"
           class="text-center py-10 text-base-content/70"
         >
           {{ $t("teacher.homeworks.create.no_problems_found") }}
