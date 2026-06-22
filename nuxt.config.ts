@@ -61,6 +61,11 @@ export default defineNuxtConfig({
     aiBaseUrl: process.env.AI_BASE_URL || "https://api.openai.com/v1",
     aiModel: process.env.AI_MODEL || "gpt-4o",
     aiApiKey: process.env.AI_API_KEY || process.env.OPENAI_API_KEY,
+    embeddingBaseUrl:
+      process.env.EMBEDDING_BASE_URL || "https://api.openai.com/v1",
+    embeddingModel: process.env.EMBEDDING_MODEL || "text-embedding-3-small",
+    embeddingApiKey:
+      process.env.EMBEDDING_API_KEY || process.env.OPENAI_API_KEY,
     mcpStudentGatewayToken: "",
     mcpTeacherGatewayToken: "",
   },

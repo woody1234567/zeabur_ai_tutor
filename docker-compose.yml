@@ -49,7 +49,7 @@ services:
       start_period: 10s
 
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: ai-tutor-db
     restart: unless-stopped
     environment:

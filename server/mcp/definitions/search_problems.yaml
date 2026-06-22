@@ -1,12 +1,16 @@
 name: search_problems
-description: Search for problems in the question bank by title, source, or hashtag.
+description: Search for problems in the question bank. Supports semantic search and keyword/structured filters.
 inputSchema:
   type: object
   properties:
+    query:
+      type: string
+      maxLength: 500
+      description: Semantic search — describe the type of problems you want in natural language
     title:
       type: string
       maxLength: 200
-      description: Filter by problem title
+      description: Filter by problem title or content keyword
     source:
       type: string
       maxLength: 200
@@ -15,6 +19,22 @@ inputSchema:
       type: string
       maxLength: 100
       description: Filter by hashtag
+    subject:
+      type: string
+      maxLength: 100
+      description: Filter by subject (e.g. Math, Science, English)
+    chapter:
+      type: string
+      maxLength: 200
+      description: Filter by chapter or unit
+    grade:
+      type: string
+      maxLength: 50
+      description: Filter by grade level
+    difficulty:
+      type: string
+      enum: [easy, medium, hard]
+      description: Filter by difficulty
     limit:
       type: integer
       minimum: 1

@@ -3,6 +3,7 @@ import { searchProblems } from "../problems";
 import type { AiToolDefinition } from "./types";
 
 const inputSchema = z.object({
+  query: z.string().max(500).optional().describe("語意搜尋，用自然語言描述想找的題目類型或概念（如：「計算三角形面積的應用題」）"),
   title: z.string().max(200).optional().describe("題目標題或內容關鍵字"),
   source: z.string().max(200).optional().describe("來源（課本、考卷名稱）"),
   hashtag: z.string().max(100).optional().describe("標籤，如 #三角函數"),
@@ -16,7 +17,7 @@ const inputSchema = z.object({
 export const searchProblemsTool = {
   name: "search_problems",
   description:
-    "搜尋題庫中的練習題。可依標題/內容關鍵字、科目、章節、年級、難度、來源、標籤篩選。用於學生想找特定主題的題目練習時。",
+    "搜尋題庫中的練習題。支援語意搜尋（用自然語言描述想找什麼）以及關鍵字、科目、章節、年級、難度、來源、標籤篩選。用於學生想找特定主題的題目練習時。",
   parameters: z.toJSONSchema(inputSchema),
   handler: async (args) => {
     const parsed = inputSchema.parse(args);

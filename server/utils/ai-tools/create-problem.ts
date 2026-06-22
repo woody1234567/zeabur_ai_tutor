@@ -76,6 +76,16 @@ export const createProblemTool = {
         createdAt: problems.createdAt,
       });
 
+    generateAndStoreEmbedding(problem!.id, {
+      title: parsed.title,
+      content: parsed.content,
+      explanation: parsed.explanation,
+      subject: parsed.subject,
+      chapter: parsed.chapter,
+      grade: parsed.grade,
+      hashtags: parsed.hashtags,
+    });
+
     return JSON.stringify({
       success: true,
       message: `題目「${problem!.title}」已成功建立`,

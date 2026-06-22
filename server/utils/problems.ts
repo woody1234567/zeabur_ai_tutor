@@ -1,8 +1,10 @@
 import { db } from "../../db";
 import { problems } from "../../db/schema";
-import { and, or, eq, ilike, sql } from "drizzle-orm";
+import { and, or, eq, ilike, sql, cosineDistance, isNotNull } from "drizzle-orm";
+import { generateEmbedding } from "./embedding";
 
 export type SearchProblemsCriteria = {
+  query?: string;
   title?: string;
   source?: string;
   hashtag?: string;
@@ -46,6 +48,36 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
   }
 
   try {
+    if (criteria.query) {
+      const queryEmbedding = await generateEmbedding(criteria.query);
+      const distance = cosineDistance(problems.embedding, queryEmbedding);
+
+      filters.push(isNotNull(problems.embedding));
+
+      const results = await db
+        .select({
+          id: problems.id,
+          title: problems.title,
+          difficulty: problems.difficulty,
+          subject: problems.subject,
+          chapter: problems.chapter,
+          grade: problems.grade,
+          source: problems.source,
+          hashtags: problems.hashtags,
+          content: problems.content,
+          choices: problems.choices,
+          correctAnswer: problems.correctAnswer,
+          explanation: problems.explanation,
+          similarity: sql<number>`1 - ${distance}`,
+        })
+        .from(problems)
+        .where(filters.length > 0 ? and(...filters) : undefined)
+        .orderBy(distance)
+        .limit(criteria.limit || 5);
+
+      return results;
+    }
+
     const results = await db
       .select({
         id: problems.id,

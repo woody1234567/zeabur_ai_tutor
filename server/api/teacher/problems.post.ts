@@ -50,5 +50,9 @@ export default defineEventHandler(async (event) => {
     })
     .returning();
 
+  generateAndStoreEmbedding(newProblem[0]!.id, {
+    title, content, explanation, subject, chapter, grade, hashtags,
+  });
+
   return newProblem[0];
 });

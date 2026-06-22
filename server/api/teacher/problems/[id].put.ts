@@ -80,6 +80,10 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(problems.id, id));
 
+    generateAndStoreEmbedding(id, {
+      title, content, explanation, subject, chapter, grade, hashtags,
+    });
+
     return { success: true };
   } catch (error: any) {
     console.error("Error updating problem:", error);

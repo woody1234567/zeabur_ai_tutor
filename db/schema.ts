@@ -8,6 +8,8 @@ import {
   foreignKey,
   interval,
   uniqueIndex,
+  index,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -63,27 +65,37 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const problems = pgTable("problems", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  choices: jsonb("choices").notNull(), // Storing as JSON
-  correctAnswer: text("correct_answer").notNull(),
-  explanation: text("explanation"),
-  difficulty: text("difficulty"),
-  subject: text("subject"),
-  chapter: text("chapter"),
-  grade: text("grade"),
-  source: text("source"),
-  imageUrl: text("image_url"),
-  hashtags: jsonb("hashtags").$type<string[]>().default([]),
-  aiGenerated: boolean("ai_generated").default(false),
-  createdBy: text("created_by").references(() => user.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const problems = pgTable(
+  "problems",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    title: text("title").notNull(),
+    content: text("content").notNull(),
+    choices: jsonb("choices").notNull(),
+    correctAnswer: text("correct_answer").notNull(),
+    explanation: text("explanation"),
+    difficulty: text("difficulty"),
+    subject: text("subject"),
+    chapter: text("chapter"),
+    grade: text("grade"),
+    source: text("source"),
+    imageUrl: text("image_url"),
+    hashtags: jsonb("hashtags").$type<string[]>().default([]),
+    embedding: vector("embedding", { dimensions: 1536 }),
+    aiGenerated: boolean("ai_generated").default(false),
+    createdBy: text("created_by").references(() => user.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    embeddingIdx: index("problems_embedding_idx").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops")
+    ),
+  })
+);
 
 export const classrooms = pgTable("classrooms", {
   id: text("id")

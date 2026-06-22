@@ -5,7 +5,7 @@ import { getMcpPrincipal } from "../../utils/mcp-auth";
 export default defineMcpTool({
   name: "search_problems",
   description:
-    "Search for problems in the question bank by title, source, or hashtag.",
+    "Search for problems in the question bank. Supports semantic search (describe what you want in natural language) and keyword/structured filters.",
   annotations: {
     readOnlyHint: true,
     destructiveHint: false,
@@ -13,6 +13,7 @@ export default defineMcpTool({
     openWorldHint: false,
   },
   inputSchema: {
+    query: z.string().max(500).optional().describe("Semantic search — describe the type of problems you want in natural language"),
     title: z.string().max(200).optional().describe("Filter by problem title or content keyword"),
     source: z.string().max(200).optional().describe("Filter by problem source"),
     hashtag: z.string().max(100).optional().describe("Filter by hashtag"),
@@ -34,6 +35,7 @@ export default defineMcpTool({
         allowedRoles: ["student", "teacher", "admin"],
       });
       const results = await searchProblems({
+        query: args.query,
         title: args.title,
         source: args.source,
         hashtag: args.hashtag,

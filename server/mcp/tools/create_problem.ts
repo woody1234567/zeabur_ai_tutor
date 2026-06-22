@@ -2,6 +2,7 @@ import { z } from "zod";
 import { problems } from "../../../db/schema";
 import { db } from "../../utils/db";
 import { getMcpPrincipal } from "../../utils/mcp-auth";
+import { generateAndStoreEmbedding } from "../../utils/embedding";
 
 export default defineMcpTool({
   name: "create_problem",
@@ -101,6 +102,16 @@ export default defineMcpTool({
         title: problems.title,
         createdAt: problems.createdAt,
       });
+
+    generateAndStoreEmbedding(problem!.id, {
+      title: args.title,
+      content: args.content,
+      explanation: args.explanation,
+      subject: args.subject,
+      chapter: args.chapter,
+      grade: args.grade,
+      hashtags: args.hashtags,
+    });
 
     return {
       content: [
