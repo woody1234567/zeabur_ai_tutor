@@ -29,6 +29,13 @@
       "when": 1782069023125,
       "tag": "0003_lowly_supernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782099318608,
+      "tag": "0004_wise_electro",
+      "breakpoints": true
     }
   ]
 }

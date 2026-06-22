@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
   const user = session.user;
   const body = await readBody(event);
-  const { message, chatId } = body;
+  const { message, chatId, projectId } = body;
 
   if (!message) {
     throw createError({ statusCode: 400, statusMessage: "Message is required" });
@@ -60,6 +60,7 @@ export default defineEventHandler(async (event) => {
           userId: user.id,
           history,
           classroomId: body.classroomId ?? null,
+          projectId: projectId ?? null,
         })) {
           // Intercept done event to capture final content
           if (chunk.startsWith("data: ")) {
@@ -93,6 +94,7 @@ export default defineEventHandler(async (event) => {
             .insert(chatHistory)
             .values({
               studentId: user.id,
+              projectId: projectId ?? null,
               title,
               messages: updatedMessages as any,
             })

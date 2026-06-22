@@ -880,5 +880,28 @@
         }
       }
     }
+  },
+  "chat": {
+    "projects": "Projects",
+    "new_project": "New Project",
+    "edit_project": "Edit Project",
+    "delete_project": "Delete Project",
+    "project_name": "Project Name",
+    "project_name_placeholder": "e.g. Math Study Group",
+    "project_description": "Description",
+    "project_description_placeholder": "Notes about this project (for your reference)",
+    "system_prompt": "Custom AI Instructions",
+    "system_prompt_placeholder": "Add custom instructions for the AI in this project...",
+    "system_prompt_hint": "These instructions will be added to every chat in this project.",
+    "has_instructions": "Custom instructions",
+    "unorganized": "Unorganized",
+    "move_to_project": "Move to Project",
+    "confirm_delete_project": "Are you sure you want to delete this project? Chats will be moved to Unorganized.",
+    "no_chats_in_project": "No chats yet",
+    "all_chats": "All Chats",
+    "new_chat_short": "New Chat",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirm": "Confirm"
   }
 }

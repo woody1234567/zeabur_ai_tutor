@@ -878,5 +878,28 @@
         }
       }
     }
+  },
+  "chat": {
+    "projects": "專案",
+    "new_project": "新增專案",
+    "edit_project": "編輯專案",
+    "delete_project": "刪除專案",
+    "project_name": "專案名稱",
+    "project_name_placeholder": "例如：數學學習小組",
+    "project_description": "說明",
+    "project_description_placeholder": "關於此專案的備註（僅供自己參考）",
+    "system_prompt": "自訂 AI 指示",
+    "system_prompt_placeholder": "為此專案中的 AI 新增自訂指示...",
+    "system_prompt_hint": "這些指示將會套用到此專案中的每個對話。",
+    "has_instructions": "自訂指示",
+    "unorganized": "未分類",
+    "move_to_project": "移至專案",
+    "confirm_delete_project": "確定要刪除此專案嗎？對話將被移至未分類。",
+    "no_chats_in_project": "尚無對話",
+    "all_chats": "所有對話",
+    "new_chat_short": "新對話",
+    "cancel": "取消",
+    "save": "儲存",
+    "confirm": "確認"
   }
 }

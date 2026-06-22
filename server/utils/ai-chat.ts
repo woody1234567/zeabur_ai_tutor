@@ -2,6 +2,9 @@ import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { getOpenAITools, executeAiTool } from "./ai-tools";
 import type { AiToolContext } from "./ai-tools/types";
+import { db } from "../../db";
+import { chatProjects } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 function buildStudentSystemPrompt(userId: string, classroomId?: string | null): string {
   return `You are a helpful AI Tutor assistant.
@@ -43,6 +46,7 @@ export type StreamChatOptions = {
   history: ChatCompletionMessageParam[];
   classroomId?: string | null;
   role?: "student" | "teacher";
+  projectId?: string | null;
 };
 
 export async function* streamChat(
@@ -60,9 +64,18 @@ export async function* streamChat(
     userId: options.userId,
     classroomId: options.classroomId,
   };
-  const systemPrompt = role === "teacher"
+  let systemPrompt = role === "teacher"
     ? buildTeacherSystemPrompt(options.userId)
     : buildStudentSystemPrompt(options.userId, options.classroomId);
+
+  if (options.projectId) {
+    const project = await db.query.chatProjects.findFirst({
+      where: eq(chatProjects.id, options.projectId),
+    });
+    if (project?.systemPrompt) {
+      systemPrompt += `\n\n--- Project Instructions ---\n${project.systemPrompt}`;
+    }
+  }
 
   const userContent: ChatCompletionMessageParam["content"] = options.imageUrl
     ? [

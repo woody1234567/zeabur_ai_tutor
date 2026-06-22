@@ -259,6 +259,21 @@ export const parentStudents = pgTable("parent_students", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const chatProjects = pgTable("chat_projects", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  role: text("role").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  systemPrompt: text("system_prompt"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const chatHistory = pgTable("chat_history", {
   id: text("id")
     .primaryKey()
@@ -266,6 +281,9 @@ export const chatHistory = pgTable("chat_history", {
   studentId: text("student_id")
     .notNull()
     .references(() => user.id),
+  projectId: text("project_id").references(() => chatProjects.id, {
+    onDelete: "set null",
+  }),
   title: text("title"),
   messages: jsonb("messages")
     .$type<{ role: "user" | "assistant"; content: string }[]>()
@@ -281,6 +299,9 @@ export const teacherChatHistory = pgTable("teacher_chat_history", {
   teacherId: text("teacher_id")
     .notNull()
     .references(() => user.id),
+  projectId: text("project_id").references(() => chatProjects.id, {
+    onDelete: "set null",
+  }),
   title: text("title"),
   messages: jsonb("messages")
     .$type<{ role: "user" | "assistant"; content: string }[]>()

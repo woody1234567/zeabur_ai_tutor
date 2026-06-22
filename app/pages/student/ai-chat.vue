@@ -3,9 +3,17 @@ definePageMeta({
   layout: "student",
 });
 
+interface Project {
+  id: string;
+  name: string;
+  description?: string | null;
+  systemPrompt?: string | null;
+}
+
 const { t } = useI18n();
-const chats = ref([]);
+const chats = ref<any[]>([]);
 const currentChatId = ref<string | null>(null);
+const currentProjectId = ref<string | null>(null);
 const messages = ref<{ role: string; content: string; name?: string }[]>([]);
 const filteredMessages = computed(() => {
   return messages.value.filter(
@@ -20,32 +28,112 @@ const isLoading = ref(false);
 const streamingContent = ref("");
 const toolStatus = ref("");
 
+// Project state
+const projects = ref<Project[]>([]);
+const showProjectDialog = ref(false);
+const editingProject = ref<Project | null>(null);
+const showMoveChatDialog = ref(false);
+const movingChatId = ref<string | null>(null);
+
 const { data: chatHistoryList, refresh: refreshHistory } = await useFetch(
   "/api/student/chats"
+);
+const { data: projectList, refresh: refreshProjects } = await useFetch(
+  "/api/student/projects"
 );
 
 watch(
   chatHistoryList,
   (newList) => {
-    if (newList) {
-      chats.value = newList;
-    }
+    if (newList) chats.value = newList as any[];
+  },
+  { immediate: true }
+);
+
+watch(
+  projectList,
+  (newList) => {
+    if (newList) projects.value = newList as Project[];
   },
   { immediate: true }
 );
 
 async function loadChat(id: string) {
   currentChatId.value = id;
+  const chat = chats.value.find((c) => c.id === id);
+  if (chat) currentProjectId.value = chat.projectId ?? null;
   const { data: chatData } = await useFetch(`/api/student/chats/${id}`);
   if (chatData.value) {
     messages.value = chatData.value.messages as any;
   }
 }
 
-async function startNewChat() {
+async function startNewChat(projectId?: string | null) {
   currentChatId.value = null;
+  currentProjectId.value = projectId ?? null;
   messages.value = [];
 }
+
+function selectProject(projectId: string | null) {
+  currentProjectId.value = projectId;
+}
+
+// Project CRUD
+function openCreateProject() {
+  editingProject.value = null;
+  showProjectDialog.value = true;
+}
+
+function openEditProject(project: Project) {
+  editingProject.value = project;
+  showProjectDialog.value = true;
+}
+
+async function saveProject(data: { name: string; description: string; systemPrompt: string }) {
+  if (editingProject.value) {
+    await $fetch(`/api/student/projects/${editingProject.value.id}`, {
+      method: "PUT",
+      body: data,
+    });
+  } else {
+    await $fetch("/api/student/projects", {
+      method: "POST",
+      body: data,
+    });
+  }
+  await refreshProjects();
+}
+
+async function handleDeleteProject(id: string) {
+  if (!confirm(t("chat.confirm_delete_project"))) return;
+  await $fetch(`/api/student/projects/${id}`, { method: "DELETE" });
+  if (currentProjectId.value === id) currentProjectId.value = null;
+  await Promise.all([refreshProjects(), refreshHistory()]);
+}
+
+// Move chat
+function openMoveChat(chatId: string) {
+  movingChatId.value = chatId;
+  showMoveChatDialog.value = true;
+}
+
+async function handleMoveChat(projectId: string | null) {
+  if (!movingChatId.value) return;
+  await $fetch(`/api/student/chats/${movingChatId.value}/project`, {
+    method: "PUT",
+    body: { projectId },
+  });
+  await refreshHistory();
+}
+
+const currentProject = computed(() =>
+  projects.value.find((p) => p.id === currentProjectId.value)
+);
+
+const movingChatProjectId = computed(() => {
+  const chat = chats.value.find((c) => c.id === movingChatId.value);
+  return chat?.projectId ?? null;
+});
 
 async function sendMessage() {
   if (!userMessage.value.trim() || isLoading.value) return;
@@ -56,10 +144,8 @@ async function sendMessage() {
   streamingContent.value = "";
   toolStatus.value = "";
 
-  // Show user message immediately
   messages.value.push({ role: "user", content: msg });
 
-  // Add a placeholder assistant message that we'll fill in via SSE tokens
   const aiMsgIndex = messages.value.length;
   messages.value.push({ role: "assistant", content: "" });
 
@@ -70,6 +156,7 @@ async function sendMessage() {
       body: JSON.stringify({
         message: msg,
         chatId: currentChatId.value,
+        projectId: currentProjectId.value,
       }),
     });
 
@@ -102,7 +189,6 @@ async function sendMessage() {
           } else if (data.type === "tool_result") {
             toolStatus.value = "";
           } else if (data.type === "done") {
-            // Ensure final content is accurate
             messages.value[aiMsgIndex].content = data.content;
             toolStatus.value = "";
           } else if (data.type === "chat_id") {
@@ -127,32 +213,33 @@ async function sendMessage() {
 <template>
   <div class="h-[calc(100vh-64px)] flex">
     <!-- Sidebar -->
-    <div
-      class="w-64 bg-base-200 p-4 border-r border-base-300 flex flex-col hidden lg:flex"
-    >
-      <button class="btn btn-primary w-full mb-4" @click="startNewChat">
-        + {{ $t("student.chat.new_chat") }}
-      </button>
-      <div class="flex-1 overflow-y-auto space-y-2">
-        <div
-          v-for="chat in chats"
-          :key="chat.id"
-          class="p-3 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
-          :class="{ 'bg-base-300': currentChatId === chat.id }"
-          @click="loadChat(chat.id)"
-        >
-          <div class="text-sm font-medium truncate">
-            {{ chat.title || $t("student.chat.new_chat") }}
-          </div>
-          <div class="text-xs text-base-content/60">
-            {{ new Date(chat.updatedAt).toLocaleDateString() }}
-          </div>
-        </div>
-      </div>
-    </div>
+    <ChatProjectSidebar
+      :projects="projects"
+      :chats="chats"
+      :current-chat-id="currentChatId"
+      :current-project-id="currentProjectId"
+      @load-chat="loadChat"
+      @start-new-chat="startNewChat"
+      @create-project="openCreateProject"
+      @edit-project="openEditProject"
+      @delete-project="handleDeleteProject"
+      @move-chat="openMoveChat"
+      @select-project="selectProject"
+    />
 
     <!-- Main Chat Area -->
     <div class="flex-1 flex flex-col bg-base-100">
+      <!-- Project indicator -->
+      <div v-if="currentProject" class="px-4 py-2 border-b border-base-300 bg-base-200/50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+        <span class="text-sm font-medium">{{ currentProject.name }}</span>
+        <span v-if="currentProject.systemPrompt" class="badge badge-xs badge-primary">
+          {{ t("chat.has_instructions") }}
+        </span>
+      </div>
+
       <!-- Mobile Sidebar Toggle -->
       <div class="lg:hidden p-2 border-b border-base-300"></div>
 
@@ -231,5 +318,18 @@ async function sendMessage() {
         </div>
       </div>
     </div>
+
+    <!-- Dialogs -->
+    <ChatProjectDialog
+      v-model="showProjectDialog"
+      :project="editingProject"
+      @save="saveProject"
+    />
+    <ChatMoveChatDialog
+      v-model="showMoveChatDialog"
+      :projects="projects"
+      :current-project-id="movingChatProjectId"
+      @move="handleMoveChat"
+    />
   </div>
 </template>
