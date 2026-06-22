@@ -15,14 +15,11 @@ pnpm db:generate            # Generate Drizzle migrations from schema changes
 pnpm db:migrate             # Apply migrations to the database
 pnpm db:studio              # Open Drizzle Studio (database GUI)
 docker compose up -d        # Start local PostgreSQL
-
-# AI microservice (separate process)
-cd packages/ai-service && uv run uvicorn src.main:app --reload --port 8000
 ```
 
 ## Architecture Overview
 
-This is a **Nuxt 4 tutoring platform** with a separate **Python FastAPI AI microservice**.
+This is a **Nuxt 4 tutoring platform** with integrated AI chat (OpenAI-compatible, server-side).
 
 ### Directory Layout
 
@@ -42,10 +39,6 @@ server/
     r2.ts                   # Two Cloudflare R2 S3 clients
 lib/
   auth-client.ts            # better-auth Vue client (signIn, signOut, useSession)
-packages/ai-service/        # Python FastAPI + LangGraph AI microservice
-  src/main.py               # FastAPI entrypoint, /chat endpoint
-  src/graph/                # LangGraph workflow (state, nodes, workflow)
-  src/tools/                # MCP tool integration
 locales/                    # i18n translation files (en.json, zhTW.json)
 drizzle/                    # Auto-generated migration files
 ```
@@ -88,12 +81,12 @@ Two separate R2 buckets accessed via `server/utils/r2.ts`:
 - `r2` — for problem images (`r2BucketName`)
 - `classMaterialsR2` — for teacher-uploaded class materials (`classMaterialsR2BucketName`)
 
-### AI Microservice
+### AI Chat
 
-- Runs independently on port 8000 (Python FastAPI + LangGraph)
-- Nuxt calls it via `server/api/student/chat.post.ts` → HTTP POST to `http://localhost:8000/chat`
-- LangGraph workflow: `packages/ai-service/src/graph/workflow.py`
-- Managed with `uv` (Python package manager); uses MCP tool integration
+- Integrated into Nuxt server — no separate microservice needed
+- `server/utils/ai-chat.ts` — OpenAI SDK streaming chat with tool-call loop (configurable base URL / model via `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`)
+- `server/utils/ai-tools/` — TypeScript tool definitions (search-problems, recommend-materials, create-problem, web-search)
+- Student chat: `server/api/student/chat.post.ts`; Teacher chat: `server/api/teacher/chat.post.ts`
 
 ### Environment Variables
 
@@ -102,6 +95,9 @@ Required in `.env` or `.env.local` (`.env.local` takes precedence):
 - `BETTER_AUTH_SECRET` — auth signing secret
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — Google OAuth
 - `OPENAI_API_KEY` — for AI features and teacher tools (vision, generate options)
+- `AI_BASE_URL` — OpenAI-compatible base URL (default: `https://api.openai.com/v1`)
+- `AI_API_KEY` — API key for AI chat (falls back to `OPENAI_API_KEY`)
+- `AI_MODEL` — chat model name (default: `gpt-4o`)
 - `GOOGLE_VISION_API_KEY` — for teacher's image-to-problem OCR tool
 - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN`
 - `CLASS_MATERIALS_R2_*` — same set for the class materials bucket
