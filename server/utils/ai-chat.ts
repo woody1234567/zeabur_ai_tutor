@@ -156,7 +156,31 @@ export async function* streamChat(
             parsedArgs = JSON.parse(tc.arguments);
           } catch {}
 
-          const result = await executeAiTool(tc.name, parsedArgs, toolContext);
+          const startTime = Date.now();
+          let result: string;
+          let toolError: string | undefined;
+
+          try {
+            result = await executeAiTool(tc.name, parsedArgs, toolContext);
+          } catch (err: any) {
+            toolError = err.message;
+            result = JSON.stringify({ error: err.message });
+          }
+
+          const durationMs = Date.now() - startTime;
+
+          logAiToolCall({
+            userId: options.userId,
+            userRole: role,
+            toolName: tc.name,
+            userMessage: options.message,
+            args: parsedArgs,
+            result,
+            durationMs,
+            error: toolError,
+            classroomId: options.classroomId,
+            projectId: options.projectId,
+          });
 
           messages.push({
             role: "tool",

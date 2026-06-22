@@ -673,11 +673,43 @@
       "home": "Home",
       "users": "Users",
       "linking": "Linking",
+      "ai_logs": "AI Logs",
       "logout": "Logout"
     },
     "dashboard": {
       "title": "Admin Dashboard",
       "welcome": "Welcome, Admin! This is a protected area."
+    },
+    "ai_tool_logs": {
+      "title": "AI Tool Logs",
+      "search_placeholder": "Search by user message...",
+      "filter_tool": "Tool",
+      "filter_role": "User Role",
+      "filter_errors_only": "Errors Only",
+      "all_tools": "All Tools",
+      "all_roles": "All Roles",
+      "table": {
+        "time": "Time",
+        "user": "User",
+        "role": "Role",
+        "tool": "Tool",
+        "message": "User Message",
+        "args": "Arguments",
+        "result_count": "Results",
+        "duration": "Duration (ms)",
+        "error": "Error",
+        "no_results": "No logs found"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page_of": "Page {current} of {total}",
+        "total_records": "{count} total records"
+      },
+      "detail": {
+        "arguments": "Arguments",
+        "result": "Result Summary"
+      }
     },
     "link_student": {
       "title": "Link Student to Parent",

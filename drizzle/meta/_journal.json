@@ -43,6 +43,13 @@
       "when": 1782103283096,
       "tag": "0005_sad_hellion",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782112924322,
+      "tag": "0006_demonic_silhouette",
+      "breakpoints": true
     }
   ]
 }

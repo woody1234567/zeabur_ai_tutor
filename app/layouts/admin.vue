@@ -42,6 +42,13 @@ const handleLogout = async () => {
             >
           </li>
           <li>
+            <NuxtLink
+              class="btn btn-ghost"
+              :to="localePath('/admin/ai-tool-logs')"
+              >{{ $t("admin.layout.ai_logs") }}</NuxtLink
+            >
+          </li>
+          <li>
             <button @click="handleLogout" class="btn btn-primary">
               {{ $t("admin.layout.logout") }}
             </button>

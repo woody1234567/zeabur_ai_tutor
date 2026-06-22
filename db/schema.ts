@@ -468,3 +468,23 @@ export const postsTemplate = pgTable(
     };
   }
 );
+
+export const aiToolLogs = pgTable("ai_tool_logs", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  userRole: text("user_role"),
+  toolName: text("tool_name").notNull(),
+  userMessage: text("user_message"),
+  args: jsonb("args").$type<Record<string, unknown>>(),
+  resultSummary: text("result_summary"),
+  resultCount: integer("result_count"),
+  durationMs: integer("duration_ms"),
+  error: text("error"),
+  classroomId: text("classroom_id"),
+  projectId: text("project_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
