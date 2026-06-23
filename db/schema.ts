@@ -517,3 +517,20 @@ export const aiInteractionLogs = pgTable(
     createdIndex: index("ai_interaction_logs_created_idx").on(table.createdAt),
   }),
 );
+
+export const teacherAvailability = pgTable("teacher_availability", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+  isAvailable: boolean("is_available").default(true).notNull(),
+  maxStudents: integer("max_students").default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

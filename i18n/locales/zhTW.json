@@ -129,7 +129,26 @@
       "logout": "登出",
       "menu": "選單",
       "dashboard": "儀表板",
-      "materials": "教材"
+      "materials": "教材",
+      "teachers": "老師列表"
+    },
+    "teachers": {
+      "title": "尋找老師",
+      "description": "選擇老師以查看其可預約時段。",
+      "count": "{count} 位老師",
+      "view_availability": "查看可預約時段",
+      "back": "返回老師列表",
+      "available_slots": "可預約時段",
+      "slots_description": "選擇一個時段來預約。",
+      "no_slots": "此老師目前沒有可預約的時段。",
+      "no_teachers": "目前沒有可用的老師。",
+      "available_count": "{count} 個可預約",
+      "available": "可預約",
+      "booked": "已預約",
+      "max_students": "最多 {count} 位學生",
+      "book": "預約",
+      "loading": "載入中...",
+      "load_error": "載入老師資訊失敗"
     },
     "classrooms": {
       "title": "我的教室",
@@ -344,7 +363,38 @@
       "dashboard": "儀表板",
       "manage_problems": "管理題目",
       "create_problem": "建立題目",
-      "ai_chat": "AI 助手"
+      "ai_chat": "AI 助手",
+      "schedule": "排程管理"
+    },
+    "schedule": {
+      "title": "我的排程",
+      "description": "管理可預約的時段與教學活動排程。",
+      "modal_create": "新增排程事件",
+      "modal_edit": "編輯排程事件",
+      "form": {
+        "title_label": "事件標題",
+        "title_placeholder": "例：數學課",
+        "description_label": "說明",
+        "description_placeholder": "事件說明...",
+        "start_time": "開始時間",
+        "end_time": "結束時間",
+        "max_students": "最大學生數",
+        "mark_available": "標記為可預約",
+        "save": "儲存事件",
+        "cancel": "取消",
+        "error_title_required": "標題為必填",
+        "error_time_required": "開始與結束時間為必填",
+        "error_time_order": "開始時間須早於結束時間",
+        "error_save_failed": "儲存事件失敗",
+        "error_delete_failed": "刪除事件失敗"
+      },
+      "event": {
+        "available": "可預約",
+        "booked": "已預約",
+        "edit": "編輯",
+        "delete": "刪除",
+        "confirm_delete": "確定要刪除此事件嗎？"
+      }
     },
     "chat": {
       "new_chat": "新對話",

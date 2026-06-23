@@ -80,6 +80,11 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <NuxtLink :to="localePath('/teacher/schedule')">{{
+                $t("teacher.layout.schedule")
+              }}</NuxtLink>
+            </li>
+            <li>
               <NuxtLink :to="localePath('/teacher/ai-chat')">{{
                 $t("teacher.layout.ai_chat")
               }}</NuxtLink>
@@ -161,6 +166,13 @@ const closeDrawer = () => {
             :to="localePath('/teacher/students_dashboard')"
             @click="closeDrawer"
             >{{ $t("teacher.layout.students") }}</NuxtLink
+          >
+        </li>
+        <li>
+          <NuxtLink
+            :to="localePath('/teacher/schedule')"
+            @click="closeDrawer"
+            >{{ $t("teacher.layout.schedule") }}</NuxtLink
           >
         </li>
         <li class="mt-auto">
