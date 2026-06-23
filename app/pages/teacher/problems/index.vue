@@ -53,9 +53,13 @@ const shouldFetchProblems = computed(
 
 const { data: result, refresh } = await useFetch("/api/problems", {
   query: queryParams,
-  watch: [queryParams],
-  immediate: shouldFetchProblems.value,
+  watch: false,
+  immediate: false,
 });
+
+watch([queryParams, shouldFetchProblems], () => {
+  if (shouldFetchProblems.value) refresh();
+}, { immediate: true });
 const problems = computed(() => (shouldFetchProblems.value ? (result.value?.data ?? []) : []));
 
 // --- Testbanks ---
@@ -194,60 +198,12 @@ const onTestbankSaved = () => {
           </div>
 
           <div v-if="problems.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div
+            <TeacherProblemListCard
               v-for="problem in problems"
               :key="problem.id"
-              class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-            >
-              <div class="card-body">
-                <h2 class="card-title text-lg">{{ problem.title }}</h2>
-                <div class="flex gap-2 mt-2 flex-wrap">
-                  <div
-                    class="badge"
-                    :class="{
-                      'badge-success': problem.difficulty === 'easy',
-                      'badge-warning': problem.difficulty === 'medium',
-                      'badge-error': problem.difficulty === 'hard',
-                    }"
-                  >
-                    {{ problem.difficulty }}
-                  </div>
-                  <div v-if="problem.subject" class="badge badge-info badge-outline">
-                    {{ problem.subject }}
-                  </div>
-                  <div v-if="problem.chapter" class="badge badge-ghost">
-                    {{ problem.chapter }}
-                  </div>
-                  <div v-if="problem.grade" class="badge badge-ghost badge-outline">
-                    {{ problem.grade }}
-                  </div>
-                  <div v-if="problem.source" class="badge badge-ghost">
-                    {{ problem.source }}
-                  </div>
-                  <div
-                    v-for="tag in problem.hashtags"
-                    :key="tag"
-                    class="badge badge-secondary badge-outline"
-                  >
-                    #{{ tag }}
-                  </div>
-                </div>
-                <div class="card-actions justify-end mt-4">
-                  <NuxtLink
-                    :to="localePath(`/teacher/problems/${problem.id}/edit`)"
-                    class="btn btn-warning btn-sm"
-                  >
-                    {{ $t("teacher.problems.edit_button") }}
-                  </NuxtLink>
-                  <button
-                    @click="deleteProblem(problem.id)"
-                    class="btn btn-error btn-sm"
-                  >
-                    {{ $t("teacher.problems.delete") }}
-                  </button>
-                </div>
-              </div>
-            </div>
+              :problem="problem"
+              @delete="deleteProblem"
+            />
           </div>
 
           <div v-if="!result" class="text-center py-10">
@@ -284,60 +240,12 @@ const onTestbankSaved = () => {
             </div>
 
             <div v-if="problems.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <div
+              <TeacherProblemListCard
                 v-for="problem in problems"
                 :key="problem.id"
-                class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-              >
-                <div class="card-body">
-                  <h2 class="card-title text-lg">{{ problem.title }}</h2>
-                  <div class="flex gap-2 mt-2 flex-wrap">
-                    <div
-                      class="badge"
-                      :class="{
-                        'badge-success': problem.difficulty === 'easy',
-                        'badge-warning': problem.difficulty === 'medium',
-                        'badge-error': problem.difficulty === 'hard',
-                      }"
-                    >
-                      {{ problem.difficulty }}
-                    </div>
-                    <div v-if="problem.subject" class="badge badge-info badge-outline">
-                      {{ problem.subject }}
-                    </div>
-                    <div v-if="problem.chapter" class="badge badge-ghost">
-                      {{ problem.chapter }}
-                    </div>
-                    <div v-if="problem.grade" class="badge badge-ghost badge-outline">
-                      {{ problem.grade }}
-                    </div>
-                    <div v-if="problem.source" class="badge badge-ghost">
-                      {{ problem.source }}
-                    </div>
-                    <div
-                      v-for="tag in problem.hashtags"
-                      :key="tag"
-                      class="badge badge-secondary badge-outline"
-                    >
-                      #{{ tag }}
-                    </div>
-                  </div>
-                  <div class="card-actions justify-end mt-4">
-                    <NuxtLink
-                      :to="localePath(`/teacher/problems/${problem.id}/edit`)"
-                      class="btn btn-warning btn-sm"
-                    >
-                      {{ $t("teacher.problems.edit_button") }}
-                    </NuxtLink>
-                    <button
-                      @click="deleteProblem(problem.id)"
-                      class="btn btn-error btn-sm"
-                    >
-                      {{ $t("teacher.problems.delete") }}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                :problem="problem"
+                @delete="deleteProblem"
+              />
             </div>
 
             <div v-if="!result" class="text-center py-10">

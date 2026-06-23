@@ -26,6 +26,8 @@ const form = ref({
 
 const saving = ref(false);
 
+const dialogRef = ref<HTMLDialogElement | null>(null);
+
 watch(
   () => props.modelValue,
   (open) => {
@@ -39,16 +41,6 @@ watch(
       } else {
         form.value = { name: "", description: "", isPublic: false };
       }
-    }
-  }
-);
-
-const dialogRef = ref<HTMLDialogElement | null>(null);
-
-watch(
-  () => props.modelValue,
-  (open) => {
-    if (open) {
       dialogRef.value?.showModal();
     } else {
       dialogRef.value?.close();
