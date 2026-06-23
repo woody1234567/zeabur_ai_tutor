@@ -121,7 +121,8 @@
       "title": "學生",
       "external_links": "外部連結",
       "physimhub": "PhysimHub",
-      "testbank": "題庫",
+      "testbanks": "題庫",
+      "testbank": "所有題目",
       "favorites": "收藏",
       "wrong": "錯題",
       "classrooms": "教室",
@@ -251,6 +252,11 @@
       "error_loading": "載入題目時發生錯誤：",
       "understood": "已理解",
       "mark_as_understood": "標記為已理解"
+    },
+    "testbanks": {
+      "title": "題庫",
+      "empty": "目前沒有可瀏覽的題庫。",
+      "back": "返回題庫列表"
     },
     "chat": {
       "new_chat": "新對話",
@@ -900,6 +906,10 @@
     }
   },
   "components": {
+    "shared_testbanks": {
+      "title": "共享題庫",
+      "empty": "目前尚未有題庫分享給這個班級。"
+    },
     "common": {
       "cancel": "取消",
       "confirm": "確定",

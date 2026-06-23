@@ -121,7 +121,8 @@
       "title": "Student",
       "external_links": "External Links",
       "physimhub": "PhysimHub",
-      "testbank": "Testbank",
+      "testbanks": "Testbanks",
+      "testbank": "All Problems",
       "favorites": "Favorites",
       "wrong": "Wrong",
       "classrooms": "Classrooms",
@@ -251,6 +252,11 @@
       "error_loading": "Error loading problem:",
       "understood": "Understood",
       "mark_as_understood": "Mark as understood"
+    },
+    "testbanks": {
+      "title": "Testbanks",
+      "empty": "No testbanks available to you yet.",
+      "back": "Back to testbanks"
     },
     "chat": {
       "new_chat": "New Chat",
@@ -900,6 +906,10 @@
     }
   },
   "components": {
+    "shared_testbanks": {
+      "title": "Shared Testbanks",
+      "empty": "No testbanks have been shared with this classroom yet."
+    },
     "common": {
       "cancel": "Cancel",
       "confirm": "Confirm",

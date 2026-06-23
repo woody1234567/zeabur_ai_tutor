@@ -3,6 +3,10 @@ definePageMeta({
   layout: "student",
 });
 const localePath = useLocalePath();
+const route = useRoute();
+
+const testbankId = computed(() => route.query.testbankId as string | undefined);
+const testbankName = computed(() => route.query.name as string | undefined);
 
 const currentPage = ref(1);
 const pageSize = ref(12);
@@ -19,6 +23,7 @@ const searchParams = ref({
 
 const queryParams = computed(() => ({
   ...searchParams.value,
+  ...(testbankId.value ? { testbankId: testbankId.value } : {}),
   page: currentPage.value,
   pageSize: pageSize.value,
 }));
@@ -44,7 +49,7 @@ const handleSearch = (params: {
   currentPage.value = 1;
 };
 
-watch(pageSize, () => {
+watch([pageSize, testbankId], () => {
   currentPage.value = 1;
 });
 
@@ -80,7 +85,19 @@ const visiblePages = computed(() => {
 
 <template>
   <div class="container mx-auto p-4 max-w-7xl">
-    <h1 class="text-3xl font-bold mb-8">{{ $t("student.problems.title") }}</h1>
+    <div v-if="testbankId" class="mb-4">
+      <NuxtLink
+        :to="localePath('/student/testbanks')"
+        class="btn btn-ghost btn-sm gap-2"
+      >
+        <Icon name="heroicons-solid:arrow-sm-left" />
+        {{ $t("student.testbanks.back") }}
+      </NuxtLink>
+    </div>
+
+    <h1 class="text-3xl font-bold mb-8">
+      {{ testbankId ? testbankName || $t("student.testbanks.title") : $t("student.problems.title") }}
+    </h1>
 
     <ProblemSearch v-model:page-size="pageSize" @search="handleSearch" />
     <br />
