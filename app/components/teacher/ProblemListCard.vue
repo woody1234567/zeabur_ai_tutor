@@ -2,7 +2,7 @@
 interface Problem {
   id: string;
   title: string;
-  difficulty: string;
+  difficulty: string | null;
   subject?: string | null;
   chapter?: string | null;
   grade?: string | null;
