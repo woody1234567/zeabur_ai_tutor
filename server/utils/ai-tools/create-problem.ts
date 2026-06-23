@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { tool } from "ai";
 import { db } from "../../../db";
-import { problems } from "../../../db/schema";
+import { problems, testbanks, testbankProblems } from "../../../db/schema";
+import { and, eq } from "drizzle-orm";
 import type { AiToolContext } from "./types";
 
 const inputSchema = z.object({
@@ -37,11 +38,12 @@ const inputSchema = z.object({
     .max(20)
     .default([])
     .describe("標籤，如 [\"三角函數\", \"高一\"]"),
+  testbankId: z.string().min(1).describe("目標題庫的 ID，請先呼叫 list_testbanks 取得可用題庫"),
 });
 
 export const createProblemTool = tool({
   description:
-    "將討論好的題目寫入題庫。請在老師確認題目內容（標題、題幹、選項、正確答案）後才呼叫此工具。choices 格式為 {\"A\":\"...\",\"B\":\"...\"}，correctAnswer 為正確選項的 key（如 \"A\"）。",
+    "將討論好的題目寫入題庫。請先呼叫 list_testbanks 取得老師的題庫列表，讓老師選擇要儲存到哪個題庫後，再呼叫此工具。請在老師確認題目內容（標題、題幹、選項、正確答案）後才呼叫此工具。choices 格式為 {\"A\":\"...\",\"B\":\"...\"}，correctAnswer 為正確選項的 key（如 \"A\"）。",
   inputSchema,
   execute: async (input, { experimental_context }) => {
     const context = experimental_context as AiToolContext;
@@ -50,6 +52,16 @@ export const createProblemTool = tool({
       return JSON.stringify({
         error: "correctAnswer 必須是 choices 中的其中一個 key",
       });
+    }
+
+    // Validate testbank ownership
+    const [tb] = await db
+      .select({ id: testbanks.id })
+      .from(testbanks)
+      .where(and(eq(testbanks.id, input.testbankId), eq(testbanks.ownerId, context.userId)));
+
+    if (!tb) {
+      return JSON.stringify({ error: "找不到該題庫或您沒有權限" });
     }
 
     const [problem] = await db
@@ -75,6 +87,12 @@ export const createProblemTool = tool({
         title: problems.title,
         createdAt: problems.createdAt,
       });
+
+    // Link problem to testbank
+    await db.insert(testbankProblems).values({
+      testbankId: input.testbankId,
+      problemId: problem!.id,
+    });
 
     generateAndStoreEmbedding(problem!.id, {
       title: input.title,

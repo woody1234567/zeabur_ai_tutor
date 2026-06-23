@@ -12,6 +12,7 @@ const inputSchema = z.object({
   chapter: z.string().max(200).optional().describe("章節，如 第三章、二次方程式"),
   grade: z.string().max(50).optional().describe("年級，如 國一、高二"),
   difficulty: z.enum(["easy", "medium", "hard"]).optional().describe("難度"),
+  testbankId: z.string().max(100).optional().describe("題庫 ID，限制搜尋範圍至特定題庫"),
   limit: z.number().int().min(1).max(20).default(10).describe("回傳數量上限"),
 });
 

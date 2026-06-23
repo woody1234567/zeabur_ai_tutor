@@ -12,6 +12,7 @@ export type SearchProblemsCriteria = {
   chapter?: string;
   grade?: string;
   difficulty?: string;
+  testbankId?: string;
   limit?: number;
 };
 
@@ -45,6 +46,11 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
   }
   if (criteria.difficulty) {
     filters.push(eq(problems.difficulty, criteria.difficulty));
+  }
+  if (criteria.testbankId) {
+    filters.push(
+      sql`${problems.id} IN (SELECT problem_id FROM testbank_problems WHERE testbank_id = ${criteria.testbankId})`
+    );
   }
 
   try {
