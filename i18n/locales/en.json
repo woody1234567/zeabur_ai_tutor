@@ -148,7 +148,29 @@
       "max_students": "Max {count} student(s)",
       "book": "Book",
       "loading": "Loading...",
-      "load_error": "Failed to load teacher information"
+      "load_error": "Failed to load teacher information",
+      "pending": "Pending",
+      "booking_modal": {
+        "title": "Book Time Slot",
+        "note_label": "Note (optional)",
+        "note_placeholder": "Add a message for the teacher...",
+        "confirm": "Confirm Booking",
+        "cancel": "Cancel",
+        "success": "Booking request sent!",
+        "error": "Failed to book slot"
+      }
+    },
+    "bookings": {
+      "title": "My Bookings",
+      "no_bookings": "No bookings yet.",
+      "status_pending": "Pending",
+      "status_confirmed": "Confirmed",
+      "status_rejected": "Rejected",
+      "status_cancelled": "Cancelled",
+      "cancel": "Cancel Booking",
+      "cancel_confirm": "Are you sure you want to cancel this booking?",
+      "teacher_note": "Teacher's note",
+      "with_teacher": "with {name}"
     },
     "classrooms": {
       "title": "My Classrooms",
@@ -365,6 +387,18 @@
       "create_problem": "Create Problem",
       "ai_chat": "AI Assistant",
       "schedule": "Schedule"
+    },
+    "bookings": {
+      "title": "Pending Bookings",
+      "no_pending": "No pending bookings.",
+      "confirm": "Confirm",
+      "reject": "Reject",
+      "note_label": "Note (optional)",
+      "note_placeholder": "Add a note...",
+      "confirm_success": "Booking confirmed!",
+      "reject_success": "Booking rejected.",
+      "student_note": "Student's note",
+      "from_student": "from {name}"
     },
     "schedule": {
       "title": "My Schedule",
@@ -666,7 +700,41 @@
           "image_title": "Image Preview:",
           "image_desc": "Uploaded images will appear in the preview immediately."
         }
-      }
+      },
+      "tabs": {
+        "public": "Public Testbank",
+        "mine": "My Testbanks"
+      },
+      "testbanks": {
+        "create": "Create Testbank",
+        "edit": "Edit Testbank",
+        "delete": "Delete Testbank",
+        "share": "Share",
+        "name": "Testbank Name",
+        "name_placeholder": "e.g. Physics Chapter 3",
+        "description": "Description",
+        "description_placeholder": "Optional description...",
+        "is_public": "Public",
+        "is_private": "Private",
+        "make_public": "Make Public",
+        "make_private": "Make Private",
+        "problem_count": "{count} problems",
+        "no_testbanks": "No testbanks yet. Create one to get started.",
+        "confirm_delete": "Are you sure you want to delete this testbank? Problems will not be deleted.",
+        "delete_error": "Failed to delete testbank",
+        "create_success": "Testbank created!",
+        "create_error": "Failed to create testbank",
+        "update_success": "Testbank updated!",
+        "update_error": "Failed to update testbank",
+        "back": "Back to My Testbanks",
+        "share_title": "Share \"{name}\"",
+        "share_desc": "Select classrooms that can access this testbank",
+        "share_success": "Sharing updated!",
+        "share_error": "Failed to update sharing",
+        "no_classrooms": "No classrooms available to share with."
+      },
+      "select_testbank": "Select Testbank",
+      "select_testbank_placeholder": "Choose a testbank..."
     },
     "students_dashboard": {
       "title": "My Students",

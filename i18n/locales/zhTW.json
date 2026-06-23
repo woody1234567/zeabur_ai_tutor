@@ -148,7 +148,29 @@
       "max_students": "最多 {count} 位學生",
       "book": "預約",
       "loading": "載入中...",
-      "load_error": "載入老師資訊失敗"
+      "load_error": "載入老師資訊失敗",
+      "pending": "待確認",
+      "booking_modal": {
+        "title": "預約時段",
+        "note_label": "備註（選填）",
+        "note_placeholder": "留言給老師...",
+        "confirm": "確認預約",
+        "cancel": "取消",
+        "success": "預約請求已送出！",
+        "error": "預約失敗"
+      }
+    },
+    "bookings": {
+      "title": "我的預約",
+      "no_bookings": "尚無預約。",
+      "status_pending": "待確認",
+      "status_confirmed": "已確認",
+      "status_rejected": "已拒絕",
+      "status_cancelled": "已取消",
+      "cancel": "取消預約",
+      "cancel_confirm": "確定要取消這個預約嗎？",
+      "teacher_note": "老師留言",
+      "with_teacher": "與 {name}"
     },
     "classrooms": {
       "title": "我的教室",
@@ -365,6 +387,18 @@
       "create_problem": "建立題目",
       "ai_chat": "AI 助手",
       "schedule": "排程管理"
+    },
+    "bookings": {
+      "title": "待確認的預約",
+      "no_pending": "無待確認的預約。",
+      "confirm": "確認",
+      "reject": "拒絕",
+      "note_label": "備註（選填）",
+      "note_placeholder": "新增備註...",
+      "confirm_success": "已確認預約！",
+      "reject_success": "已拒絕預約。",
+      "student_note": "學生留言",
+      "from_student": "來自 {name}"
     },
     "schedule": {
       "title": "我的排程",
@@ -666,7 +700,41 @@
           "image_title": "圖片預覽：",
           "image_desc": "上傳的圖片將立即顯示在預覽中。"
         }
-      }
+      },
+      "tabs": {
+        "public": "公開題庫",
+        "mine": "我的題庫"
+      },
+      "testbanks": {
+        "create": "建立題庫",
+        "edit": "編輯題庫",
+        "delete": "刪除題庫",
+        "share": "分享",
+        "name": "題庫名稱",
+        "name_placeholder": "例如：物理第三章",
+        "description": "描述",
+        "description_placeholder": "選填描述...",
+        "is_public": "公開",
+        "is_private": "私人",
+        "make_public": "設為公開",
+        "make_private": "設為私人",
+        "problem_count": "{count} 題",
+        "no_testbanks": "尚無題庫，請建立一個開始使用。",
+        "confirm_delete": "確定要刪除此題庫嗎？題目本身不會被刪除。",
+        "delete_error": "刪除題庫失敗",
+        "create_success": "題庫建立成功！",
+        "create_error": "建立題庫失敗",
+        "update_success": "題庫更新成功！",
+        "update_error": "更新題庫失敗",
+        "back": "返回我的題庫",
+        "share_title": "分享「{name}」",
+        "share_desc": "選擇可以存取此題庫的班級",
+        "share_success": "分享設定已更新！",
+        "share_error": "更新分享設定失敗",
+        "no_classrooms": "沒有可分享的班級。"
+      },
+      "select_testbank": "選擇題庫",
+      "select_testbank_placeholder": "請選擇題庫..."
     },
     "students_dashboard": {
       "title": "我的學生",
