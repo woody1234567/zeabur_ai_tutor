@@ -682,35 +682,49 @@
       "title": "管理員儀表板",
       "welcome": "歡迎，管理員！這是受保護的區域。"
     },
-    "ai_tool_logs": {
-      "title": "AI 工具呼叫紀錄",
-      "search_placeholder": "搜尋使用者訊息...",
-      "filter_tool": "工具",
-      "filter_role": "使用者角色",
-      "filter_errors_only": "僅顯示錯誤",
-      "all_tools": "所有工具",
-      "all_roles": "所有角色",
+    "ai_interaction_logs": {
+      "title": "AI 對話與工具紀錄",
+      "search_placeholder": "搜尋內容、工具、錯誤或對話 ID...",
+      "total_records": "共 {count} 筆紀錄",
+      "event_types": {
+        "user_message": "使用者訊息",
+        "assistant_message": "AI 回覆",
+        "tool_call": "工具呼叫"
+      },
+      "statuses": {
+        "completed": "完成",
+        "aborted": "已中止",
+        "error": "錯誤"
+      },
+      "filters": {
+        "all_events": "所有事件",
+        "all_tools": "所有工具",
+        "all_roles": "所有角色",
+        "all_statuses": "所有狀態",
+        "chat_id": "對話 ID",
+        "clear": "清除篩選"
+      },
       "table": {
         "time": "時間",
         "user": "使用者",
-        "role": "角色",
-        "tool": "工具",
-        "message": "使用者訊息",
-        "args": "參數",
-        "result_count": "結果數",
+        "event": "事件",
+        "status": "狀態",
+        "chat": "對話",
+        "content": "內容",
+        "model": "模型",
         "duration": "耗時 (ms)",
-        "error": "錯誤",
         "no_results": "沒有找到紀錄"
+      },
+      "detail": {
+        "content": "完整內容與附件",
+        "metadata": "事件資訊",
+        "tool_input": "工具輸入",
+        "tool_output": "工具輸出"
       },
       "pagination": {
         "previous": "上一頁",
         "next": "下一頁",
-        "page_of": "第 {current} 頁，共 {total} 頁",
-        "total_records": "共 {count} 筆紀錄"
-      },
-      "detail": {
-        "arguments": "參數",
-        "result": "結果摘要"
+        "page_of": "第 {current} 頁，共 {total} 頁"
       }
     },
     "link_student": {

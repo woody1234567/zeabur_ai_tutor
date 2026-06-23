@@ -3,6 +3,7 @@ import type { UIMessage } from "ai";
 import { getAIModel } from "./ai-provider";
 import { getTools } from "./ai-tools";
 import type { AiToolContext } from "./ai-tools/types";
+import { recordAiToolCall } from "./ai-tool-recorder";
 import { db } from "../../db";
 import { chatProjects } from "../../db/schema";
 import { eq } from "drizzle-orm";
@@ -42,6 +43,7 @@ When drafting problems, use clear and precise language suitable for the target g
 
 export type StreamChatOptions = {
   messages: UIMessage[];
+  chatId: string;
   userId: string;
   classroomId?: string | null;
   role?: "student" | "teacher";
@@ -77,6 +79,7 @@ export async function createChatStream(options: StreamChatOptions) {
 
   const modelMessages = await convertToModelMessages(options.messages);
 
+  console.log("[AI Chat] creating streamText with direct tool recording");
   return streamText({
     model,
     system: systemPrompt,
@@ -84,25 +87,16 @@ export async function createChatStream(options: StreamChatOptions) {
     tools,
     stopWhen: stepCountIs(5),
     experimental_context: toolContext,
-    experimental_onToolCallFinish(event) {
-      const lastUserMsg = options.messages.findLast(m => m.role === "user");
-      const userText = lastUserMsg?.parts
-        ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-        .map(p => p.text)
-        .join(" ") ?? "";
-
-      logAiToolCall({
+    experimental_onToolCallFinish: recordAiToolCall,
+    experimental_telemetry: {
+      isEnabled: true,
+      metadata: {
+        chatId: options.chatId,
         userId: options.userId,
         userRole: role,
-        toolName: event.toolCall.toolName,
-        userMessage: userText,
-        args: event.toolCall.input as Record<string, unknown>,
-        result: event.success ? String(event.output) : JSON.stringify({ error: String(event.error) }),
-        durationMs: event.durationMs,
-        error: event.success ? undefined : String(event.error),
-        classroomId: options.classroomId,
-        projectId: options.projectId,
-      });
+        ...(options.classroomId ? { classroomId: options.classroomId } : {}),
+        ...(options.projectId ? { projectId: options.projectId } : {}),
+      },
     },
   });
 }

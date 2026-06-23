@@ -44,7 +44,7 @@ const handleLogout = async () => {
           <li>
             <NuxtLink
               class="btn btn-ghost"
-              :to="localePath('/admin/ai-tool-logs')"
+              :to="localePath('/admin/ai-interaction-logs')"
               >{{ $t("admin.layout.ai_logs") }}</NuxtLink
             >
           </li>

@@ -469,22 +469,51 @@ export const postsTemplate = pgTable(
   }
 );
 
-export const aiToolLogs = pgTable("ai_tool_logs", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id),
-  userRole: text("user_role"),
-  toolName: text("tool_name").notNull(),
-  userMessage: text("user_message"),
-  args: jsonb("args").$type<Record<string, unknown>>(),
-  resultSummary: text("result_summary"),
-  resultCount: integer("result_count"),
-  durationMs: integer("duration_ms"),
-  error: text("error"),
-  classroomId: text("classroom_id"),
-  projectId: text("project_id"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export type AiInteractionAttachment = {
+  url: string;
+  mediaType: string;
+  filename?: string;
+};
+
+export const aiInteractionLogs = pgTable(
+  "ai_interaction_logs",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    eventKey: text("event_key").notNull(),
+    chatId: text("chat_id").notNull(),
+    messageId: text("message_id"),
+    toolCallId: text("tool_call_id"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id),
+    userRole: text("user_role").notNull(),
+    eventType: text("event_type").notNull(),
+    status: text("status").notNull().default("completed"),
+    content: text("content"),
+    attachments: jsonb("attachments").$type<AiInteractionAttachment[]>(),
+    toolName: text("tool_name"),
+    toolInput: jsonb("tool_input").$type<unknown>(),
+    toolOutput: jsonb("tool_output").$type<unknown>(),
+    finishReason: text("finish_reason"),
+    durationMs: integer("duration_ms"),
+    error: text("error"),
+    classroomId: text("classroom_id"),
+    projectId: text("project_id"),
+    stepNumber: integer("step_number"),
+    modelId: text("model_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    eventKeyUnique: uniqueIndex("ai_interaction_logs_event_key_unique").on(
+      table.eventKey,
+    ),
+    chatCreatedIndex: index("ai_interaction_logs_chat_created_idx").on(
+      table.chatId,
+      table.createdAt,
+    ),
+    createdIndex: index("ai_interaction_logs_created_idx").on(table.createdAt),
+  }),
+);
