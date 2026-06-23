@@ -7,7 +7,11 @@ import { eq, sql } from "drizzle-orm";
 
 import { admin } from "better-auth/plugins";
 
+const betterAuthUrl =
+  process.env.NUXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000";
+
 export const auth = betterAuth({
+  baseURL: betterAuthUrl,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
@@ -16,10 +20,14 @@ export const auth = betterAuth({
     enabled: true,
   },
   socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          },
+        }
+      : {}),
   },
 
   databaseHooks: {
@@ -51,12 +59,12 @@ export const auth = betterAuth({
   },
   plugins: [admin()],
   trustedOrigins: [
-    "https://preview.studywithwoody.site",
-    "https://staging.studywithwoody.site",
-    "https://studywithwoody.site",
-    "http://localhost:3000",
+    betterAuthUrl,
+    ...(process.env.NODE_ENV !== "production"
+      ? ["http://localhost:3000"]
+      : [])
   ],
-  debug: true,
+  debug: process.env.NODE_ENV !== "production",
 });
 
 export const requireAuthSession = async (event: H3Event) => {
