@@ -1,4 +1,5 @@
-import { problems, testbankProblems } from "../../../db/schema";
+import { problems, testbankProblems, testbanks } from "../../../db/schema";
+import { and, eq, inArray } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -58,12 +59,16 @@ export default defineEventHandler(async (event) => {
 
   // Link to testbanks if provided
   if (Array.isArray(testbankIds) && testbankIds.length > 0) {
+    const owned = await useDrizzle()
+      .select({ id: testbanks.id })
+      .from(testbanks)
+      .where(and(eq(testbanks.ownerId, session.user.id), inArray(testbanks.id, testbankIds)));
+    if (owned.length !== testbankIds.length) {
+      throw createError({ statusCode: 403, statusMessage: "You can only link problems to testbanks you own" });
+    }
     await useDrizzle()
       .insert(testbankProblems)
-      .values(testbankIds.map((testbankId: string) => ({
-        testbankId,
-        problemId: newProblem[0]!.id,
-      })))
+      .values(testbankIds.map((testbankId: string) => ({ testbankId, problemId: newProblem[0]!.id })))
       .onConflictDoNothing();
   }
 

@@ -20,8 +20,9 @@ export const searchProblemsTool = tool({
   description:
     "搜尋題庫中的練習題。支援語意搜尋（用自然語言描述想找什麼）以及關鍵字、科目、章節、年級、難度、來源、標籤篩選。用於學生想找特定主題的題目練習時。",
   inputSchema,
-  execute: async (input) => {
-    const results = await searchProblems(input);
+  execute: async (input, { experimental_context }) => {
+    const context = experimental_context as AiToolContext;
+    const results = await searchProblems({ ...input, viewerId: context.userId, viewerRole: context.userRole });
     return JSON.stringify(results, null, 2);
   },
 });

@@ -31,7 +31,7 @@ export default defineMcpTool({
   },
   handler: async (args) => {
     try {
-      getMcpPrincipal({
+      const principal = getMcpPrincipal({
         allowedRoles: ["student", "teacher", "admin"],
       });
       const results = await searchProblems({
@@ -44,6 +44,8 @@ export default defineMcpTool({
         grade: args.grade,
         difficulty: args.difficulty,
         limit: args.limit,
+        viewerId: principal.id,
+        viewerRole: principal.role,
       });
 
       return {

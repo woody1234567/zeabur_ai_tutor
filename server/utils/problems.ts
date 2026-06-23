@@ -14,6 +14,8 @@ export type SearchProblemsCriteria = {
   difficulty?: string;
   testbankId?: string;
   limit?: number;
+  viewerId?: string;
+  viewerRole?: string;
 };
 
 export async function searchProblems(criteria: SearchProblemsCriteria) {
@@ -51,6 +53,38 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
     filters.push(
       sql`${problems.id} IN (SELECT problem_id FROM testbank_problems WHERE testbank_id = ${criteria.testbankId})`
     );
+  }
+
+  // Visibility: when a non-admin viewer is provided, restrict to problems they may see.
+  if (criteria.viewerRole && criteria.viewerRole !== "admin") {
+    if (criteria.viewerRole === "teacher") {
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND (tb.is_public = true OR tb.owner_id = ${criteria.viewerId})
+        )`
+      );
+    } else {
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND (
+            tb.is_public = true
+            OR tb.id IN (
+              SELECT tc.testbank_id FROM testbank_classrooms tc
+              WHERE tc.classroom_id IN (
+                SELECT cs.classroom_id FROM classroom_students cs
+                WHERE cs.student_id = ${criteria.viewerId}
+              )
+            )
+          )
+        )`
+      );
+    }
   }
 
   try {
