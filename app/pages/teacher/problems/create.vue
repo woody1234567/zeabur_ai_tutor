@@ -6,6 +6,7 @@ definePageMeta({
   layout: "teacher",
 });
 const localePath = useLocalePath();
+const route = useRoute();
 
 interface Choice {
   text: string;
@@ -26,6 +27,15 @@ interface ProblemData {
   imageFile: File | null;
   imagePreviewUrl: string | null;
   hashtags: string[];
+}
+
+interface Testbank {
+  id: string;
+  name: string;
+  description: string | null;
+  isPublic: boolean;
+  problemCount: number;
+  createdAt: string;
 }
 
 const formData = ref<ProblemData>({
@@ -50,6 +60,27 @@ const formData = ref<ProblemData>({
 });
 
 const isUploading = ref(false);
+
+// Testbank selector
+const { data: testbanks } = await useFetch<Testbank[]>("/api/teacher/testbanks");
+const selectedTestbankIds = ref<string[]>([]);
+
+watch(testbanks, (tbs) => {
+  if (!tbs || selectedTestbankIds.value.length > 0) return;
+  const preselectId = route.query.testbankId as string | undefined;
+  if (preselectId && tbs.some(t => t.id === preselectId)) {
+    selectedTestbankIds.value = [preselectId];
+  } else {
+    const firstPublic = tbs.find(t => t.isPublic);
+    if (firstPublic) selectedTestbankIds.value = [firstPublic.id];
+  }
+}, { immediate: true });
+
+const toggleTestbank = (id: string) => {
+  const idx = selectedTestbankIds.value.indexOf(id);
+  if (idx === -1) selectedTestbankIds.value.push(id);
+  else selectedTestbankIds.value.splice(idx, 1);
+};
 
 const submitProblem = async () => {
   try {
@@ -90,6 +121,7 @@ const submitProblem = async () => {
         source: formData.value.source,
         imageUrl,
         hashtags: formData.value.hashtags,
+        testbankIds: selectedTestbankIds.value,
       },
     });
 
@@ -143,6 +175,34 @@ const handleCancel = () => {
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Left Column: Editor -->
       <div>
+        <!-- Testbank Selector -->
+        <div v-if="testbanks && testbanks.length > 0" class="card bg-base-100 shadow-xl mb-6">
+          <div class="card-body">
+            <h2 class="card-title text-lg">{{ $t('teacher.problems.select_testbank') }}</h2>
+            <div class="space-y-2">
+              <label
+                v-for="tb in testbanks"
+                :key="tb.id"
+                class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-base-200"
+              >
+                <input
+                  type="checkbox"
+                  class="checkbox checkbox-primary"
+                  :checked="selectedTestbankIds.includes(tb.id)"
+                  @change="toggleTestbank(tb.id)"
+                />
+                <span class="flex-1">{{ tb.name }}</span>
+                <span
+                  class="badge badge-sm"
+                  :class="tb.isPublic ? 'badge-success' : 'badge-warning'"
+                >
+                  {{ tb.isPublic ? $t('teacher.problems.testbanks.is_public') : $t('teacher.problems.testbanks.is_private') }}
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <TeacherProblemForm
           v-model="formData"
           :is-uploading="isUploading"
