@@ -44,9 +44,6 @@ importers:
       '@types/marked':
         specifier: ^6.0.0
         version: 6.0.0
-      AI_tutor_mvp:
-        specifier: 'link:'
-        version: 'link:'
       ai:
         specifier: ^6.0.208
         version: 6.0.208(zod@4.1.13)
