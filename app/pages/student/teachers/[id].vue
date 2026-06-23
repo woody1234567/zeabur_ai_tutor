@@ -28,12 +28,45 @@ interface AvailableResponse {
   availableSlots: ScheduleEvent[];
 }
 
-const { data, status, error } = await useFetch<AvailableResponse>(
-  `/api/student/teachers/${teacherId}/available`
+const { data, status, error, refresh } = await useFetch<AvailableResponse>(
+  `/api/student/teachers/${teacherId}/available`,
 );
 
-function bookSlot(slot: ScheduleEvent) {
-  alert(`Booking for "${slot.title}" — Feature coming soon`);
+const showBookingModal = ref(false);
+const selectedSlot = ref<ScheduleEvent | null>(null);
+const bookingNote = ref("");
+const bookingLoading = ref(false);
+const bookingError = ref("");
+
+function openBookingModal(slot: ScheduleEvent) {
+  selectedSlot.value = slot;
+  bookingNote.value = "";
+  bookingError.value = "";
+  showBookingModal.value = true;
+}
+
+async function confirmBooking() {
+  if (!selectedSlot.value) return;
+
+  bookingLoading.value = true;
+  bookingError.value = "";
+
+  try {
+    await $fetch("/api/student/bookings", {
+      method: "POST",
+      body: {
+        availabilityId: selectedSlot.value.id,
+        studentNote: bookingNote.value || undefined,
+      },
+    });
+    showBookingModal.value = false;
+    await refresh();
+  } catch (err: any) {
+    bookingError.value =
+      err.data?.statusMessage || t("student.teachers.booking_modal.error");
+  } finally {
+    bookingLoading.value = false;
+  }
 }
 </script>
 
@@ -48,14 +81,19 @@ function bookSlot(slot: ScheduleEvent) {
     </NuxtLink>
 
     <!-- Loading -->
-    <div v-if="status === 'pending'" class="flex items-center justify-center gap-3 py-16">
+    <div
+      v-if="status === 'pending'"
+      class="flex items-center justify-center gap-3 py-16"
+    >
       <span class="loading loading-spinner loading-md"></span>
       <span class="opacity-70">{{ t("student.teachers.loading") }}</span>
     </div>
 
     <!-- Error -->
     <div v-else-if="error" class="alert alert-error">
-      <span>{{ error.data?.message || t("student.teachers.load_error") }}</span>
+      <span>{{
+        error.data?.message || t("student.teachers.load_error")
+      }}</span>
     </div>
 
     <!-- Content -->
@@ -70,7 +108,9 @@ function bookSlot(slot: ScheduleEvent) {
 
       <!-- Available slots -->
       <section class="space-y-4">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div
+          class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
+        >
           <div>
             <h2 class="text-xl font-semibold">
               {{ t("student.teachers.available_slots") }}
@@ -80,7 +120,11 @@ function bookSlot(slot: ScheduleEvent) {
             </p>
           </div>
           <span class="badge badge-success">
-            {{ t("student.teachers.available_count", { count: data.availableSlots.length }) }}
+            {{
+              t("student.teachers.available_count", {
+                count: data.availableSlots.length,
+              })
+            }}
           </span>
         </div>
 
@@ -94,10 +138,75 @@ function bookSlot(slot: ScheduleEvent) {
             :key="slot.id"
             :event="slot"
             :show-book-button="true"
-            @book="bookSlot(slot)"
+            @book="openBookingModal(slot)"
           />
         </div>
       </section>
     </div>
+
+    <!-- Booking Modal -->
+    <dialog
+      class="modal"
+      :class="{ 'modal-open': showBookingModal }"
+    >
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">
+          {{ t("student.teachers.booking_modal.title") }}
+        </h3>
+
+        <div v-if="selectedSlot" class="mt-4 space-y-3">
+          <div class="rounded-lg bg-base-200 p-3">
+            <p class="font-semibold">{{ selectedSlot.title }}</p>
+            <p v-if="selectedSlot.description" class="text-sm opacity-70">
+              {{ selectedSlot.description }}
+            </p>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{{
+                t("student.teachers.booking_modal.note_label")
+              }}</span>
+            </label>
+            <textarea
+              v-model="bookingNote"
+              class="textarea textarea-bordered"
+              :placeholder="
+                t('student.teachers.booking_modal.note_placeholder')
+              "
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div v-if="bookingError" class="alert alert-error text-sm">
+            <span>{{ bookingError }}</span>
+          </div>
+        </div>
+
+        <div class="modal-action">
+          <button
+            class="btn btn-ghost"
+            :disabled="bookingLoading"
+            @click="showBookingModal = false"
+          >
+            {{ t("student.teachers.booking_modal.cancel") }}
+          </button>
+          <button
+            class="btn btn-primary"
+            :disabled="bookingLoading"
+            @click="confirmBooking"
+          >
+            <span
+              v-if="bookingLoading"
+              class="loading loading-spinner loading-sm"
+            ></span>
+            {{ t("student.teachers.booking_modal.confirm") }}
+          </button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button @click="showBookingModal = false">close</button>
+      </form>
+    </dialog>
   </div>
 </template>

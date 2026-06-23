@@ -7,7 +7,10 @@ export default defineEventHandler(async (event) => {
     headers: event.headers,
   });
 
-  if (!session || session.user.role !== "teacher") {
+  if (
+    !session ||
+    (session.user.role !== "teacher" && session.user.role !== "admin")
+  ) {
     throw createError({
       statusCode: 403,
       statusMessage: "Unauthorized",

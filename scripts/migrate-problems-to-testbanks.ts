@@ -1,6 +1,17 @@
-import { db } from "../db";
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { problems, testbanks, testbankProblems, user } from "../db/schema";
+import * as schema from "../db/schema";
 import { eq, isNull, sql } from "drizzle-orm";
+
+const connectionString = process.env.DATABASE_URL || "";
+if (!connectionString) {
+  console.error("DATABASE_URL is not set");
+  process.exit(1);
+}
+const client = postgres(connectionString);
+const db = drizzle(client, { schema });
 
 async function migrate() {
   console.log("Starting testbank migration...");

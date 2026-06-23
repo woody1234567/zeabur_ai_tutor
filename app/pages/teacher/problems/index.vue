@@ -311,7 +311,6 @@ const onTestbankSaved = () => {
     />
 
     <TeacherTestbankShareDialog
-      v-if="sharingTestbank.id"
       v-model="showShareDialog"
       :testbank-id="sharingTestbank.id"
       :testbank-name="sharingTestbank.name"
