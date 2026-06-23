@@ -534,3 +534,81 @@ export const teacherAvailability = pgTable("teacher_availability", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const bookings = pgTable("bookings", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  availabilityId: text("availability_id")
+    .notNull()
+    .references(() => teacherAvailability.id),
+  studentId: text("student_id")
+    .notNull()
+    .references(() => user.id),
+  teacherId: text("teacher_id")
+    .notNull()
+    .references(() => user.id),
+  status: text("status").notNull().default("pending"),
+  studentNote: text("student_note"),
+  teacherNote: text("teacher_note"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const testbanks = pgTable("testbanks", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  description: text("description"),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => user.id),
+  isPublic: boolean("is_public").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const testbankProblems = pgTable(
+  "testbank_problems",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    testbankId: text("testbank_id")
+      .notNull()
+      .references(() => testbanks.id, { onDelete: "cascade" }),
+    problemId: text("problem_id")
+      .notNull()
+      .references(() => problems.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    testbankProblemUnique: uniqueIndex("testbank_problems_unique").on(
+      table.testbankId,
+      table.problemId
+    ),
+  })
+);
+
+export const testbankClassrooms = pgTable(
+  "testbank_classrooms",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    testbankId: text("testbank_id")
+      .notNull()
+      .references(() => testbanks.id, { onDelete: "cascade" }),
+    classroomId: text("classroom_id")
+      .notNull()
+      .references(() => classrooms.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    testbankClassroomUnique: uniqueIndex("testbank_classrooms_unique").on(
+      table.testbankId,
+      table.classroomId
+    ),
+  })
+);
