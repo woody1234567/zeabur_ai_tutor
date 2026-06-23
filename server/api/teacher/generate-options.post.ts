@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
       response_format: { type: "json_object" },
     });
 
-    const responseContent = completion.choices[0].message.content;
+    const responseContent = completion.choices[0]!.message.content;
     console.log(responseContent);
     if (!responseContent) {
       throw new Error("No content received from OpenAI");

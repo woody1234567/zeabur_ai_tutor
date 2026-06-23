@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const errorRecord = existingError[0];
+  const errorRecord = existingError[0]!;
 
   // Toggle understood status
   const currentStatus = errorRecord.understood;

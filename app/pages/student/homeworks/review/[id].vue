@@ -111,7 +111,7 @@ const toggleUnderstood = async () => {
       data.value.problems &&
       data.value.problems[currentProblemIndex.value]
     ) {
-      data.value.problems[currentProblemIndex.value].understood =
+      data.value.problems[currentProblemIndex.value]!.understood =
         result.understood;
     }
   } catch (e) {
@@ -143,7 +143,7 @@ const toggleUnderstood = async () => {
     <!-- Review View -->
     <div v-else-if="currentProblem && data" class="space-y-6">
       <HomeworkHeader
-        :title="data.homework.title"
+        :title="data.homework.title ?? ''"
         :current-index="currentProblemIndex"
         :problems="data.problems"
         mode="review"
@@ -278,8 +278,8 @@ const toggleUnderstood = async () => {
             <div class="collapse-content">
               <MarkdownRenderer
                 :content="
-                  currentProblem.explanation ||
-                  $t('student.homeworks.review.no_explanation')
+                  (currentProblem.explanation ??
+                  $t('student.homeworks.review.no_explanation')) as string
                 "
               />
             </div>

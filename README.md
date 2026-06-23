@@ -1,6 +1,6 @@
 # zeabur_ai_tutor_may
 
-AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Cloudflare R2**, with a separate **Python FastAPI AI service** for streaming tutor chat.
+AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Cloudflare R2**. Streaming tutor chat and tool execution run directly in the Nuxt server through **AI SDK 6**.
 
 ---
 
@@ -17,6 +17,7 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
 - Student workflows:
   - problems, homework, favorites, wrong-problem tracking
   - AI tutor chat (streaming SSE)
+- Unified AI interaction logging for user messages, assistant responses, and tool calls
 - Parent/admin workflows:
   - parent-student linking
   - pending approvals & user management
@@ -30,6 +31,7 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
 - Nuxt 4
 - Vue 3
 - Nitro server routes
+- AI SDK 6
 - TailwindCSS + DaisyUI
 - @nuxtjs/i18n (en / zhTW)
 
@@ -161,10 +163,82 @@ pnpm db:studio    # Open Drizzle Studio
 
 ## AI Chat Flow (High-level)
 
-1. Frontend calls `POST /api/student/chat`
-2. Nuxt route validates session, loads prior chat history
-3. AI features are handled directly by the Nuxt server (OpenAI API)
-4. Assistant message is persisted into `chat_history`
+1. The student or teacher frontend calls `POST /api/student/chat` or `POST /api/teacher/chat`.
+2. The Nuxt server route validates the session and records the latest user message.
+3. `server/utils/ai-chat.ts` creates an AI SDK `streamText()` response with the available tools.
+4. Completed tool executions are recorded through `experimental_onToolCallFinish`.
+5. When the stream finishes, the assistant response and chat history are persisted.
+6. Tool parts in the final UI message are reconciled as a fallback in case the direct callback did not write a record.
+
+---
+
+## AI Interaction Logging
+
+All current AI activity is stored in the `ai_interaction_logs` table. One table is used for these event types:
+
+- `user_message`: a message submitted by a student or teacher
+- `assistant_message`: a completed, aborted, or failed assistant response
+- `tool_call`: a completed or failed AI tool execution, including its input and output
+
+### Write flow
+
+```text
+Student / Teacher chat API
+  ├─ user and assistant messages
+  │    → server/utils/ai-chat-interactions.ts
+  │    → server/utils/ai-interaction-logger.ts
+  │    → ai_interaction_logs
+  │
+  └─ completed tool execution
+       → server/utils/ai-tool-recorder.ts
+       → server/utils/ai-interaction-logger.ts
+       → ai_interaction_logs
+```
+
+The files have the following responsibilities:
+
+- `server/utils/ai-chat-interactions.ts` converts AI SDK `UIMessage` data into user-message, assistant-message, and fallback tool-call log entries.
+- `server/utils/ai-tool-recorder.ts` receives AI SDK `OnToolCallFinishEvent` callbacks and records tool name, input, output, SDK-provided execution duration, step number, model ID, and errors.
+- `server/utils/ai-interaction-logger.ts` is the only shared database writer. It normalizes values and inserts or updates `ai_interaction_logs`.
+- `server/api/admin/ai-interaction-logs.get.ts` is the admin-only read API used by the log viewer.
+
+Assistant response duration is measured on the server from immediately before stream creation until the stream finishes or fails. This end-to-end duration includes model setup, model generation, streaming, and any tool calls. User message events do not have a duration.
+
+### Tool-call fallback and deduplication
+
+Tool calls have two recording paths:
+
+1. The primary path is `experimental_onToolCallFinish`, handled by `ai-tool-recorder.ts`.
+2. After the response stream finishes, `reconcileToolCallsFromMessage()` checks completed tool parts in the final `UIMessage` and writes any missing records.
+
+Both paths use the same unique event key:
+
+```text
+tool:<chatId>:<toolCallId>
+```
+
+The fallback uses an ignore-on-conflict insert. This prevents duplicate rows and preserves the richer callback record when it already exists. Message events use similarly stable keys based on chat ID, role, and message ID.
+
+### Failure behavior
+
+Logging failures are reported to the server console and return `false` from the shared logger. They do not terminate the active AI chat stream. Callers that require stronger delivery guarantees should explicitly handle the returned result.
+
+### Admin log viewer
+
+- Page: `/admin/ai-interaction-logs`
+- API: `GET /api/admin/ai-interaction-logs`
+- Access: admin only
+
+The API supports search, event type, tool name, user role, status, chat ID, date, and pagination filters. It joins the `user` table to include the user name in the response.
+
+### Database migrations
+
+The unified table is defined in `db/schema.ts`. After changing its schema, generate and apply a migration:
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+```
 
 ---
 

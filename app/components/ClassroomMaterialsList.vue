@@ -14,7 +14,7 @@ const apiEndpoint = computed(() =>
 const currentPath = ref<{ id: string; name: string }[]>([]);
 const currentFolderId = computed(() =>
   currentPath.value.length > 0
-    ? currentPath.value[currentPath.value.length - 1].id
+    ? currentPath.value[currentPath.value.length - 1]!.id
     : undefined
 );
 

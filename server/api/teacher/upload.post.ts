@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const file = files[0];
+  const file = files[0]!;
   const config = useRuntimeConfig();
 
   if (

@@ -8,7 +8,10 @@ import {
   logUserChatMessage,
   reconcileToolCallsFromMessage,
 } from "../../utils/ai-chat-interactions";
-import { getInteractionError } from "../../utils/ai-interaction-logger";
+import {
+  getElapsedDurationMs,
+  getInteractionError,
+} from "../../utils/ai-interaction-logger";
 import type { UIMessage } from "ai";
 
 export default defineEventHandler(async (event) => {
@@ -60,6 +63,7 @@ export default defineEventHandler(async (event) => {
     ),
   });
 
+  const assistantStartedAt = performance.now();
   let result;
   try {
     result = await createChatStream({
@@ -71,7 +75,12 @@ export default defineEventHandler(async (event) => {
       useWebSearch: !!useWebSearch,
     });
   } catch (error) {
-    await logAssistantChatError(interactionContext, latestUserMessage.id, error);
+    await logAssistantChatError(
+      interactionContext,
+      latestUserMessage.id,
+      error,
+      getElapsedDurationMs(assistantStartedAt),
+    );
     throw error;
   }
 
@@ -123,6 +132,7 @@ export default defineEventHandler(async (event) => {
           responseMessage,
           {
             status,
+            durationMs: getElapsedDurationMs(assistantStartedAt),
             finishReason: finishReason ?? null,
             error: streamError,
           },

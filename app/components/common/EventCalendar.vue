@@ -8,8 +8,8 @@ import type {
   EventClickArg,
   DateSelectArg,
   EventDropArg,
-  EventResizeDoneArg,
 } from "@fullcalendar/core";
+import type { EventResizeDoneArg } from "@fullcalendar/interaction";
 
 const { t } = useI18n();
 
@@ -192,7 +192,7 @@ const saveEvent = async () => {
       calendarOptions.value.events = [
         ...(calendarOptions.value.events as any[]),
         {
-          id: newEvent.id,
+          id: newEvent!.id,
           ...eventData,
           backgroundColor: "#3788d8",
           borderColor: "#3788d8",

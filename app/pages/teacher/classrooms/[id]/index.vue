@@ -296,7 +296,7 @@ const deleteClassroom = async () => {
                       <td>
                         <span
                           :class="{
-                            'text-error': new Date(hw.deadline) < new Date(),
+                            'text-error': hw.deadline && new Date(hw.deadline) < new Date(),
                           }"
                         >
                           {{

@@ -1,4 +1,5 @@
 import type { OnToolCallFinishEvent } from "ai";
+import type { AiToolContext } from "./ai-tools/types";
 import {
   getInteractionError,
   logAiInteraction,
@@ -9,13 +10,18 @@ export async function recordAiToolCall(
   event: OnToolCallFinishEvent,
 ): Promise<void> {
   const metadata = event.metadata ?? {};
-  const userId = String(metadata.userId ?? "");
-  const userRole = String(metadata.userRole ?? "") as "student" | "teacher";
-  const chatId = String(metadata.chatId ?? "");
-  const classroomId = metadata.classroomId
-    ? String(metadata.classroomId)
+  const context = (event.experimental_context ?? {}) as Partial<AiToolContext>;
+  const userId = String(context.userId ?? metadata.userId ?? "");
+  const userRole = String(
+    context.userRole ?? metadata.userRole ?? "",
+  ) as "student" | "teacher";
+  const chatId = String(context.chatId ?? metadata.chatId ?? "");
+  const classroomValue = context.classroomId ?? metadata.classroomId;
+  const projectValue = context.projectId ?? metadata.projectId;
+  const classroomId = classroomValue
+    ? String(classroomValue)
     : null;
-  const projectId = metadata.projectId ? String(metadata.projectId) : null;
+  const projectId = projectValue ? String(projectValue) : null;
 
   if (!userId || !chatId || !["student", "teacher"].includes(userRole)) {
     console.error("AI tool callback metadata is incomplete", {

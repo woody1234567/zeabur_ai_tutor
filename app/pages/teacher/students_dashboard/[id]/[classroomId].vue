@@ -69,7 +69,7 @@ const { data: posts } = await useFetch(
               v-for="post in posts"
               :key="post.id"
               :post="post"
-              :students="[performance.student]"
+              :students="[performance.student as any]"
             />
           </div>
           <div v-else class="text-center py-10 opacity-50">

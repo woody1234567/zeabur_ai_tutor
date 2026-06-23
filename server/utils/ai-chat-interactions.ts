@@ -40,6 +40,7 @@ export async function logAssistantChatMessage(
   message: UIMessage,
   options: {
     status: AiInteractionStatus;
+    durationMs: number;
     finishReason?: string | null;
     error?: string | null;
   },
@@ -62,6 +63,7 @@ export async function logAssistantChatMessage(
     content,
     attachments,
     finishReason: options.finishReason,
+    durationMs: options.durationMs,
     error: options.error,
     classroomId: context.classroomId,
     projectId: context.projectId,
@@ -72,6 +74,7 @@ export async function logAssistantChatError(
   context: AiChatInteractionContext,
   requestMessageId: string,
   error: unknown,
+  durationMs: number,
 ): Promise<boolean> {
   return logAiInteraction({
     eventKey: `message:${context.chatId}:assistant-error:${requestMessageId}`,
@@ -80,6 +83,7 @@ export async function logAssistantChatError(
     userRole: context.userRole,
     eventType: "assistant_message",
     status: "error",
+    durationMs,
     error: getInteractionError(error),
     classroomId: context.classroomId,
     projectId: context.projectId,

@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
       .offset((page - 1) * pageSize),
   ]);
 
-  const total = Number(countResult[0].count);
+  const total = Number(countResult[0]!.count);
 
   return {
     data: allProblems.map((p) => ({

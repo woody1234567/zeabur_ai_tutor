@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
     });
 
     return {
-      formattedContent: completion.choices[0].message.content,
+      formattedContent: completion.choices[0]!.message.content,
     };
   } catch (error: any) {
     console.error("OpenAI API Error:", error);

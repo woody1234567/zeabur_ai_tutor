@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
   // Record completion
   await db.insert(homeworkCompletions).values({
     homeworkId: homeworkId,
-    classroomId: homework.classroomId,
+    classroomId: homework.classroomId!,
     userId: session.user.id,
   });
 

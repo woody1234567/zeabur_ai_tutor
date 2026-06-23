@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
       .from(classMaterials)
       .where(eq(classMaterials.parentId, id));
     // drizzle select({ count: count() }) returns array [{ count: number }]
-    const hasChildren = childrenRequest[0]?.count > 0;
+    const hasChildren = (childrenRequest[0]?.count ?? 0) > 0;
 
     if (hasChildren) {
       // For MVP, blocking delete of non-empty folders

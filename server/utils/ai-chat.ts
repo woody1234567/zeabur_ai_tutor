@@ -56,8 +56,11 @@ export async function createChatStream(options: StreamChatOptions) {
   const role = options.role ?? "student";
   const tools = getTools(role);
   const toolContext: AiToolContext = {
+    chatId: options.chatId,
     userId: options.userId,
+    userRole: role,
     classroomId: options.classroomId,
+    projectId: options.projectId,
   };
 
   let systemPrompt = role === "teacher"

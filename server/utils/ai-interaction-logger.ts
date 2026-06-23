@@ -68,6 +68,10 @@ export function getInteractionError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+export function getElapsedDurationMs(startedAt: number): number {
+  return Math.max(0, Math.round(performance.now() - startedAt));
+}
+
 export async function logAiInteraction(
   entry: AiInteractionLogEntry,
   options: { onConflict?: "update" | "ignore" } = {},

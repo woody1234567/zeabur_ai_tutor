@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: "Validation failed",
-      data: validation.error.errors,
+      data: validation.error.issues,
     });
   }
 

@@ -27,12 +27,12 @@ export default defineEventHandler(async (event) => {
   const transporter = nodemailer.createTransport({
     host: config.smtpHost || process.env.SMTP_HOST,
     port: Number(config.smtpPort || process.env.SMTP_PORT),
-    secure: false, // true for 465, false for other ports
+    secure: false,
     auth: {
       user: config.smtpUser || process.env.SMTP_USER,
       pass: config.smtpPass || process.env.SMTP_PASS,
     },
-  });
+  } as nodemailer.TransportOptions);
 
   const adminEmail = config.adminEmail || process.env.ADMIN_EMAIL;
 
@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
   try {
     await transporter.sendMail({
       from: `"AI Tutor" <${config.smtpUser || process.env.SMTP_USER}>`,
-      to: adminEmail,
+      to: adminEmail as string,
       subject: "New User Signup - AI Tutor",
       text: `A new user has signed up and is pending approval.\n\nName: ${user.name}\nEmail: ${user.email}\nID: ${user.id}\nRequested Role: ${requestedRole}`,
       html: `

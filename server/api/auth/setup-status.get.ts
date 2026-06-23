@@ -6,5 +6,5 @@ export default defineEventHandler(async () => {
   const result = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(user);
-  return { hasUsers: result[0].count > 0 };
+  return { hasUsers: result[0]!.count > 0 };
 });

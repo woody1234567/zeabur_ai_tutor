@@ -25,7 +25,12 @@ const { data: templateData } = await useFetch(
 );
 
 // Fetch post details
-const { data: postData, error: fetchError } = await useFetch(
+const { data: postData, error: fetchError } = await useFetch<{
+  classStartTime: string;
+  classEndTime: string;
+  content: string | null;
+  attendees: string[] | null;
+}>(
   `/api/teacher/classrooms/${classroomId}/posts/${postId}`
 );
 

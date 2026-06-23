@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       message: "Invalid input",
-      data: result.error.errors,
+      data: result.error.issues,
     });
   }
 
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
       const [homework] = await tx
         .insert(tables.homeworks)
         .values({
-          classroomId: classroomIds[0], // Optional: Deprecate use of this column
+          classroomId: classroomIds[0],
           teacherId: session.user.id,
           subject,
           title,
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
       if (classroomIds.length > 0) {
         await tx.insert(tables.homeworkClassrooms).values(
           classroomIds.map((cid) => ({
-            homeworkId: homework.id,
+            homeworkId: homework!.id,
             classroomId: cid,
           }))
         );
@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
       if (problemIds.length > 0) {
         await tx.insert(tables.homeworkProblems).values(
           problemIds.map((problemId, index) => ({
-            homeworkId: homework.id,
+            homeworkId: homework!.id,
             problemId,
             order: String(index),
           }))

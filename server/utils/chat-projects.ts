@@ -141,9 +141,8 @@ export async function moveChatToProject(
   const table = getChatTable(role);
   const ownerCol = getOwnerColumn(role);
 
-  const chat = await db.query[
-    role === "teacher" ? "teacherChatHistory" : "chatHistory"
-  ].findFirst({
+  const queryTable = role === "teacher" ? db.query.teacherChatHistory : db.query.chatHistory;
+  const chat = await queryTable.findFirst({
     where: and(eq(table.id, chatId), eq(ownerCol, userId)),
   });
   if (!chat) {

@@ -36,18 +36,18 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const p = problem[0];
+  const p = problem[0]!;
 
   const prompt = `
     You are a helpful AI tutor. A student has answered a multiple-choice question.
-    
+
     Question: ${p.content}
     Choices: ${JSON.stringify(p.choices)}
     Correct Answer: ${p.correctAnswer}
     Official Explanation: ${p.explanation}
-    
+
     Student's Answer: ${userAnswer}
-    
+
     Please explain why the student's answer is ${
       userAnswer === p.correctAnswer ? "correct" : "incorrect"
     } and provide a clear, step-by-step explanation of the solution. 
@@ -69,6 +69,6 @@ export default defineEventHandler(async (event) => {
   });
 
   return {
-    explanation: completion.choices[0].message.content,
+    explanation: completion.choices[0]!.message.content,
   };
 });

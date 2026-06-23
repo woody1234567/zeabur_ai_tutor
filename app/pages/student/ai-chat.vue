@@ -102,7 +102,7 @@ const displayMessages = computed(() =>
 );
 
 async function loadChat(id: string) {
-  chatId.value = id;
+  chatId.value = id as `${string}-${string}-${string}-${string}-${string}`;
   const chatData = chats.value.find((c) => c.id === id);
   if (chatData) currentProjectId.value = chatData.projectId ?? null;
   const { data } = await useFetch(`/api/student/chats/${id}`);

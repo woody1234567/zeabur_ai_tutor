@@ -111,7 +111,7 @@ export const getStudentClassroomPerformance = async (
           : 0;
 
       const isCompleted = completion.length > 0;
-      const completedAt = isCompleted ? completion[0].completedAt : null;
+      const completedAt = isCompleted ? completion[0]!.completedAt : null;
 
       let status = "Pending";
       if (isCompleted) {

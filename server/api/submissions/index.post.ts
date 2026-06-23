@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const isCorrect = problem[0].correctAnswer === userAnswer;
+  const isCorrect = problem[0]!.correctAnswer === userAnswer;
 
   // Record the submission
   await db.insert(submissions).values({
@@ -73,9 +73,9 @@ export default defineEventHandler(async (event) => {
         .update(errorProblems)
         .set({
           understood: false,
-          createdAt: new Date(), // Update timestamp to show recent error
+          createdAt: new Date(),
         })
-        .where(eq(errorProblems.id, existingError[0].id));
+        .where(eq(errorProblems.id, existingError[0]!.id));
     } else {
       await db.insert(errorProblems).values({
         userId: session.user.id,
@@ -122,7 +122,7 @@ export default defineEventHandler(async (event) => {
         // Insert new record
         await db.insert(hwRecords).values({
           homeworkId: homeworkId,
-          classroomId: homework.classroomId,
+          classroomId: homework!.classroomId!,
           userId: session.user.id,
           problemId: problemId,
           correctness: isCorrect,
@@ -135,7 +135,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     correct: isCorrect,
-    explanation: problem[0].explanation, // Return official explanation
-    correctAnswer: problem[0].correctAnswer, // Reveal correct answer
+    explanation: problem[0]!.explanation,
+    correctAnswer: problem[0]!.correctAnswer,
   };
 });
