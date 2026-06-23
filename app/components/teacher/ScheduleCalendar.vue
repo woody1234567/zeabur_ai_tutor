@@ -44,7 +44,7 @@ const eventForm = ref({
 });
 const formError = ref("");
 
-function toFcEvents(events: ScheduleEvent[] | null) {
+function toFcEvents(events: ScheduleEvent[] | null | undefined) {
   if (!events) return [];
   return events.map((e) => ({
     id: e.id,
