@@ -16,6 +16,9 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const userId = session.user.id;
+  const userRole = session.user.role as string;
+
   const query = getQuery(event);
   const title = query.title as string;
   const source = query.source as string;
@@ -24,10 +27,14 @@ export default defineEventHandler(async (event) => {
   const chapter = query.chapter as string;
   const grade = query.grade as string;
   const difficulty = query.difficulty as string;
+  const tab = query.tab as string;
+  const testbankId = query.testbankId as string;
   const page = Math.max(1, parseInt(query.page as string) || 1);
   const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize as string) || 12));
 
   const filters = [];
+
+  // --- Existing search filters ---
   if (title) filters.push(ilike(problems.title, `%${title}%`));
   if (source) filters.push(ilike(problems.source, `%${source}%`));
   if (hashtag) {
@@ -38,10 +45,109 @@ export default defineEventHandler(async (event) => {
   if (grade) filters.push(eq(problems.grade, grade));
   if (difficulty) filters.push(eq(problems.difficulty, difficulty));
 
+  // --- Visibility filtering based on tab / testbankId / role ---
+  if (testbankId) {
+    // Specific testbank: verify visibility before returning problems
+    // Admin can see any testbank; teacher can see public or own; student can see public or shared with their classrooms
+    if (userRole === "admin") {
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          WHERE tp.problem_id = ${problems.id}
+          AND tp.testbank_id = ${testbankId}
+        )`
+      );
+    } else if (userRole === "teacher") {
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND tp.testbank_id = ${testbankId}
+          AND (tb.is_public = true OR tb.owner_id = ${userId})
+        )`
+      );
+    } else {
+      // student (or other roles): public or shared with their classrooms
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND tp.testbank_id = ${testbankId}
+          AND (
+            tb.is_public = true
+            OR tb.id IN (
+              SELECT tc.testbank_id FROM testbank_classrooms tc
+              WHERE tc.classroom_id IN (
+                SELECT cs.classroom_id FROM classroom_students cs
+                WHERE cs.student_id = ${userId}
+              )
+            )
+          )
+        )`
+      );
+    }
+  } else if (tab === "public") {
+    // Only problems in public testbanks
+    filters.push(
+      sql`EXISTS (
+        SELECT 1 FROM testbank_problems tp
+        JOIN testbanks tb ON tb.id = tp.testbank_id
+        WHERE tp.problem_id = ${problems.id}
+        AND tb.is_public = true
+      )`
+    );
+  } else if (tab === "mine") {
+    // Only problems in the calling teacher's own testbanks
+    filters.push(
+      sql`EXISTS (
+        SELECT 1 FROM testbank_problems tp
+        JOIN testbanks tb ON tb.id = tp.testbank_id
+        WHERE tp.problem_id = ${problems.id}
+        AND tb.owner_id = ${userId}
+      )`
+    );
+  } else {
+    // Default: all visible problems based on role
+    if (userRole === "admin") {
+      // Admin sees all problems — no visibility filter needed
+    } else if (userRole === "teacher") {
+      // Teacher sees problems in public testbanks + their own private testbanks
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND (tb.is_public = true OR tb.owner_id = ${userId})
+        )`
+      );
+    } else {
+      // Student: problems in public testbanks + private testbanks shared with their classrooms
+      filters.push(
+        sql`EXISTS (
+          SELECT 1 FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          WHERE tp.problem_id = ${problems.id}
+          AND (
+            tb.is_public = true
+            OR tb.id IN (
+              SELECT tc.testbank_id FROM testbank_classrooms tc
+              WHERE tc.classroom_id IN (
+                SELECT cs.classroom_id FROM classroom_students cs
+                WHERE cs.student_id = ${userId}
+              )
+            )
+          )
+        )`
+      );
+    }
+  }
+
   const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
   // Sync status first
-  await updateProblemStatus(session.user.id);
+  await updateProblemStatus(userId);
 
   const [countResult, allProblems] = await Promise.all([
     db
@@ -67,7 +173,7 @@ export default defineEventHandler(async (event) => {
         problemsStatus,
         and(
           eq(problemsStatus.problemId, problems.id),
-          eq(problemsStatus.userId, session.user.id)
+          eq(problemsStatus.userId, userId)
         )
       )
       .where(whereClause)
