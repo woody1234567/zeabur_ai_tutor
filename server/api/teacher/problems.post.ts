@@ -1,4 +1,4 @@
-import { problems } from "../../../db/schema";
+import { problems, testbankProblems } from "../../../db/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
     source,
     imageUrl,
     hashtags,
+    testbankIds,
   } = body;
 
   if (!title || !content || !choices || !correctAnswer) {
@@ -47,12 +48,24 @@ export default defineEventHandler(async (event) => {
       source,
       imageUrl,
       hashtags,
+      createdBy: session.user.id,
     })
     .returning();
 
   generateAndStoreEmbedding(newProblem[0]!.id, {
     title, content, explanation, subject, chapter, grade, hashtags,
   });
+
+  // Link to testbanks if provided
+  if (Array.isArray(testbankIds) && testbankIds.length > 0) {
+    await useDrizzle()
+      .insert(testbankProblems)
+      .values(testbankIds.map((testbankId: string) => ({
+        testbankId,
+        problemId: newProblem[0]!.id,
+      })))
+      .onConflictDoNothing();
+  }
 
   return newProblem[0];
 });

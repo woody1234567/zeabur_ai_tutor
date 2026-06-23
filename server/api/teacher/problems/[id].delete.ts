@@ -1,4 +1,4 @@
-import { problems, submissions } from "../../../../db/schema";
+import { problems, submissions, testbankProblems } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 // @ts-ignore
@@ -38,6 +38,14 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    // Verify ownership (admins can delete any problem)
+    if (session.user.role !== "admin" && problem.createdBy !== session.user.id) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: "You can only delete problems you created",
+      });
+    }
+
     // 2. Delete image from R2 if it exists
     if (problem.imageUrl) {
       const config = useRuntimeConfig();
@@ -71,7 +79,10 @@ export default defineEventHandler(async (event) => {
     // 3. Delete associated submissions first (Foreign Key Constraint)
     await useDrizzle().delete(submissions).where(eq(submissions.problemId, id));
 
-    // 4. Delete from database
+    // 4. Delete from testbanks (cascade cleanup)
+    await useDrizzle().delete(testbankProblems).where(eq(testbankProblems.problemId, id));
+
+    // 5. Delete from database
     await useDrizzle().delete(problems).where(eq(problems.id, id));
 
     return { success: true };
