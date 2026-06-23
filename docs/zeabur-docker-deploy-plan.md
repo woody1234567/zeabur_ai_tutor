@@ -70,7 +70,7 @@
 - `NODE_ENV=production`
 - `DATABASE_URL=postgres://...`
 - `BETTER_AUTH_SECRET=...`
-- `BETTER_AUTH_URL=https://<your-web-domain>`
+- `NUXT_PUBLIC_BASE_URL=https://<your-web-domain>`
 - `OPENAI_API_KEY=...`（若 Nuxt 端也會用）
 - `AI_SERVICE_URL=http://ai-service:8000`
 - `GOOGLE_CLIENT_ID=...`

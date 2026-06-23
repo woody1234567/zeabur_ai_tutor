@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
           <li><strong>ID:</strong> ${user.id}</li>
           <li><strong>Requested Role:</strong> ${requestedRole}</li>
         </ul>
-        <a href=${config.public.baseURL || process.env.PUBLIC_BASE_URL}
+        <a href=${config.public.baseURL}
             style="
               display: inline-block;
               padding: 12px 20px;

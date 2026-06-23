@@ -7,11 +7,11 @@ import { eq, sql } from "drizzle-orm";
 
 import { admin } from "better-auth/plugins";
 
-const betterAuthUrl =
-  process.env.NUXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000";
+const baseURL =
+  process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const auth = betterAuth({
-  baseURL: betterAuthUrl,
+  baseURL,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
@@ -59,7 +59,7 @@ export const auth = betterAuth({
   },
   plugins: [admin()],
   trustedOrigins: [
-    betterAuthUrl,
+    baseURL,
     ...(process.env.NODE_ENV !== "production"
       ? ["http://localhost:3000"]
       : [])

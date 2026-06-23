@@ -74,8 +74,7 @@ Create `.env.local` (recommended) or `.env` in repo root.
 ### Core
 - `DATABASE_URL`
 - `BETTER_AUTH_SECRET`
-- `NUXT_BASE_URL` (optional)
-- `BETTER_AUTH_URL` (default: `http://localhost:3000`)
+- `NUXT_PUBLIC_BASE_URL` (default: `http://localhost:3000`)
 
 ### OAuth
 - `GOOGLE_CLIENT_ID`

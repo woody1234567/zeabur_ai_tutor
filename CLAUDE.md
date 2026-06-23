@@ -101,4 +101,4 @@ Required in `.env` or `.env.local` (`.env.local` takes precedence):
 - `GOOGLE_VISION_API_KEY` — for teacher's image-to-problem OCR tool
 - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN`
 - `CLASS_MATERIALS_R2_*` — same set for the class materials bucket
-- `PUBLIC_BASE_URL` — used by auth-client SSR fallback
+- `NUXT_PUBLIC_BASE_URL` — app base URL (used by auth server, auth client SSR, email templates)
