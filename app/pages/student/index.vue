@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import EventCalendar from "~/components/common/EventCalendar.vue";
-
 definePageMeta({
   layout: "student",
 });
@@ -33,6 +31,6 @@ const localePath = useLocalePath();
       </NuxtLink>
     </div>
 
-    <EventCalendar />
+    <LazyCommonEventCalendar />
   </div>
 </template>

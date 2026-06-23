@@ -78,5 +78,19 @@ export default defineNuxtConfig({
       asyncContext: true,
     },
   },
+  vite: {
+    build: {
+      chunkSizeWarningLimit: 750,
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes("node_modules/katex") || id.includes("node_modules/marked")) {
+              return "vendor-markdown";
+            }
+          },
+        },
+      },
+    },
+  },
   css: ["~/assets/css/main.css"],
 });

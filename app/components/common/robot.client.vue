@@ -25,12 +25,6 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watch, computed } from "vue";
-// @ts-ignore - three.js works without type declarations
-import * as THREE from "three";
-// @ts-ignore
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-// @ts-ignore
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const props = withDefaults(defineProps<{ theme?: "light" | "dark" }>(), {
   theme: "light",
@@ -42,60 +36,43 @@ const textColorClass = computed(() => {
 
 const canvasEl = ref<HTMLCanvasElement | null>(null);
 
-let renderer: THREE.WebGLRenderer;
-let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
-// let controls: any;
+// THREE module reference — set after dynamic import
+let THREE: typeof import("three");
+
+let renderer: any;
+let scene: any;
+let camera: any;
 let animationId = 0;
 
 // Eye groups
-let leftEye!: THREE.Group;
-let rightEye!: THREE.Group;
-let leftPupil!: THREE.Mesh;
-let rightPupil!: THREE.Mesh;
+let leftEye: any;
+let rightEye: any;
+let leftPupil: any;
+let rightPupil: any;
 
-// Reusable objects
-let robotModel: THREE.Group | undefined;
-const raycaster = new THREE.Raycaster();
-const mouseNDC = new THREE.Vector2();
-const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0); // z=0 plane
-const hitPoint = new THREE.Vector3();
+// Reusable objects — initialized after THREE loads
+let robotModel: any;
+let raycaster: any;
+let mouseNDC: any;
+let planeZ: any;
+let hitPoint: any;
 
 // Track state
 let isPointerActive = false;
 let idleTime = 0;
 
-// Eyeball/pupil sizing helpers
-// These values control the relative sizes of the eye components.
-const EYE_RADIUS = 0.6; // Radius of the main eyeball sphere
-const PUPIL_RADIUS = 0.18; // Radius of the pupil (black center)
-const IRIS_RADIUS = 0.28; // Radius of the iris (colored part)
-
-// MAX_ROTATION clamps the pupil's movement to ensure it stays within the eye's bounds
-// and doesn't rotate too far off the iris surface.
-// Angle ~ 0.04/0.6 = 0.067 rad (approx linear calculation).
-// Tweaked to 0.2 to allow natural looking range without clipping.
+const EYE_RADIUS = 0.6;
+const PUPIL_RADIUS = 0.18;
+const IRIS_RADIUS = 0.28;
 const MAX_ROTATION = 0.2;
 
-/**
- * buildEye
- * Constructs a complex eye group with layers for realism:
- * 1. Sclera: The white outer sphere.
- * 2. Cornea: A slightly larger, transparent sphere with high specular reflection.
- * 3. Iris: A spherical cap (curved disk) representing the colored eye part.
- * 4. Pupil: A smaller spherical cap sitting on the iris.
- * 5. Occlusion Ring: A subtle shadow ring around the iris edge.
- *
- * All components are "conformal" - they follow the curve of the main sphere.
- */
-function buildEye(): { group: THREE.Group; pupil: THREE.Mesh } {
+function buildEye(): { group: any; pupil: any } {
   const group = new THREE.Group();
 
-  // 1. Sclera (White Sphere)
   const scleraGeo = new THREE.SphereGeometry(EYE_RADIUS, 48, 48);
   const scleraMat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
-    roughness: 0.25, // slightly glossier
+    roughness: 0.25,
     metalness: 0.0,
     transmission: 0,
     reflectivity: 0.2,
@@ -103,15 +80,13 @@ function buildEye(): { group: THREE.Group; pupil: THREE.Mesh } {
   const sclera = new THREE.Mesh(scleraGeo, scleraMat);
   group.add(sclera);
 
-  // 2. Cornea (Clear bulged sphere over everything)
-  // Make it large enough to cover the iris/pupil layers
-  const corneaRadius = EYE_RADIUS + 0.03; // 0.63
+  const corneaRadius = EYE_RADIUS + 0.03;
   const corneaGeo = new THREE.SphereGeometry(corneaRadius, 48, 48);
   const corneaMat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     roughness: 0.05,
     metalness: 0,
-    transmission: 0.95, // more transparent
+    transmission: 0.95,
     transparent: true,
     opacity: 0.3,
     ior: 1.38,
@@ -120,33 +95,22 @@ function buildEye(): { group: THREE.Group; pupil: THREE.Mesh } {
   const cornea = new THREE.Mesh(corneaGeo, corneaMat);
   group.add(cornea);
 
-  // Helper to create spherical caps (curved disks) facing +Z.
-  // Standard SphereGeometry creates a sphere. By using phi/theta start/lengths,
-  // we can create just a "cap" (slice) of the sphere.
-  //
-  // capRadius: The radius of the circular opening of the cap (2D radius of iris/pupil).
-  // radius: The radius of the underlying sphere (EYE_RADIUS + layer offset).
   const createCapGeo = (radius: number, capRadius: number) => {
-    // Calculat theta angle needed to create a cap of specific 2D radius
-    // sin(theta) = opposite/hypotenuse = capRadius/radius
     const theta = Math.asin(capRadius / radius);
     const geo = new THREE.SphereGeometry(
       radius,
       32,
       32,
       0,
-      Math.PI * 2, // phiLength (full circle around Y)
+      Math.PI * 2,
       0,
-      theta // thetaLength (arc down from North Pole)
+      theta
     );
-    // Rotate the cap so it faces the front (+Z) instead of Up (+Y)
-    geo.rotateX(Math.PI / 2); // North pole points to +Z
-    geo.rotateY(-Math.PI / 2); // Correct orientation if needed for texture mapping
+    geo.rotateX(Math.PI / 2);
+    geo.rotateY(-Math.PI / 2);
     return geo;
   };
 
-  // 3. Iris (Colored Cap)
-  // Layer it slightly above sclera
   const irisSphereRadius = EYE_RADIUS + 0.01;
   const irisGeo = createCapGeo(irisSphereRadius, IRIS_RADIUS);
   const irisMat = new THREE.MeshStandardMaterial({
@@ -157,13 +121,6 @@ function buildEye(): { group: THREE.Group; pupil: THREE.Mesh } {
   const iris = new THREE.Mesh(irisGeo, irisMat);
   group.add(iris);
 
-  // 4. Occlusion Ring (Dark Band around Iris edge)
-  // We can make a slightly larger cap with a hole? No, just a slightly larger black cap underneath?
-  // Or a ring texture? Let's use a slightly larger cap behind the iris but larger radius?
-  // Actually, original was a "RingGeometry" on top.
-  // Let's make a cap that is slightly larger than Iris, black, and sit just below or above?
-  // Let's try a "Ring" implementation using a spherical band.
-  // Sphere spanning from theta_inner to theta_outer.
   const ringSphereRadius = irisSphereRadius + 0.001;
   const thetaInner = Math.asin((IRIS_RADIUS * 0.9) / ringSphereRadius);
   const thetaOuter = Math.asin((IRIS_RADIUS * 1.1) / ringSphereRadius);
@@ -188,29 +145,16 @@ function buildEye(): { group: THREE.Group; pupil: THREE.Mesh } {
   const ring = new THREE.Mesh(ringGeo, ringMat);
   group.add(ring);
 
-  // 5. Pupil (Black Cap)
-  // Layer above Iris
-  const pupilSphereRadius = irisSphereRadius + 0.005; // 0.615
+  const pupilSphereRadius = irisSphereRadius + 0.005;
   const pupilGeo = createCapGeo(pupilSphereRadius, PUPIL_RADIUS);
   const pupilMat = new THREE.MeshStandardMaterial({
     color: 0x111111,
     roughness: 0.1,
   });
   const pupil = new THREE.Mesh(pupilGeo, pupilMat);
-  // Pupil is NOT added to group directly if we want to rotate it independently around center?
-  // Actually, if we add it to group, we rotate the pupil mesh itself.
-  // Since the geometry is centered at (0,0,0), rotating the mesh rotates the cap around the center.
   group.add(pupil);
 
   return { group, pupil };
-}
-
-function clampOffset(vec: THREE.Vector3, maxLen: number) {
-  const len = Math.hypot(vec.x, vec.y);
-  if (len > maxLen && len > 0) {
-    const s = maxLen / len;
-    // function clampOffset end
-  }
 }
 
 function onPointerMove(e: PointerEvent) {
@@ -240,25 +184,20 @@ function onResize() {
 function updateSceneBackground() {
   const isDark = props.theme === "dark";
 
-  // Update Shader Uniforms
   if (scene && scene.userData.bgMaterial) {
-    const mat = scene.userData.bgMaterial as THREE.ShaderMaterial;
+    const mat = scene.userData.bgMaterial;
     if (isDark) {
-      // Dark Theme (Industrial/Sci-Fi)
       mat.uniforms.colorTop.value.setHex(0x5a2ff7);
       mat.uniforms.colorMid.value.setHex(0x1a1f2e);
       mat.uniforms.colorBottom.value.setHex(0x5a2ff7);
     } else {
-      // Light Theme (Clean/Sky)
       mat.uniforms.colorTop.value.setHex(0xffffff);
-      mat.uniforms.colorMid.value.setHex(0xe0f2fe); // Sky 100
-      mat.uniforms.colorBottom.value.setHex(0xbae6fd); // Sky 200
+      mat.uniforms.colorMid.value.setHex(0xe0f2fe);
+      mat.uniforms.colorBottom.value.setHex(0xbae6fd);
     }
   }
 
-  // Fallback / Renderer Clean Color (mostly transparent if sphere covers all)
   const color = isDark ? 0x1d232a : 0xf6f7fb;
-  // if (scene) scene.background = new THREE.Color(color); // Disabled for shader
   if (renderer) renderer.setClearColor(color, 1);
 }
 
@@ -269,10 +208,9 @@ watch(
   }
 );
 
-function createScene(canvas: HTMLCanvasElement) {
+function createScene(canvas: HTMLCanvasElement, GLTFLoader: any) {
   scene = new THREE.Scene();
 
-  // Shader Background
   const bgGeometry = new THREE.SphereGeometry(50, 64, 64);
   const bgMaterial = new THREE.ShaderMaterial({
     side: THREE.BackSide,
@@ -294,12 +232,11 @@ function createScene(canvas: HTMLCanvasElement) {
     uniform vec3 colorMid;
     uniform vec3 colorBottom;
     varying vec3 vWorldPosition;
-    
-    // Simple noise function
+
     float hash(vec2 p) {
       return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
     }
-    
+
     float noise(vec2 p) {
       vec2 i = floor(p);
       vec2 f = fract(p);
@@ -310,27 +247,24 @@ function createScene(canvas: HTMLCanvasElement) {
         f.y
       );
     }
-    
+
     void main() {
       vec3 dir = normalize(vWorldPosition);
       float h = dir.y * 0.5 + 0.5;
-      
-      // Three-way gradient
+
       vec3 color;
       if (h > 0.5) {
         color = mix(colorMid, colorTop, (h - 0.5) * 2.0);
       } else {
         color = mix(colorBottom, colorMid, h * 2.0);
       }
-      
-      // Add subtle noise texture
+
       float n = noise(dir.xz * 8.0) * 0.03;
       color += vec3(n);
-      
-      // Vignette
+
       float vignette = 1.0 - length(dir.xz) * 0.3;
       color *= vignette;
-      
+
       gl_FragColor = vec4(color, 1.0);
     }
   `,
@@ -338,27 +272,21 @@ function createScene(canvas: HTMLCanvasElement) {
   const bgSphere = new THREE.Mesh(bgGeometry, bgMaterial);
   scene.add(bgSphere);
 
-  // Store reference to update uniforms later
-  (scene as any).userData = { bgMaterial }; // Hacky but effective storage
+  (scene as any).userData = { bgMaterial };
 
   updateSceneBackground();
 
   camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-  camera.position.set(0, 3.25, 20); // Moved back slightly to see the whole robot
+  camera.position.set(0, 3.25, 20);
 
   renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
     powerPreference: "high-performance",
-    alpha: true, // Enable transparency for the canvas
+    alpha: true,
   });
-  renderer.setClearColor(0x000000, 0); // Transparent background
+  renderer.setClearColor(0x000000, 0);
   onResize();
-
-  // Controls
-  // controls = new OrbitControls(camera, renderer.domElement);
-  // controls.enableDamping = true;
-  // controls.dampingFactor = 0.05;
 
   // Lights
   const hemi = new THREE.HemisphereLight(0xffffff, 0xcccccc, 1);
@@ -370,51 +298,34 @@ function createScene(canvas: HTMLCanvasElement) {
   rim.position.set(-4, 2, -2);
   scene.add(rim);
 
-  // Load Robot Model asynchronously
-  // The logic inside handles setup once the model is loaded.
+  // Load Robot Model
   const loader = new GLTFLoader();
   loader.load("/models/robot/scene.gltf", (gltf: any) => {
     robotModel = gltf.scene;
-    // Adjust scale and position based on typical model sizes; may need tuning
-    // robotModel.scale.set(1.5, 1.5, 1.5);
     if (robotModel) {
-      robotModel.position.y = -2; // Move down to center the face
-      robotModel.rotation.y = 0; // Initial rotation (facing forward?)
+      robotModel.position.y = -2;
+      robotModel.rotation.y = 0;
       scene.add(robotModel);
     }
-
-    // Create Eyes and attach to robot or scene
-    // Because the robot might have its own transforms, let's add eyes to the scene for now
-    // and position them where the robot's eyes likely are.
 
     ({ group: leftEye, pupil: leftPupil } = buildEye());
     ({ group: rightEye, pupil: rightPupil } = buildEye());
 
-    // Scale eyes down to fit the robot face (assuming robot head is roughly human-sized scaled up)
     const EYE_SCALE = 1.1;
     leftEye.scale.set(EYE_SCALE, EYE_SCALE, EYE_SCALE);
     rightEye.scale.set(EYE_SCALE, EYE_SCALE, EYE_SCALE);
 
-    // Attach eyes to the robot model so they rotate with it
     if (robotModel) {
       robotModel.add(leftEye, rightEye);
-
-      // Calculated local positions to match previous world positions roughly
-      // World (-0.7, 4.7, 1.5) -> Local (-1.5, 6.7, -0.7)
-      // World (0.7, 4.7, 1.5) -> Local (-1.5, 6.7, 0.7)
       leftEye.position.set(-1.5, 6.7, -0.7);
       rightEye.position.set(-1.5, 6.7, 0.7);
     } else {
-      // Fallback if robot model failed to load for some reason (unlikely here)
       scene.add(leftEye, rightEye);
       leftEye.position.set(-0.7, 4.7, 1.5);
       rightEye.position.set(0.7, 4.7, 1.5);
     }
   });
 
-  // Soft floor to ground the scene visually
-  // (Optional: we can keep or remove the floor if the classroom has one,
-  // but let's keep it for now or make it more transparent if needed)
   const floorGeo = new THREE.CircleGeometry(6, 64);
   const floorMat = new THREE.MeshBasicMaterial({
     color: 0x000000,
@@ -423,59 +334,20 @@ function createScene(canvas: HTMLCanvasElement) {
   });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -2.0; // aligned with robot feet
+  floor.position.y = -2.0;
   floor.position.z = -0.5;
   scene.add(floor);
-
-  // // Grid Helper
-  // const gridHelper = new THREE.GridHelper(20, 20);
-  // gridHelper.position.y = -2.0;
-  // scene.add(gridHelper);
-
-  // // axis helper
-  // const axesHelper = new THREE.AxesHelper(5);
-  // scene.add(axesHelper);
 }
 
-/**
- * lookAtPointForEye
- * Calculates rotation for the pupil and the eye group to track a target point.
- *
- * @param eye - The entire eye group (contains sclera, iris, pupil etc)
- * @param pupil - The pupil mesh (child of eye group)
- * @param target - 3D point in world space to look at
- */
-function lookAtPointForEye(
-  eye: THREE.Group,
-  pupil: THREE.Mesh,
-  target: THREE.Vector3
-) {
+function lookAtPointForEye(eye: any, pupil: any, target: any) {
   const local = eye.worldToLocal(target.clone());
 
-  // We mapped target to local space.
-  // We want to calculate rotation angles for the pupil.
-  // local.x maps to Yaw (Rotation Y). local.y maps to Pitch (Rotation X).
-  // Note: +X is right, requires negative rotation around Y to face right?
-  // Wait, Right Hand Rule: Thumb +Y, fingers curl +Z -> +X.
-  // Rotate around +Y: +Z moves to +X. So positive rotation Y looks Right.
-  // Let's just use linear approximation for small angles.
-
   const offset = new THREE.Vector2(local.x, local.y);
-
-  // Scale down sensitivity
   offset.multiplyScalar(0.4);
 
-  // Clamp magnitude
   if (offset.length() > MAX_ROTATION) {
     offset.setLength(MAX_ROTATION);
   }
-
-  // Animate pupil rotation
-  // We rotate the pupil MESH.
-  // Axis X rotation controls Up/Down (Y). +X rotation looks DOWN. -X rotation looks UP.
-  // Axis Y rotation controls Left/Right (X). +Y rotation looks RIGHT. -Y rotation looks LEFT.
-  // Target Y > 0 (Up) -> Need Negative X rotation.
-  // Target X > 0 (Right) -> Need Positive Y rotation.
 
   const targetRotX = target.y > 0 ? -offset.y : offset.y;
   const targetRotY = target.x > 0 ? -offset.x : offset.x;
@@ -483,7 +355,6 @@ function lookAtPointForEye(
   pupil.rotation.x = THREE.MathUtils.lerp(pupil.rotation.x, targetRotX, 0.2);
   pupil.rotation.y = THREE.MathUtils.lerp(pupil.rotation.y, targetRotY, 0.2);
 
-  // Slight eyeball rotation (the whole group)
   const ROT_MAX = 0.5;
   eye.rotation.y = THREE.MathUtils.clamp(
     THREE.MathUtils.lerp(eye.rotation.y, offset.x * 0.5, 0.18),
@@ -497,27 +368,16 @@ function lookAtPointForEye(
   );
 }
 
-/**
- * animate
- * Main render loop. Handles interaction and physics simulation logic.
- */
 function animate() {
   animationId = requestAnimationFrame(animate);
 
-  // if (controls) controls.update();
-
-  // Robot Body Rotation
   if (robotModel) {
-    let targetBodyRot = 1.57; // Base rotation (PI/2)
+    let targetBodyRot = 1.57;
     if (isPointerActive) {
-      // Map mouseNDC.x (-1 to 1) to a small rotation offset
-      // e.g. -0.5 to 0.5 radians
       const rotOffset = mouseNDC.x * 0.5;
       targetBodyRot = 1.57 + rotOffset;
     }
 
-    // Smoothly interpolate current rotation to target
-    // Lower factor = slower, lazier movement
     robotModel.rotation.y = THREE.MathUtils.lerp(
       robotModel.rotation.y,
       targetBodyRot,
@@ -525,29 +385,22 @@ function animate() {
     );
   }
 
-  // Ensure eyes exist before trying to move them
   if (!leftEye || !rightEye) return;
 
-  // Determine where to look
-  // raycaster + planeZ calculates where the mouse ray hits the Z=0 plane (screen depth)
-  let target: THREE.Vector3;
+  let target: any;
   if (isPointerActive) {
     raycaster.setFromCamera(mouseNDC, camera);
     raycaster.ray.intersectPlane(planeZ, hitPoint);
     target = hitPoint;
-    idleTime = 0; // Reset idle timer when user is active
+    idleTime = 0;
   } else {
-    // Idle Animation:
-    // If user interacts, pupil tracks mouse.
-    // If idle, pupil wanders slowly in a small figure-8 or circle to feel alive.
     idleTime += 0.016;
-    const r = 0.6; // radius of wandering
+    const r = 0.6;
     const x = Math.cos(idleTime * 0.6) * r;
     const y = Math.sin(idleTime * 0.9) * r * 0.6;
     target = new THREE.Vector3(x, y, 0);
   }
 
-  // Update both eyes to look at the calculated target
   lookAtPointForEye(leftEye, leftPupil, target);
   lookAtPointForEye(rightEye, rightPupil, target);
 
@@ -562,9 +415,23 @@ function onVisibilityChange() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!canvasEl.value) return;
-  createScene(canvasEl.value);
+
+  // Dynamically import Three.js — only loads when this component mounts
+  const [threeModule, gltfModule] = await Promise.all([
+    import("three"),
+    import("three/examples/jsm/loaders/GLTFLoader"),
+  ]);
+  THREE = threeModule;
+
+  // Initialize reusable objects now that THREE is available
+  raycaster = new THREE.Raycaster();
+  mouseNDC = new THREE.Vector2();
+  planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  hitPoint = new THREE.Vector3();
+
+  createScene(canvasEl.value, gltfModule.GLTFLoader);
 
   // Events
   window.addEventListener("resize", onResize, { passive: true });
@@ -587,12 +454,11 @@ onBeforeUnmount(() => {
   }
   document.removeEventListener("visibilitychange", onVisibilityChange);
 
-  // Dispose
   scene?.traverse((obj: any) => {
-    if ((obj as THREE.Mesh).geometry) (obj as THREE.Mesh).geometry.dispose?.();
-    const mat = (obj as THREE.Mesh).material;
-    if (Array.isArray(mat)) mat.forEach((m) => m.dispose?.());
-    else (mat as THREE.Material)?.dispose?.();
+    if (obj.geometry) obj.geometry.dispose?.();
+    const mat = obj.material;
+    if (Array.isArray(mat)) mat.forEach((m: any) => m.dispose?.());
+    else mat?.dispose?.();
   });
   renderer?.dispose();
 });
@@ -600,7 +466,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 section {
-  /* Smoothens the canvas edges on some displays */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
