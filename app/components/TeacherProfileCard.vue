@@ -18,28 +18,28 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="space-y-3 sm:space-y-4">
     <!-- Teacher Header -->
-    <div class="flex items-start gap-5">
+    <div class="flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-5">
       <div class="avatar placeholder">
-        <div class="bg-neutral text-neutral-content rounded-full w-20 h-20">
+        <div class="bg-neutral text-neutral-content rounded-full w-16 h-16 sm:w-20 sm:h-20">
           <img
             v-if="teacher.image"
             :src="teacher.image"
             :alt="teacher.name || 'Teacher'"
             class="rounded-full object-cover"
           />
-          <span v-else class="text-2xl">
+          <span v-else class="text-xl sm:text-2xl">
             {{ (teacher.name || "T").slice(0, 1).toUpperCase() }}
           </span>
         </div>
       </div>
-      <div>
-        <h2 class="text-2xl font-bold">
+      <div class="text-center sm:text-left">
+        <h2 class="text-xl sm:text-2xl font-bold">
           {{ teacher.name || "Teacher" }}
         </h2>
         <p class="text-sm opacity-70">{{ teacher.email }}</p>
-        <div v-if="teacher.teachingAreas" class="flex flex-wrap gap-1 mt-2">
+        <div v-if="teacher.teachingAreas" class="flex flex-wrap justify-center sm:justify-start gap-1 mt-2">
           <span
             v-for="area in teacher.teachingAreas.split(',').map(s => s.trim()).filter(Boolean)"
             :key="area"
@@ -56,18 +56,18 @@ const { t } = useI18n();
       v-if="teacher.bio || teacher.teachingExperience || teacher.interests"
       class="card bg-base-200"
     >
-      <div class="card-body space-y-4">
+      <div class="card-body p-4 sm:p-8 space-y-3 sm:space-y-4">
         <div v-if="teacher.bio">
-          <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_bio") }}</h3>
-          <p class="text-sm whitespace-pre-line">{{ teacher.bio }}</p>
+          <h3 class="text-sm sm:text-base font-semibold mb-1">{{ t("student.teachers.profile_bio") }}</h3>
+          <p class="text-xs sm:text-sm whitespace-pre-line">{{ teacher.bio }}</p>
         </div>
         <div v-if="teacher.interests">
-          <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_interests") }}</h3>
-          <p class="text-sm">{{ teacher.interests }}</p>
+          <h3 class="text-sm sm:text-base font-semibold mb-1">{{ t("student.teachers.profile_interests") }}</h3>
+          <p class="text-xs sm:text-sm">{{ teacher.interests }}</p>
         </div>
         <div v-if="teacher.teachingExperience">
-          <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_teaching_experience") }}</h3>
-          <p class="text-sm whitespace-pre-line">{{ teacher.teachingExperience }}</p>
+          <h3 class="text-sm sm:text-base font-semibold mb-1">{{ t("student.teachers.profile_teaching_experience") }}</h3>
+          <p class="text-xs sm:text-sm whitespace-pre-line">{{ teacher.teachingExperience }}</p>
         </div>
       </div>
     </div>

@@ -40,30 +40,39 @@ const {
       v-else-if="testbanks && testbanks.length > 0"
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
     >
-      <div
-        v-for="testbank in testbanks"
-        :key="testbank.id"
-        class="card bg-base-100 border border-base-200 shadow-sm"
-      >
-        <div class="card-body p-4">
-          <h3 class="card-title text-base">{{ testbank.name }}</h3>
-          <p
-            v-if="testbank.description"
-            class="text-sm text-base-content/70 line-clamp-2"
-          >
-            {{ testbank.description }}
-          </p>
-          <div class="mt-2">
-            <div class="badge badge-ghost badge-outline">
-              {{
-                $t("teacher.problems.testbanks.problem_count", {
-                  count: testbank.problemCount,
-                })
-              }}
+      <template v-if="userType === 'student'">
+        <StudentTestbankCard
+          v-for="testbank in testbanks"
+          :key="testbank.id"
+          :testbank="testbank"
+        />
+      </template>
+      <template v-else>
+        <div
+          v-for="testbank in testbanks"
+          :key="testbank.id"
+          class="card bg-base-100 border border-base-200 shadow-sm"
+        >
+          <div class="card-body p-4">
+            <h3 class="card-title text-base">{{ testbank.name }}</h3>
+            <p
+              v-if="testbank.description"
+              class="text-sm text-base-content/70 line-clamp-2"
+            >
+              {{ testbank.description }}
+            </p>
+            <div class="mt-2">
+              <div class="badge badge-ghost badge-outline">
+                {{
+                  $t("teacher.problems.testbanks.problem_count", {
+                    count: testbank.problemCount,
+                  })
+                }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
 
     <div v-else class="text-center py-10 opacity-50">
