@@ -146,6 +146,25 @@ export default defineEventHandler(async (event) => {
 
   const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
+  // Visibility predicate (referencing alias `tb`) used when aggregating the
+  // testbanks each problem belongs to, so students/teachers only see the
+  // testbanks they are allowed to see.
+  const testbankVisibility =
+    userRole === "admin"
+      ? sql`true`
+      : userRole === "teacher"
+        ? sql`(tb.is_public = true OR tb.owner_id = ${userId})`
+        : sql`(
+            tb.is_public = true
+            OR tb.id IN (
+              SELECT tc.testbank_id FROM testbank_classrooms tc
+              WHERE tc.classroom_id IN (
+                SELECT cs.classroom_id FROM classroom_students cs
+                WHERE cs.student_id = ${userId}
+              )
+            )
+          )`;
+
   // Sync status first
   await updateProblemStatus(userId);
 
@@ -164,6 +183,22 @@ export default defineEventHandler(async (event) => {
         grade: problems.grade,
         source: problems.source,
         hashtags: problems.hashtags,
+        testbanks: sql<
+          { name: string; ownerName: string }[]
+        >`(
+          SELECT COALESCE(
+            json_agg(
+              json_build_object('name', tb.name, 'ownerName', u.name)
+              ORDER BY tb.name
+            ),
+            '[]'::json
+          )
+          FROM testbank_problems tp
+          JOIN testbanks tb ON tb.id = tp.testbank_id
+          JOIN "user" u ON u.id = tb.owner_id
+          WHERE tp.problem_id = ${problems.id}
+          AND ${testbankVisibility}
+        )`,
         isFavorite: problemsStatus.isFavorite,
         isWrong: problemsStatus.isWrong,
         understood: problemsStatus.understood,

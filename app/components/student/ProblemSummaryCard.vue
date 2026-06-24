@@ -8,6 +8,7 @@ const props = defineProps<{
     chapter?: string | null;
     grade?: string | null;
     source?: string | null;
+    testbanks?: { name: string; ownerName: string }[] | null;
     hashtags: string[] | null;
     isWrong?: boolean | null;
     understood?: boolean | null;
@@ -47,6 +48,21 @@ const toggleFavorite = async () => {
   <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
     <div class="card-body">
       <h2 class="card-title text-lg">{{ problem.title }}</h2>
+      <div
+        v-if="problem.testbanks && problem.testbanks.length"
+        class="flex flex-col gap-1 mt-1"
+      >
+        <div
+          v-for="(tb, idx) in problem.testbanks"
+          :key="idx"
+          class="flex items-center gap-1 text-xs text-base-content/60"
+        >
+          <Icon name="heroicons:building-library" class="w-4 h-4 shrink-0" />
+          <span class="font-medium">{{ tb.name }}</span>
+          <span class="opacity-70">·</span>
+          <span>{{ $t("student.problems.created_by", { name: tb.ownerName }) }}</span>
+        </div>
+      </div>
       <div class="flex gap-2 mt-2 flex-wrap">
         <div
           class="badge"

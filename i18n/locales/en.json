@@ -251,7 +251,8 @@
       "ask_ai_button": "Explain this to me",
       "error_loading": "Error loading problem:",
       "understood": "Understood",
-      "mark_as_understood": "Mark as understood"
+      "mark_as_understood": "Mark as understood",
+      "created_by": "by {name}"
     },
     "testbanks": {
       "title": "Testbanks",

@@ -251,7 +251,8 @@
       "ask_ai_button": "向我解釋",
       "error_loading": "載入題目時發生錯誤：",
       "understood": "已理解",
-      "mark_as_understood": "標記為已理解"
+      "mark_as_understood": "標記為已理解",
+      "created_by": "由 {name} 建立"
     },
     "testbanks": {
       "title": "題庫",
