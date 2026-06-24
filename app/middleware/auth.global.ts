@@ -16,6 +16,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const userRole = session?.user?.role;
 
+  if (!import.meta.dev && routeBaseName === "login-success" && session) {
+    if (userRole === "admin") return navigateTo(localePath("/admin"));
+    if (userRole === "teacher") return navigateTo(localePath("/teacher"));
+    if (userRole === "student") return navigateTo(localePath("/student"));
+    if (userRole === "parent") return navigateTo(localePath("/parent"));
+  }
+
   if (session) {
     if (userRole === "user") {
       try {
