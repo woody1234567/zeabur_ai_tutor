@@ -8,6 +8,6 @@ export default <Config>{
   },
   plugins: [daisyui],
   daisyui: {
-    themes: ["dark", "retro"],
+    themes: ["light", "dark", "retro", "halloween", "dracula", "valentine"],
   },
 };

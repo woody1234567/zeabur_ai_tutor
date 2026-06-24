@@ -1,66 +1,48 @@
 <script setup lang="ts">
-import { themeChange } from "theme-change";
-
-// We still keep this state for other components (like the robot) to react to
+const themes = ["light", "dark", "retro", "halloween", "dracula", "valentine"];
 const theme = useState<string>("theme", () => "dark");
 
+function setTheme(newTheme: string) {
+  theme.value = newTheme;
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+}
+
 onMounted(() => {
-  // Initialize theme-change
-  themeChange(false);
-
-  // Sync initial state from DOM (theme-change might have set it or we default)
-  const currentTheme =
-    document.documentElement.getAttribute("data-theme") || "dark";
-  theme.value = currentTheme;
-
-  // Watch for changes on the html element (attribute p) to update our Nuxt state
-  // This ensures if theme-change updates the DOM, our state reflects it
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (
-        mutation.type === "attributes" &&
-        mutation.attributeName === "data-theme"
-      ) {
-        const newTheme = document.documentElement.getAttribute("data-theme");
-        if (newTheme) {
-          theme.value = newTheme;
-        }
-      }
-    });
-  });
-
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
+  const saved = localStorage.getItem("theme") || "dark";
+  setTheme(saved);
 });
 </script>
 
 <template>
-  <label
-    class="swap swap-rotate hover:scale-110 active:scale-95 transition-all"
-  >
-    <!-- 
-      theme-change library uses data-toggle-theme to toggle between specified themes.
-      No click handler needed, the library handles it.
-    -->
-    <input
-      type="checkbox"
-      data-toggle-theme="dark,retro"
-      data-act-class="ACTIVECLASS"
-      :checked="theme === 'retro'"
-    />
-
-    <!-- sun icon -->
-    <Icon
-      class="swap-on fill-current w-6 h-6"
-      name="heroicons-solid:sun"
-    ></Icon>
-
-    <!-- moon icon -->
-    <Icon
-      class="swap-off fill-current w-6 h-6"
-      name="heroicons-solid:moon"
-    ></Icon>
-  </label>
+  <div class="dropdown dropdown-end">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-1">
+      <Icon name="heroicons-solid:swatch" class="w-5 h-5" />
+      <span class="hidden sm:inline capitalize">{{ theme }}</span>
+      <Icon name="heroicons-solid:chevron-down" class="w-3 h-3" />
+    </div>
+    <ul
+      tabindex="0"
+      class="dropdown-content z-[1] menu p-2 shadow-lg bg-base-200 rounded-box w-44 mt-2"
+    >
+      <li v-for="t in themes" :key="t">
+        <button
+          class="capitalize justify-between"
+          :class="{ active: theme === t }"
+          @click="setTheme(t)"
+        >
+          {{ t }}
+          <span
+            class="flex gap-0.5"
+            :data-theme="t"
+          >
+            <span class="w-2 h-4 rounded bg-primary" />
+            <span class="w-2 h-4 rounded bg-secondary" />
+            <span class="w-2 h-4 rounded bg-accent" />
+            <span class="w-2 h-4 rounded bg-neutral" />
+          </span>
+        </button>
+      </li>
+    </ul>
+  </div>
 </template>
