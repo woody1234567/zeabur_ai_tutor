@@ -125,7 +125,7 @@ const renderedContent = computed(() => {
 </template>
 
 <style>
-/* Add any specific overrides for markdown styles here */
+@reference "~/assets/css/main.css";
 .markdown-body {
   @apply text-base leading-relaxed;
 }

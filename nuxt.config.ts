@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import dotenv from "dotenv";
+import tailwindcss from "@tailwindcss/vite";
 
 // Load .env first
 dotenv.config();
@@ -16,7 +17,6 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    "@nuxtjs/tailwindcss",
     "@nuxtjs/i18n",
     "@nuxtjs/mcp-toolkit",
     "@nuxt/icon",
@@ -78,6 +78,7 @@ export default defineNuxtConfig({
     },
   },
   vite: {
+    plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,
       rollupOptions: {
