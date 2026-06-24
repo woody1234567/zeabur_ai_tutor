@@ -46,6 +46,16 @@ const { data: posts } = await useFetch(
         </div>
       </div>
 
+      <!-- Teacher Profile -->
+      <div v-if="classroom.teacher" class="card bg-base-100 shadow-xl border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title mb-4">
+            {{ $t("student.classrooms.teacher", "Teacher") }}
+          </h2>
+          <TeacherProfileCard :teacher="classroom.teacher" />
+        </div>
+      </div>
+
       <!-- Students List (Read Only) -->
       <div class="card bg-base-100 shadow-xl border border-base-200">
         <div class="card-body">

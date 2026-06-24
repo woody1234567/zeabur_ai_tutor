@@ -204,7 +204,8 @@
       "view_hw": "查看作業",
       "review_hw": "複習作業",
       "no_homeworks": "此教室尚無作業。",
-      "error_loading": "載入教室時發生錯誤："
+      "error_loading": "載入教室時發生錯誤：",
+      "teacher": "教師"
     },
     "homeworks": {
       "title": "我的作業",

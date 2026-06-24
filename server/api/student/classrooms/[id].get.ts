@@ -1,4 +1,4 @@
-import { classrooms, classroomStudents, user } from "../../../../db/schema";
+import { classrooms, classroomStudents, user, teacherProfiles } from "../../../../db/schema";
 import { eq, and } from "drizzle-orm";
 import { auth } from "../../../../server/utils/auth";
 
@@ -55,6 +55,23 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // Fetch teacher profile
+  const [teacher] = await useDrizzle()
+    .select({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      bio: teacherProfiles.bio,
+      interests: teacherProfiles.interests,
+      teachingAreas: teacherProfiles.teachingAreas,
+      teachingExperience: teacherProfiles.teachingExperience,
+    })
+    .from(user)
+    .leftJoin(teacherProfiles, eq(teacherProfiles.userId, user.id))
+    .where(eq(user.id, classroom[0].teacherId))
+    .limit(1);
+
   // Fetch students in the classroom
   const students = await useDrizzle()
     .select({
@@ -70,6 +87,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     ...classroom[0],
+    teacher: teacher || null,
     students,
   };
 });

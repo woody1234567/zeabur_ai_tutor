@@ -204,7 +204,8 @@
       "view_hw": "View HW",
       "review_hw": "Review HW",
       "no_homeworks": "No homeworks assigned to this classroom yet.",
-      "error_loading": "Error loading classroom:"
+      "error_loading": "Error loading classroom:",
+      "teacher": "Teacher"
     },
     "homeworks": {
       "title": "My Homework",
