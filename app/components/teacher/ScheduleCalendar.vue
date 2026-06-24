@@ -62,6 +62,7 @@ function toFcEvents(events: ScheduleEvent[] | null | undefined) {
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
   initialView: "timeGridWeek",
+  timeZone: "local",
   headerToolbar: {
     left: "prev,next today",
     center: "title",

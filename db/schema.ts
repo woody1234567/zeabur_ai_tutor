@@ -526,11 +526,11 @@ export const teacherAvailability = pgTable("teacher_availability", {
     .notNull()
     .references(() => user.id),
   description: text("description"),
-  startTime: timestamp("start_time").notNull(),
-  endTime: timestamp("end_time").notNull(),
+  startTime: timestamp("start_time", { withTimezone: true }).notNull(),
+  endTime: timestamp("end_time", { withTimezone: true }).notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const bookings = pgTable("bookings", {
@@ -549,8 +549,8 @@ export const bookings = pgTable("bookings", {
   status: text("status").notNull().default("pending"),
   studentNote: text("student_note"),
   teacherNote: text("teacher_note"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const testbanks = pgTable("testbanks", {
