@@ -1,12 +1,10 @@
 <script setup lang="ts">
 interface ScheduleEvent {
   id: string;
-  title: string;
   description: string | null;
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  maxStudents: number | null;
 }
 
 const props = defineProps<{
@@ -54,9 +52,6 @@ function formatTime(dateStr: string) {
       <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div class="min-w-0 flex-1">
           <div class="flex flex-wrap items-start gap-2">
-            <h3 class="min-w-0 flex-1 truncate text-base font-semibold">
-              {{ event.title }}
-            </h3>
             <span class="badge" :class="badgeClass">
               {{
                 event.isAvailable
@@ -81,11 +76,6 @@ function formatTime(dateStr: string) {
             </span>
           </div>
 
-          <div class="mt-3">
-            <span class="badge badge-info badge-outline">
-              {{ t("student.teachers.max_students", { count: event.maxStudents ?? 1 }) }}
-            </span>
-          </div>
         </div>
 
         <button

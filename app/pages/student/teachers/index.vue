@@ -9,6 +9,8 @@ interface TeacherSummary {
   name: string;
   email: string;
   image: string | null;
+  bio: string | null;
+  teachingAreas: string | null;
 }
 
 const { data: teachers, status } = await useFetch<TeacherSummary[]>(
@@ -74,6 +76,23 @@ const sortedTeachers = computed(() =>
               </h3>
               <p class="text-sm opacity-70 truncate">{{ teacher.email }}</p>
             </div>
+          </div>
+
+          <p
+            v-if="teacher.bio"
+            class="text-sm opacity-70 mt-2 line-clamp-2"
+          >
+            {{ teacher.bio }}
+          </p>
+
+          <div v-if="teacher.teachingAreas" class="flex flex-wrap gap-1 mt-2">
+            <span
+              v-for="area in teacher.teachingAreas.split(',').map(s => s.trim()).filter(Boolean)"
+              :key="area"
+              class="badge badge-outline badge-sm"
+            >
+              {{ area }}
+            </span>
           </div>
 
           <div class="card-actions justify-end mt-4">

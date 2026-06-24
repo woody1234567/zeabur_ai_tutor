@@ -92,6 +92,13 @@
       "when": 1782222434744,
       "tag": "0012_bouncy_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782271693890,
+      "tag": "0013_redundant_dragon_lord",
+      "breakpoints": true
     }
   ]
 }

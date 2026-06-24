@@ -2,12 +2,10 @@ import { teacherAvailability } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 
 interface UpdateScheduleBody {
-  title?: string;
   description?: string | null;
   startTime?: string;
   endTime?: string;
   isAvailable?: boolean;
-  maxStudents?: number;
 }
 
 export default defineEventHandler(async (event) => {
@@ -57,12 +55,10 @@ export default defineEventHandler(async (event) => {
   const [updated] = await useDrizzle()
     .update(teacherAvailability)
     .set({
-      title: body.title ?? existing.title,
       description: body.description !== undefined ? body.description : existing.description,
       startTime: start,
       endTime: end,
       isAvailable: body.isAvailable ?? existing.isAvailable,
-      maxStudents: body.maxStudents ?? existing.maxStudents,
       updatedAt: new Date(),
     })
     .where(eq(teacherAvailability.id, id))

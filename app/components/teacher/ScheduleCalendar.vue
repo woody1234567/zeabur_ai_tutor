@@ -16,12 +16,10 @@ const { t } = useI18n();
 interface ScheduleEvent {
   id: string;
   teacherId: string;
-  title: string;
   description: string | null;
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  maxStudents: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,12 +33,10 @@ const editingEventId = ref<string | null>(null);
 const isEditing = computed(() => !!editingEventId.value);
 
 const eventForm = ref({
-  title: "",
   description: "",
   startTime: "",
   endTime: "",
   isAvailable: true,
-  maxStudents: 1,
 });
 const formError = ref("");
 
@@ -48,7 +44,9 @@ function toFcEvents(events: ScheduleEvent[] | null | undefined) {
   if (!events) return [];
   return events.map((e) => ({
     id: e.id,
-    title: e.title,
+    title: e.isAvailable
+      ? t("teacher.schedule.event.available")
+      : t("teacher.schedule.event.booked"),
     start: e.startTime,
     end: e.endTime,
     backgroundColor: e.isAvailable ? "#22c55e" : "#9ca3af",
@@ -57,7 +55,6 @@ function toFcEvents(events: ScheduleEvent[] | null | undefined) {
     extendedProps: {
       description: e.description,
       isAvailable: e.isAvailable,
-      maxStudents: e.maxStudents,
     },
   }));
 }
@@ -93,7 +90,6 @@ watch(scheduleEvents, (val) => {
 
 function resetForm(start?: Date, end?: Date) {
   eventForm.value = {
-    title: "",
     description: "",
     startTime: start
       ? toDateTimeLocal(start)
@@ -102,7 +98,6 @@ function resetForm(start?: Date, end?: Date) {
       ? toDateTimeLocal(end)
       : "",
     isAvailable: true,
-    maxStudents: 1,
   };
   formError.value = "";
   editingEventId.value = null;
@@ -147,12 +142,10 @@ function handleEventClick(clickInfo: EventClickArg) {
   const end = event.end || new Date(start.getTime() + 3600000);
 
   eventForm.value = {
-    title: event.title,
     description: event.extendedProps.description || "",
     startTime: toDateTimeLocal(start),
     endTime: toDateTimeLocal(end),
     isAvailable: event.extendedProps.isAvailable ?? true,
-    maxStudents: event.extendedProps.maxStudents ?? 1,
   };
   formError.value = "";
   showModal.value = true;
@@ -167,10 +160,6 @@ function closeModal() {
 async function saveEvent() {
   formError.value = "";
 
-  if (!eventForm.value.title.trim()) {
-    formError.value = t("teacher.schedule.form.error_title_required");
-    return;
-  }
   if (!eventForm.value.startTime || !eventForm.value.endTime) {
     formError.value = t("teacher.schedule.form.error_time_required");
     return;
@@ -185,12 +174,10 @@ async function saveEvent() {
 
   try {
     const body = {
-      title: eventForm.value.title.trim(),
       description: eventForm.value.description.trim() || null,
       startTime: start.toISOString(),
       endTime: end.toISOString(),
       isAvailable: eventForm.value.isAvailable,
-      maxStudents: eventForm.value.maxStudents,
     };
 
     if (isEditing.value && editingEventId.value) {
@@ -295,19 +282,6 @@ onUnmounted(() => {
           }}
         </h3>
 
-        <!-- Title -->
-        <div class="form-control w-full mb-3">
-          <label class="label">
-            <span class="label-text">{{ $t("teacher.schedule.form.title_label") }}</span>
-          </label>
-          <input
-            v-model="eventForm.title"
-            type="text"
-            :placeholder="$t('teacher.schedule.form.title_placeholder')"
-            class="input input-bordered w-full"
-          />
-        </div>
-
         <!-- Description -->
         <div class="form-control w-full mb-3">
           <label class="label">
@@ -343,19 +317,6 @@ onUnmounted(() => {
               class="input input-bordered w-full"
             />
           </div>
-        </div>
-
-        <!-- Max Students -->
-        <div class="form-control w-full mb-3">
-          <label class="label">
-            <span class="label-text">{{ $t("teacher.schedule.form.max_students") }}</span>
-          </label>
-          <input
-            v-model.number="eventForm.maxStudents"
-            type="number"
-            min="1"
-            class="input input-bordered w-full"
-          />
         </div>
 
         <!-- Available toggle -->

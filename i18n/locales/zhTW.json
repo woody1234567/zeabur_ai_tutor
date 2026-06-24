@@ -146,7 +146,6 @@
       "available_count": "{count} 個可預約",
       "available": "可預約",
       "booked": "已預約",
-      "max_students": "最多 {count} 位學生",
       "book": "預約",
       "loading": "載入中...",
       "load_error": "載入老師資訊失敗",
@@ -159,7 +158,11 @@
         "cancel": "取消",
         "success": "預約請求已送出！",
         "error": "預約失敗"
-      }
+      },
+      "profile_bio": "關於",
+      "profile_teaching_areas": "教學領域",
+      "profile_teaching_experience": "教學經歷",
+      "profile_interests": "興趣"
     },
     "bookings": {
       "title": "我的預約",
@@ -314,6 +317,36 @@
     }
   },
   "teacher": {
+    "profile": {
+      "title": "個人資料",
+      "description": "更新你的個人資料，讓學生更認識你。",
+      "avatar_label": "大頭貼",
+      "change_avatar": "更換照片",
+      "uploading_avatar": "上傳中...",
+      "avatar_upload_error": "上傳照片失敗",
+      "avatar_too_large": "照片大小不能超過 5MB",
+      "name_label": "姓名",
+      "name_placeholder": "你的姓名",
+      "gender_label": "性別",
+      "gender_options": {
+        "": "不透露",
+        "male": "男",
+        "female": "女",
+        "other": "其他"
+      },
+      "bio_label": "自我介紹",
+      "bio_placeholder": "向學生介紹你自己...",
+      "interests_label": "興趣",
+      "interests_placeholder": "例如：閱讀、登山、音樂",
+      "teaching_areas_label": "教學領域",
+      "teaching_areas_placeholder": "例如：數學、物理、化學",
+      "teaching_experience_label": "教學經歷",
+      "teaching_experience_placeholder": "描述你的教學背景...",
+      "save": "儲存個人資料",
+      "saving": "儲存中...",
+      "save_success": "個人資料已更新！",
+      "save_error": "更新個人資料失敗"
+    },
     "posts": {
       "back": "返回教室",
       "add_title": "新增貼文",
@@ -393,7 +426,8 @@
       "manage_problems": "管理題目",
       "create_problem": "建立題目",
       "ai_chat": "AI 助手",
-      "schedule": "排程管理"
+      "schedule": "排程管理",
+      "profile": "個人資料"
     },
     "bookings": {
       "title": "待確認的預約",
@@ -413,17 +447,13 @@
       "modal_create": "新增排程事件",
       "modal_edit": "編輯排程事件",
       "form": {
-        "title_label": "事件標題",
-        "title_placeholder": "例：數學課",
         "description_label": "說明",
         "description_placeholder": "事件說明...",
         "start_time": "開始時間",
         "end_time": "結束時間",
-        "max_students": "最大學生數",
         "mark_available": "標記為可預約",
         "save": "儲存事件",
         "cancel": "取消",
-        "error_title_required": "標題為必填",
         "error_time_required": "開始與結束時間為必填",
         "error_time_order": "開始時間須早於結束時間",
         "error_save_failed": "儲存事件失敗",

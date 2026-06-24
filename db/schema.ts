@@ -525,12 +525,10 @@ export const teacherAvailability = pgTable("teacher_availability", {
   teacherId: text("teacher_id")
     .notNull()
     .references(() => user.id),
-  title: text("title").notNull(),
   description: text("description"),
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time").notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
-  maxStudents: integer("max_students").default(1),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -612,3 +610,15 @@ export const testbankClassrooms = pgTable(
     ),
   })
 );
+
+export const teacherProfiles = pgTable("teacher_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id),
+  gender: text("gender"),
+  bio: text("bio"),
+  interests: text("interests"),
+  teachingAreas: text("teaching_areas"),
+  teachingExperience: text("teaching_experience"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

@@ -1,12 +1,10 @@
 import { teacherAvailability } from "../../../db/schema";
 
 interface CreateScheduleBody {
-  title?: string;
   description?: string | null;
   startTime?: string;
   endTime?: string;
   isAvailable?: boolean;
-  maxStudents?: number;
 }
 
 export default defineEventHandler(async (event) => {
@@ -16,13 +14,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody<CreateScheduleBody>(event);
-  const { title, startTime, endTime, description, isAvailable, maxStudents } =
-    body;
+  const { startTime, endTime, description, isAvailable } = body;
 
-  if (!title || !startTime || !endTime) {
+  if (!startTime || !endTime) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Title, start time, and end time are required",
+      statusMessage: "Start time and end time are required",
     });
   }
 
@@ -44,12 +41,10 @@ export default defineEventHandler(async (event) => {
     .insert(teacherAvailability)
     .values({
       teacherId: session.user.id,
-      title,
       description: description || null,
       startTime: start,
       endTime: end,
       isAvailable: isAvailable ?? true,
-      maxStudents: maxStudents ?? 1,
     })
     .returning();
 

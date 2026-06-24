@@ -1,4 +1,4 @@
-import { user, teacherAvailability } from "../../../../../db/schema";
+import { user, teacherAvailability, teacherProfiles } from "../../../../../db/schema";
 import { eq, and, asc } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
@@ -22,8 +22,13 @@ export default defineEventHandler(async (event) => {
       email: user.email,
       image: user.image,
       role: user.role,
+      bio: teacherProfiles.bio,
+      interests: teacherProfiles.interests,
+      teachingAreas: teacherProfiles.teachingAreas,
+      teachingExperience: teacherProfiles.teachingExperience,
     })
     .from(user)
+    .leftJoin(teacherProfiles, eq(teacherProfiles.userId, user.id))
     .where(eq(user.id, teacherId))
     .limit(1);
 
@@ -51,6 +56,10 @@ export default defineEventHandler(async (event) => {
       name: teacher.name,
       email: teacher.email,
       image: teacher.image,
+      bio: teacher.bio,
+      interests: teacher.interests,
+      teachingAreas: teacher.teachingAreas,
+      teachingExperience: teacher.teachingExperience,
     },
     availableSlots,
   };

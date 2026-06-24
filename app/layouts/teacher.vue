@@ -90,6 +90,11 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <NuxtLink :to="localePath('/teacher/profile')">{{
+                $t("teacher.layout.profile")
+              }}</NuxtLink>
+            </li>
+            <li>
               <ThemeSwitcher />
             </li>
             <li>
@@ -173,6 +178,13 @@ const closeDrawer = () => {
             :to="localePath('/teacher/schedule')"
             @click="closeDrawer"
             >{{ $t("teacher.layout.schedule") }}</NuxtLink
+          >
+        </li>
+        <li>
+          <NuxtLink
+            :to="localePath('/teacher/profile')"
+            @click="closeDrawer"
+            >{{ $t("teacher.layout.profile") }}</NuxtLink
           >
         </li>
         <li class="mt-auto">

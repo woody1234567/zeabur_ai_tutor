@@ -146,7 +146,6 @@
       "available_count": "{count} available",
       "available": "Available",
       "booked": "Booked",
-      "max_students": "Max {count} student(s)",
       "book": "Book",
       "loading": "Loading...",
       "load_error": "Failed to load teacher information",
@@ -159,7 +158,11 @@
         "cancel": "Cancel",
         "success": "Booking request sent!",
         "error": "Failed to book slot"
-      }
+      },
+      "profile_bio": "About",
+      "profile_teaching_areas": "Teaching Areas",
+      "profile_teaching_experience": "Teaching Experience",
+      "profile_interests": "Interests"
     },
     "bookings": {
       "title": "My Bookings",
@@ -314,6 +317,36 @@
     }
   },
   "teacher": {
+    "profile": {
+      "title": "My Profile",
+      "description": "Update your profile to help students get to know you.",
+      "avatar_label": "Profile Picture",
+      "change_avatar": "Change Photo",
+      "uploading_avatar": "Uploading...",
+      "avatar_upload_error": "Failed to upload photo",
+      "avatar_too_large": "Photo must be under 5MB",
+      "name_label": "Name",
+      "name_placeholder": "Your full name",
+      "gender_label": "Gender",
+      "gender_options": {
+        "": "Prefer not to say",
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "bio_label": "Self-Introduction",
+      "bio_placeholder": "Tell students about yourself...",
+      "interests_label": "Interests",
+      "interests_placeholder": "e.g. Reading, Hiking, Music",
+      "teaching_areas_label": "Teaching Areas",
+      "teaching_areas_placeholder": "e.g. Math, Physics, Chemistry",
+      "teaching_experience_label": "Teaching Experience",
+      "teaching_experience_placeholder": "Describe your teaching background...",
+      "save": "Save Profile",
+      "saving": "Saving...",
+      "save_success": "Profile updated successfully!",
+      "save_error": "Failed to update profile"
+    },
     "posts": {
       "back": "Back to Classroom",
       "add_title": "Add New Post",
@@ -393,7 +426,8 @@
       "manage_problems": "Manage Problems",
       "create_problem": "Create Problem",
       "ai_chat": "AI Assistant",
-      "schedule": "Schedule"
+      "schedule": "Schedule",
+      "profile": "Profile"
     },
     "bookings": {
       "title": "Pending Bookings",
@@ -413,17 +447,13 @@
       "modal_create": "New Schedule Event",
       "modal_edit": "Edit Schedule Event",
       "form": {
-        "title_label": "Event Title",
-        "title_placeholder": "e.g., Math Class",
         "description_label": "Description",
         "description_placeholder": "Event description...",
         "start_time": "Start Time",
         "end_time": "End Time",
-        "max_students": "Max Students",
         "mark_available": "Mark as available",
         "save": "Save Event",
         "cancel": "Cancel",
-        "error_title_required": "Title is required",
         "error_time_required": "Start and end times are required",
         "error_time_order": "Start time must be before end time",
         "error_save_failed": "Failed to save event",

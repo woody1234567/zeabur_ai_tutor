@@ -11,16 +11,18 @@ interface TeacherProfile {
   name: string | null;
   email: string;
   image: string | null;
+  bio: string | null;
+  interests: string | null;
+  teachingAreas: string | null;
+  teachingExperience: string | null;
 }
 
 interface ScheduleEvent {
   id: string;
-  title: string;
   description: string | null;
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  maxStudents: number | null;
 }
 
 interface AvailableResponse {
@@ -99,11 +101,56 @@ async function confirmBooking() {
     <!-- Content -->
     <div v-else-if="data" class="space-y-8">
       <!-- Teacher header -->
-      <div>
-        <h1 class="text-3xl font-bold">
-          {{ data.teacher.name || "Teacher" }}
-        </h1>
-        <p class="text-sm opacity-70">{{ data.teacher.email }}</p>
+      <div class="flex items-start gap-5">
+        <div class="avatar placeholder">
+          <div class="bg-neutral text-neutral-content rounded-full w-20 h-20">
+            <img
+              v-if="data.teacher.image"
+              :src="data.teacher.image"
+              :alt="data.teacher.name || 'Teacher'"
+              class="rounded-full object-cover"
+            />
+            <span v-else class="text-2xl">
+              {{ (data.teacher.name || "T").slice(0, 1).toUpperCase() }}
+            </span>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold">
+            {{ data.teacher.name || "Teacher" }}
+          </h1>
+          <p class="text-sm opacity-70">{{ data.teacher.email }}</p>
+          <div v-if="data.teacher.teachingAreas" class="flex flex-wrap gap-1 mt-2">
+            <span
+              v-for="area in data.teacher.teachingAreas.split(',').map(s => s.trim()).filter(Boolean)"
+              :key="area"
+              class="badge badge-primary badge-outline badge-sm"
+            >
+              {{ area }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teacher Profile -->
+      <div
+        v-if="data.teacher.bio || data.teacher.teachingExperience || data.teacher.interests"
+        class="card bg-base-100 shadow"
+      >
+        <div class="card-body space-y-4">
+          <div v-if="data.teacher.bio">
+            <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_bio") }}</h3>
+            <p class="text-sm whitespace-pre-line">{{ data.teacher.bio }}</p>
+          </div>
+          <div v-if="data.teacher.interests">
+            <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_interests") }}</h3>
+            <p class="text-sm">{{ data.teacher.interests }}</p>
+          </div>
+          <div v-if="data.teacher.teachingExperience">
+            <h3 class="font-semibold mb-1">{{ t("student.teachers.profile_teaching_experience") }}</h3>
+            <p class="text-sm whitespace-pre-line">{{ data.teacher.teachingExperience }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Available slots -->
