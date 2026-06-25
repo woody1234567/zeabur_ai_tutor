@@ -20,7 +20,61 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@nuxtjs/mcp-toolkit",
     "@nuxt/icon",
+    "@vite-pwa/nuxt",
   ],
+  pwa: {
+    registerType: 'prompt',
+    manifest: {
+      name: 'Study With Woody',
+      short_name: 'StudyWoody',
+      description: 'AI-powered tutoring platform',
+      theme_color: '#ffffff',
+      background_color: '#ffffff',
+      display: 'standalone',
+      scope: '/',
+      start_url: '/',
+      icons: [
+        {
+          src: 'pwa-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+      ],
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      navigateFallback: '/offline.html',
+      navigateFallbackDenylist: [/^\/api\//],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'image-cache',
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 30 * 24 * 60 * 60,
+            },
+          },
+        },
+      ],
+      cleanupOutdatedCaches: true,
+    },
+    devOptions: {
+      enabled: false,
+    },
+  },
   i18n: {
     locales: [
       { code: "en", file: "en.json", name: "English" },
