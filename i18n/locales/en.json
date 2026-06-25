@@ -1134,6 +1134,7 @@
     "new_chat_short": "New Chat",
     "cancel": "Cancel",
     "save": "Save",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "toggle_sidebar": "Toggle sidebar"
   }
 }

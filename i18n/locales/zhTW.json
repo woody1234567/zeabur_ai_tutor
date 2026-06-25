@@ -1132,6 +1132,7 @@
     "new_chat_short": "新對話",
     "cancel": "取消",
     "save": "儲存",
-    "confirm": "確認"
+    "confirm": "確認",
+    "toggle_sidebar": "切換側邊欄"
   }
 }

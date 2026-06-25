@@ -18,7 +18,7 @@ onMounted(() => {
   <div class="dropdown dropdown-end">
     <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-1">
       <Icon name="heroicons-solid:swatch" class="w-5 h-5" />
-      <span class="hidden sm:inline capitalize">{{ theme.value }}</span>
+      <span class="capitalize">{{ theme }}</span>
       <Icon name="heroicons-solid:chevron-down" class="w-3 h-3" />
     </div>
     <ul

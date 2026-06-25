@@ -75,6 +75,12 @@ const closeDrawer = () => {
             >Dashboard</NuxtLink
           >
         </li>
+        <li>
+          <LangSwitcher />
+        </li>
+        <li>
+          <ThemeSwitcher />
+        </li>
         <li class="mt-auto">
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
             Logout

@@ -57,7 +57,7 @@ function handleNewChat(projectId?: string | null) {
 </script>
 
 <template>
-  <div class="w-64 bg-base-200 p-4 border-r border-base-300 flex flex-col hidden lg:flex">
+  <div class="w-64 h-full bg-base-200 p-4 border-r border-base-300 flex flex-col">
     <!-- Action buttons -->
     <div class="flex gap-2 mb-4">
       <button class="btn btn-primary btn-sm flex-1" @click="handleNewChat(currentProjectId)">

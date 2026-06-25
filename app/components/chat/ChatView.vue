@@ -36,6 +36,7 @@ const apiPrefix = `/api/${props.role}`;
 const chatId = ref(crypto.randomUUID());
 const currentProjectId = ref<string | null>(null);
 const userMessage = ref("");
+const sidebarOpen = ref(false);
 
 const projects = ref<Project[]>([]);
 const showProjectDialog = ref(false);
@@ -128,12 +129,14 @@ async function loadChat(id: string) {
   if (data.value) {
     chat.messages = (data.value as any).messages as UIMessage[];
   }
+  sidebarOpen.value = false;
 }
 
 function startNewChat(projectId?: string | null) {
   chatId.value = crypto.randomUUID();
   currentProjectId.value = projectId ?? null;
   chat.messages = [];
+  sidebarOpen.value = false;
 }
 
 function selectProject(projectId: string | null) {
@@ -224,28 +227,43 @@ async function sendMessage() {
 </script>
 
 <template>
-  <div class="h-[calc(100vh-64px)] flex">
-    <!-- Sidebar -->
-    <ChatProjectSidebar
-      :projects="projects"
-      :chats="chats"
-      :current-chat-id="chatId"
-      :current-project-id="currentProjectId"
-      @load-chat="loadChat"
-      @start-new-chat="startNewChat"
-      @create-project="openCreateProject"
-      @edit-project="openEditProject"
-      @delete-project="handleDeleteProject"
-      @move-chat="openMoveChat"
-      @select-project="selectProject"
+  <div class="h-[calc(100vh-64px)] flex relative">
+    <!-- Mobile sidebar backdrop -->
+    <div
+      v-if="sidebarOpen"
+      class="fixed inset-0 bg-black/40 z-40 lg:hidden"
+      @click="sidebarOpen = false"
     />
+
+    <!-- Sidebar: static on lg+, fixed overlay on mobile when open -->
+    <div
+      :class="[
+        sidebarOpen
+          ? 'fixed top-[64px] left-0 bottom-0 z-50 flex lg:static lg:z-auto lg:top-auto lg:left-auto lg:bottom-auto'
+          : 'hidden lg:flex'
+      ]"
+    >
+      <ChatProjectSidebar
+        :projects="projects"
+        :chats="chats"
+        :current-chat-id="chatId"
+        :current-project-id="currentProjectId"
+        @load-chat="loadChat"
+        @start-new-chat="startNewChat"
+        @create-project="openCreateProject"
+        @edit-project="openEditProject"
+        @delete-project="handleDeleteProject"
+        @move-chat="openMoveChat"
+        @select-project="selectProject"
+      />
+    </div>
 
     <!-- Main Chat Area -->
     <div class="flex-1 flex flex-col bg-base-100">
-      <!-- Project indicator -->
+      <!-- Mobile Sidebar Toggle + Project indicator -->
       <div
         v-if="currentProject"
-        class="px-4 py-2 border-b border-base-300 bg-base-200/50 flex items-center gap-2"
+        class="hidden lg:flex items-center gap-2 px-4 py-2 border-b border-base-300 bg-base-200/50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -269,9 +287,53 @@ async function sendMessage() {
           {{ t("chat.has_instructions") }}
         </span>
       </div>
-
-      <!-- Mobile Sidebar Toggle -->
-      <div class="lg:hidden p-2 border-b border-base-300"></div>
+      <div class="flex items-center gap-2 border-b border-base-300 lg:hidden">
+        <button
+          class="btn btn-ghost btn-square"
+          :title="t('chat.toggle_sidebar')"
+          @click="sidebarOpen = !sidebarOpen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="w-5 h-5 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+        <div
+          v-if="currentProject"
+          class="flex items-center gap-2 px-2 py-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+            />
+          </svg>
+          <span class="text-sm font-medium">{{ currentProject.name }}</span>
+          <span
+            v-if="currentProject.systemPrompt"
+            class="badge badge-xs badge-primary"
+          >
+            {{ t("chat.has_instructions") }}
+          </span>
+        </div>
+      </div>
 
       <!-- Messages -->
       <div class="flex-1 overflow-y-auto p-4 space-y-4">
