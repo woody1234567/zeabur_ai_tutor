@@ -195,6 +195,12 @@ const closeDrawer = () => {
             >AI Chat</NuxtLink
           >
         </li>
+        <li>
+          <LangSwitcher />
+        </li>
+        <li>
+          <ThemeSwitcher />
+        </li>
         <li class="mt-auto">
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
             {{ $t("student.layout.logout") }}

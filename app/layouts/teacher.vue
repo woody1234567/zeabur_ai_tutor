@@ -187,6 +187,12 @@ const closeDrawer = () => {
             >{{ $t("teacher.layout.profile") }}</NuxtLink
           >
         </li>
+        <li>
+          <LangSwitcher />
+        </li>
+        <li>
+          <ThemeSwitcher />
+        </li>
         <li class="mt-auto">
           <button @click="handleLogout" class="btn btn-secondary btn-outline">
             {{ $t("teacher.layout.logout") }}

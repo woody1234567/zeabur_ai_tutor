@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
       availabilityId: bookings.availabilityId,
       teacherId: bookings.teacherId,
       teacherName: user.name,
-      slotTitle: teacherAvailability.title,
       slotDescription: teacherAvailability.description,
       slotStartTime: teacherAvailability.startTime,
       slotEndTime: teacherAvailability.endTime,
