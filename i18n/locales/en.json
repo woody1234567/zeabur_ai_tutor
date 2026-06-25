@@ -256,7 +256,12 @@
       "error_loading": "Error loading problem:",
       "understood": "Understood",
       "mark_as_understood": "Mark as understood",
-      "created_by": "by {name}"
+      "created_by": "by {name}",
+      "difficulty_label": "Difficulty",
+      "subject_label": "Subject",
+      "chapter_label": "Chapter",
+      "grade_label": "Grade",
+      "source_label": "Source"
     },
     "testbanks": {
       "title": "Testbanks",

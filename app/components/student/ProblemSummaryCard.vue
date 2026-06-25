@@ -63,29 +63,36 @@ const toggleFavorite = async () => {
           <span>{{ $t("student.problems.created_by", { name: tb.ownerName }) }}</span>
         </div>
       </div>
-      <div class="flex gap-2 mt-2 flex-wrap">
-        <div
-          class="badge"
-          :class="{
-            'badge-success': problem.difficulty === 'easy',
-            'badge-warning': problem.difficulty === 'medium',
-            'badge-error': problem.difficulty === 'hard',
-          }"
-        >
-          {{ problem.difficulty }}
+      <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+        <div v-if="problem.difficulty" class="flex items-center gap-1">
+          <span class="text-base-content/60">{{ $t("student.problems.difficulty_label") }}:</span>
+          <span
+            class="font-medium"
+            :class="{
+              'text-success': problem.difficulty === 'easy',
+              'text-warning': problem.difficulty === 'medium',
+              'text-error': problem.difficulty === 'hard',
+            }"
+          >{{ problem.difficulty }}</span>
         </div>
-        <div v-if="problem.subject" class="badge badge-info badge-outline">
-          {{ problem.subject }}
+        <div v-if="problem.subject" class="flex items-center gap-1">
+          <span class="text-base-content/60">{{ $t("student.problems.subject_label") }}:</span>
+          <span class="font-medium">{{ problem.subject }}</span>
         </div>
-        <div v-if="problem.chapter" class="badge badge-ghost">
-          {{ problem.chapter }}
+        <div v-if="problem.grade" class="flex items-center gap-1">
+          <span class="text-base-content/60">{{ $t("student.problems.grade_label") }}:</span>
+          <span class="font-medium">{{ problem.grade }}</span>
         </div>
-        <div v-if="problem.grade" class="badge badge-ghost badge-outline">
-          {{ problem.grade }}
+        <div v-if="problem.source" class="flex items-center gap-1 col-span-2">
+          <span class="text-base-content/60">{{ $t("student.problems.source_label") }}:</span>
+          <span class="font-medium">{{ problem.source }}</span>
         </div>
-        <div v-if="problem.source" class="badge badge-ghost">
-          {{ problem.source }}
+        <div v-if="problem.chapter" class="flex items-center gap-1 col-span-2">
+          <span class="text-base-content/60">{{ $t("student.problems.chapter_label") }}:</span>
+          <span class="font-medium">{{ problem.chapter }}</span>
         </div>
+      </div>
+      <div v-if="problem.hashtags && problem.hashtags.length" class="flex gap-2 mt-2 flex-wrap">
         <div
           v-for="tag in problem.hashtags"
           :key="tag"
