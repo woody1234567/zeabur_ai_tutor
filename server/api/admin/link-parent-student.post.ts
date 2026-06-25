@@ -25,9 +25,11 @@ export default defineEventHandler(async (event) => {
   try {
     await db.transaction(async (tx) => {
       // 1. Get parentId from pending_parent
-      const pendingRecord = await tx.query.pendingParent.findFirst({
-        where: eq(pendingParent.id, pendingParentId),
-      });
+      const [pendingRecord] = await tx
+        .select()
+        .from(pendingParent)
+        .where(eq(pendingParent.id, pendingParentId))
+        .limit(1);
 
       if (!pendingRecord) {
         throw new Error("Pending parent record not found");

@@ -2,6 +2,7 @@
 definePageMeta({
   layout: "admin",
 });
+const localePath = useLocalePath();
 const { t } = useI18n();
 
 interface PendingParent {
@@ -115,7 +116,7 @@ onMounted(() => {
               <div class="flex gap-2" v-if="item.status === 'pending'">
                 <NuxtLink
                   class="btn btn-xs btn-success text-white"
-                  :to="'/admin/link-student-parent?id=' + item.id"
+                  :to="localePath('/admin/link-student-parent') + '?id=' + item.id"
                 >
                   {{ $t("admin.pending_parents.table.link") }}
                 </NuxtLink>

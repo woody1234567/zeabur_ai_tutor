@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  let queryBuilder = db
+  const results = await db
     .select({
       id: pendingParent.id,
       parentId: pendingParent.parentId,
@@ -47,14 +47,8 @@ export default defineEventHandler(async (event) => {
       parentEmail: user.email,
     })
     .from(pendingParent)
-    .leftJoin(user, eq(pendingParent.parentId, user.id));
-
-  if (conditions.length > 0) {
-    // @ts-ignore
-    queryBuilder.where(and(...conditions));
-  }
-
-  const results = await queryBuilder;
+    .leftJoin(user, eq(pendingParent.parentId, user.id))
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
 
   return results;
 });
