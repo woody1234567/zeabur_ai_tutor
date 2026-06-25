@@ -81,6 +81,16 @@ Two separate R2 buckets accessed via `server/utils/r2.ts`:
 - `r2` — for problem images (`r2BucketName`)
 - `classMaterialsR2` — for teacher-uploaded class materials (`classMaterialsR2BucketName`)
 
+### PWA (Progressive Web App)
+
+- **Module**: `@vite-pwa/nuxt` with `generateSW` strategy
+- **Update behavior**: `prompt` — shows a DaisyUI toast when a new version is available (`app/components/PwaUpdatePrompt.vue`)
+- **Offline**: falls back to `public/offline.html` when offline; API routes (`/api/*`) are excluded from service worker caching
+- **Manifest & meta tags**: registered in `app/app.vue` via `<NuxtPwaManifest />` and `useHead()`
+- **Icons**: `public/pwa-192x192.png`, `public/pwa-512x512.png`, `public/apple-touch-icon.png`, `public/mask-icon.svg`
+- **Config**: all PWA options are in the `pwa` key of `nuxt.config.ts`
+- **Dev testing**: set `pwa.devOptions.enabled: true` in `nuxt.config.ts` to test PWA in dev mode
+
 ### AI Chat
 
 - Integrated into Nuxt server — no separate microservice needed

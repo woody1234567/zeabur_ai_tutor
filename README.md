@@ -22,6 +22,7 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
   - parent-student linking
   - pending approvals & user management
 - Built-in MCP tools/resources used by AI service
+- **PWA support** — installable on desktop/mobile, offline fallback page, prompt-based update notifications
 
 ---
 
@@ -34,6 +35,7 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
 - AI SDK 6
 - TailwindCSS + DaisyUI
 - @nuxtjs/i18n (en / zhTW)
+- @vite-pwa/nuxt (PWA with service worker)
 
 ### Backend services
 - PostgreSQL
