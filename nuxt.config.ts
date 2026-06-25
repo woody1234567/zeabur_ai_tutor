@@ -25,8 +25,8 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'prompt',
     manifest: {
-      name: 'Study With Woody',
-      short_name: 'StudyWoody',
+      name: 'AI tutor',
+      short_name: 'AI tutor',
       description: 'AI-powered tutoring platform',
       theme_color: '#ffffff',
       background_color: '#ffffff',
