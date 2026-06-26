@@ -5,7 +5,6 @@ definePageMeta({
   layout: "admin",
 });
 const localePath = useLocalePath();
-const { t } = useI18n();
 
 const route = useRoute();
 const pendingParentId = route.query.id as string;
@@ -51,23 +50,13 @@ const handleSearch = async () => {
   }
 };
 
-const linkStudent = async (studentId: string) => {
-  if (!confirm(t("admin.link_student.confirm_link"))) return;
-
-  try {
-    await $fetch("/api/admin/link-parent-student", {
-      method: "POST",
-      body: {
-        pendingParentId,
-        studentId,
-      },
-    });
-    alert(t("admin.link_student.success_link"));
-    navigateTo(localePath("/admin/pending-parents"));
-  } catch (error) {
-    console.error("Failed to link student", error);
-    alert(t("admin.link_student.failed_link"));
-  }
+const viewStudent = (studentId: string) => {
+  navigateTo(
+    localePath({
+      path: `/admin/link-student-parent/${studentId}`,
+      query: pendingParentId ? { pendingParentId } : {},
+    })
+  );
 };
 </script>
 
@@ -158,6 +147,7 @@ const linkStudent = async (studentId: string) => {
         <UserSearchBar
           v-model="searchQuery"
           v-model:roleFilter="roleFilter"
+          :lock-role="true"
           @search="handleSearch"
         />
       </div>
@@ -200,9 +190,9 @@ const linkStudent = async (studentId: string) => {
             <td>
               <button
                 class="btn btn-sm btn-primary"
-                @click="linkStudent(user.id)"
+                @click="viewStudent(user.id)"
               >
-                {{ $t("admin.link_student.table.link") }}
+                {{ $t("admin.link_student.table.view") }}
               </button>
             </td>
           </tr>
