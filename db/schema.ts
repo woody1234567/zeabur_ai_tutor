@@ -622,3 +622,22 @@ export const teacherProfiles = pgTable("teacher_profiles", {
   teachingExperience: text("teaching_experience"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const studentProfiles = pgTable("student_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id),
+  gender: text("gender"),
+  bio: text("bio"),
+  interests: text("interests"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const parentProfiles = pgTable("parent_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id),
+  gender: text("gender"),
+  bio: text("bio"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

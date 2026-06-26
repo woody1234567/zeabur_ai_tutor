@@ -131,7 +131,32 @@
       "menu": "Menu",
       "dashboard": "Dashboard",
       "materials": "Materials",
-      "teachers": "Teachers"
+      "teachers": "Teachers",
+      "profile": "Profile"
+    },
+    "profile": {
+      "title": "My Profile",
+      "description": "Update your profile information.",
+      "change_avatar": "Change Photo",
+      "uploading_avatar": "Uploading...",
+      "avatar_upload_error": "Failed to upload photo",
+      "avatar_too_large": "Photo must be under 5MB",
+      "name_label": "Name",
+      "name_placeholder": "Your full name",
+      "gender_label": "Gender",
+      "gender_options": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "bio_label": "About Me",
+      "bio_placeholder": "Tell others about yourself...",
+      "interests_label": "Interests",
+      "interests_placeholder": "e.g. Reading, Music, Sports",
+      "save": "Save Profile",
+      "saving": "Saving...",
+      "save_success": "Profile updated successfully!",
+      "save_error": "Failed to update profile"
     },
     "teachers": {
       "title": "Find Teachers",
@@ -789,6 +814,31 @@
     }
   },
   "parent": {
+    "layout": {
+      "profile": "Profile"
+    },
+    "profile": {
+      "title": "My Profile",
+      "description": "Update your profile information.",
+      "change_avatar": "Change Photo",
+      "uploading_avatar": "Uploading...",
+      "avatar_upload_error": "Failed to upload photo",
+      "avatar_too_large": "Photo must be under 5MB",
+      "name_label": "Name",
+      "name_placeholder": "Your full name",
+      "gender_label": "Gender",
+      "gender_options": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "bio_label": "About Me",
+      "bio_placeholder": "Tell others about yourself...",
+      "save": "Save Profile",
+      "saving": "Saving...",
+      "save_success": "Profile updated successfully!",
+      "save_error": "Failed to update profile"
+    },
     "dashboard": {
       "title": "Parent Dashboard",
       "your_students": "Your Students",
@@ -835,7 +885,7 @@
       "student_name": "Student Name",
       "student_name_placeholder": "e.g. John Doe",
       "student_email": "Student Email",
-      "student_email_placeholder": "e.g. john@example.com",
+      "student_email_placeholder": "e.g. john{'@'}example.com",
       "submit": "Submit Request",
       "submit_error": "Failed to submit request",
       "success_title": "Request Submitted!",
@@ -1129,7 +1179,7 @@
           "show": "Show",
           "upload_placeholder": "Upload an image or paste from clipboard (Ctrl+V) to extract text",
           "remove_image": "Remove image",
-          "upload_hint": "Supports handwritten or printed text. Max size 20MB.",
+          "upload_hint": "Supports handwritten or printed text. Max size 5MB.",
           "extracting": "Extracting Text...",
           "extract_button": "Extract Text to Content",
           "alert_no_text": "No text found in the image.",

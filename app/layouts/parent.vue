@@ -46,6 +46,11 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
+              <NuxtLink :to="localePath('/parent/profile')">{{
+                $t("parent.layout.profile")
+              }}</NuxtLink>
+            </li>
+            <li>
               <ThemeSwitcher />
             </li>
             <li>
@@ -85,6 +90,13 @@ const closeDrawer = () => {
             :to="localePath('/parent/link-child')"
             @click="closeDrawer"
             >{{ $t("parent.link_child.nav_label") }}</NuxtLink
+          >
+        </li>
+        <li>
+          <NuxtLink
+            :to="localePath('/parent/profile')"
+            @click="closeDrawer"
+            >{{ $t("parent.layout.profile") }}</NuxtLink
           >
         </li>
         <li>

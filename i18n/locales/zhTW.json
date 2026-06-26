@@ -131,7 +131,32 @@
       "menu": "選單",
       "dashboard": "儀表板",
       "materials": "教材",
-      "teachers": "老師列表"
+      "teachers": "老師列表",
+      "profile": "個人資料"
+    },
+    "profile": {
+      "title": "個人資料",
+      "description": "更新你的個人資料。",
+      "change_avatar": "更換照片",
+      "uploading_avatar": "上傳中...",
+      "avatar_upload_error": "上傳照片失敗",
+      "avatar_too_large": "照片大小不能超過 5MB",
+      "name_label": "姓名",
+      "name_placeholder": "你的姓名",
+      "gender_label": "性別",
+      "gender_options": {
+        "male": "男",
+        "female": "女",
+        "other": "其他"
+      },
+      "bio_label": "自我介紹",
+      "bio_placeholder": "向大家介紹你自己...",
+      "interests_label": "興趣",
+      "interests_placeholder": "例如：閱讀、音樂、運動",
+      "save": "儲存個人資料",
+      "saving": "儲存中...",
+      "save_success": "個人資料已更新！",
+      "save_error": "更新個人資料失敗"
     },
     "teachers": {
       "title": "尋找老師",
@@ -789,6 +814,31 @@
     }
   },
   "parent": {
+    "layout": {
+      "profile": "個人資料"
+    },
+    "profile": {
+      "title": "個人資料",
+      "description": "更新你的個人資料。",
+      "change_avatar": "更換照片",
+      "uploading_avatar": "上傳中...",
+      "avatar_upload_error": "上傳照片失敗",
+      "avatar_too_large": "照片大小不能超過 5MB",
+      "name_label": "姓名",
+      "name_placeholder": "你的姓名",
+      "gender_label": "性別",
+      "gender_options": {
+        "male": "男",
+        "female": "女",
+        "other": "其他"
+      },
+      "bio_label": "自我介紹",
+      "bio_placeholder": "向大家介紹你自己...",
+      "save": "儲存個人資料",
+      "saving": "儲存中...",
+      "save_success": "個人資料已更新！",
+      "save_error": "更新個人資料失敗"
+    },
     "dashboard": {
       "title": "家長儀表板",
       "your_students": "您的學生",
@@ -835,7 +885,7 @@
       "student_name": "學生姓名",
       "student_name_placeholder": "例如：王小明",
       "student_email": "學生電子郵件",
-      "student_email_placeholder": "例如：wang@example.com",
+      "student_email_placeholder": "例如：wang{'@'}example.com",
       "submit": "提交申請",
       "submit_error": "提交申請失敗",
       "success_title": "申請已送出！",
@@ -1105,10 +1155,11 @@
           "title": "AI 格式化工具",
           "hide": "隱藏",
           "show": "顯示",
+          "hint": "將文字轉換為 Markdown 與 LaTeX 數學公式",
           "description": "使用 AI 將您的內容格式化為帶有 LaTeX 數學公式的整潔 Markdown。",
           "description_small": "(將文字轉換為 $...$ 用於行內數學公式，$$...$$ 用於區塊數學公式)",
-          "button_formatting": "格式化中...",
-          "button_format": "格式化目前內容",
+          "formatting": "格式化中...",
+          "format_button": "格式化目前內容",
           "alert_enter_content": "請先輸入一些內容以進行格式化。",
           "alert_failed": "格式化內容失敗。請重試。"
         },
@@ -1117,8 +1168,8 @@
           "hide": "隱藏",
           "show": "顯示",
           "description": "使用 AI 根據題目內容自動產生選項和詳解。",
-          "button_generating": "產生中...",
-          "button_generate": "產生選項和詳解",
+          "generating": "產生中...",
+          "generate_button": "產生選項和詳解",
           "alert_enter_content": "請先輸入題目內容。",
           "alert_failed": "產生選項失敗。請重試。"
         },
@@ -1127,6 +1178,7 @@
           "hide": "隱藏",
           "show": "顯示",
           "upload_placeholder": "上傳圖片或從剪貼簿貼上 (Ctrl+V) 以擷取文字",
+          "upload_hint": "支援手寫或印刷文字。最大大小 5MB。",
           "remove_image": "移除圖片",
           "button_extracting": "擷取中...",
           "button_extract": "擷取文字至內容",
