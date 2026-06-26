@@ -41,6 +41,11 @@ const closeDrawer = () => {
           <ul class="menu menu-horizontal px-1 items-center">
             <!-- Navbar menu content here -->
             <li>
+              <NuxtLink :to="localePath('/parent/link-child')">{{
+                $t("parent.link_child.nav_label")
+              }}</NuxtLink>
+            </li>
+            <li>
               <ThemeSwitcher />
             </li>
             <li>
@@ -73,6 +78,13 @@ const closeDrawer = () => {
         <li>
           <NuxtLink :to="localePath('/parent')" @click="closeDrawer"
             >Dashboard</NuxtLink
+          >
+        </li>
+        <li>
+          <NuxtLink
+            :to="localePath('/parent/link-child')"
+            @click="closeDrawer"
+            >{{ $t("parent.link_child.nav_label") }}</NuxtLink
           >
         </li>
         <li>

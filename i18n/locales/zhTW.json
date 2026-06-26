@@ -827,6 +827,21 @@
       "no_classrooms": "此學生尚未加入任何教室。",
       "back_to_student_classrooms": "返回學生教室列表",
       "error_loading_performance": "載入表現資料時發生錯誤："
+    },
+    "link_child": {
+      "title": "連結學生帳號",
+      "description": "請提供孩子的姓名與電子郵件，申請家長連結。管理員審核後將完成連結。",
+      "nav_label": "連結學生",
+      "student_name": "學生姓名",
+      "student_name_placeholder": "例如：王小明",
+      "student_email": "學生電子郵件",
+      "student_email_placeholder": "例如：wang@example.com",
+      "submit": "提交申請",
+      "submit_error": "提交申請失敗",
+      "success_title": "申請已送出！",
+      "success_message": "您的申請已送出，管理員將審核並連結您孩子的帳號。",
+      "link_another": "連結另一位學生",
+      "back_to_dashboard": "返回儀表板"
     }
   },
   "admin": {

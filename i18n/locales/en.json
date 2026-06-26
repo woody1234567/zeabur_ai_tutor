@@ -827,6 +827,21 @@
       "no_classrooms": "This student is not enrolled in any classrooms.",
       "back_to_student_classrooms": "Back to Student Classrooms",
       "error_loading_performance": "Error loading performance data:"
+    },
+    "link_child": {
+      "title": "Link a Student",
+      "description": "Provide your child's name and email to request a student-parent link. An admin will review and approve your request.",
+      "nav_label": "Link Child",
+      "student_name": "Student Name",
+      "student_name_placeholder": "e.g. John Doe",
+      "student_email": "Student Email",
+      "student_email_placeholder": "e.g. john@example.com",
+      "submit": "Submit Request",
+      "submit_error": "Failed to submit request",
+      "success_title": "Request Submitted!",
+      "success_message": "Your request has been submitted. An admin will review and link your child's account.",
+      "link_another": "Link Another Student",
+      "back_to_dashboard": "Back to Dashboard"
     }
   },
   "admin": {
