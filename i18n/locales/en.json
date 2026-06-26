@@ -899,13 +899,22 @@
       "confirm_link": "Are you sure you want to link this student to the parent?",
       "success_link": "Successfully linked student and parent!",
       "failed_link": "Failed to link student and parent",
+      "student_info": "Student Info",
+      "linked_parents": "Linked Parents",
+      "no_linked_parents": "No parents linked yet.",
+      "confirm_unlink": "Are you sure you want to unlink this parent?",
+      "success_unlink": "Parent unlinked successfully.",
+      "failed_unlink": "Failed to unlink parent.",
       "table": {
         "avatar": "Avatar",
         "name": "Name",
         "email": "Email",
         "role": "Role",
         "action": "Action",
-        "link": "Link"
+        "link": "Link",
+        "view": "View",
+        "unlink": "Unlink",
+        "linked_at": "Linked At"
       }
     },
     "pending_parents": {

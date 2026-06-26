@@ -899,13 +899,22 @@
       "confirm_link": "您確定要將此學生連結到家長嗎？",
       "success_link": "成功連結學生與家長！",
       "failed_link": "連結學生與家長失敗",
+      "student_info": "學生資訊",
+      "linked_parents": "已連結的家長",
+      "no_linked_parents": "尚未連結任何家長。",
+      "confirm_unlink": "您確定要解除此家長的連結嗎？",
+      "success_unlink": "成功解除家長連結。",
+      "failed_unlink": "解除家長連結失敗。",
       "table": {
         "avatar": "頭像",
         "name": "姓名",
         "email": "電子郵件",
         "role": "角色",
         "action": "操作",
-        "link": "連結"
+        "link": "連結",
+        "view": "查看",
+        "unlink": "解除連結",
+        "linked_at": "連結時間"
       }
     },
     "pending_parents": {
