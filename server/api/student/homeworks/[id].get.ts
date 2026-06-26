@@ -1,8 +1,22 @@
 import { eq, asc, and } from "drizzle-orm";
-import { homeworks, homeworkProblems, problems, hwRecords } from "~~/db/schema";
+import {
+  homeworks,
+  homeworkProblems,
+  homeworkClassrooms,
+  classroomStudents,
+  problems,
+  hwRecords,
+} from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
+  if (!session?.user || (session.user.role !== "student" && session.user.role !== "admin")) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+    });
+  }
+
   const homeworkId = getRouterParam(event, "id");
 
   if (!homeworkId) {
@@ -23,6 +37,48 @@ export default defineEventHandler(async (event) => {
       statusCode: 404,
       statusMessage: "Homework not found",
     });
+  }
+
+  // Verify the student is enrolled in a classroom that owns this homework
+  if (session.user.role === "student") {
+    const directEnrollment = await useDrizzle()
+      .select({ id: classroomStudents.id })
+      .from(classroomStudents)
+      .where(
+        and(
+          eq(classroomStudents.studentId, session.user.id),
+          eq(classroomStudents.classroomId, homework.classroomId)
+        )
+      )
+      .limit(1);
+
+    let isEnrolled = directEnrollment.length > 0;
+
+    if (!isEnrolled) {
+      const indirectEnrollment = await useDrizzle()
+        .select({ id: classroomStudents.id })
+        .from(classroomStudents)
+        .innerJoin(
+          homeworkClassrooms,
+          eq(classroomStudents.classroomId, homeworkClassrooms.classroomId)
+        )
+        .where(
+          and(
+            eq(classroomStudents.studentId, session.user.id),
+            eq(homeworkClassrooms.homeworkId, homeworkId)
+          )
+        )
+        .limit(1);
+
+      isEnrolled = indirectEnrollment.length > 0;
+    }
+
+    if (!isEnrolled) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: "Forbidden",
+      });
+    }
   }
 
   // 2. Fetch problems associated with the homework
