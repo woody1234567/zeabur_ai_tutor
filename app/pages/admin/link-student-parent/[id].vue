@@ -17,14 +17,13 @@ const {
   data: relationships,
   error: relError,
   refresh,
-} = await useAsyncData(`student-relationships-${studentId}`, () =>
-  $fetch(`/api/admin/student-relationships/${studentId}`)
-);
+} = await useFetch(`/api/admin/student-relationships/${studentId}`);
 
 const pendingParentInfo = ref<any>(null);
 if (pendingParentId) {
   try {
-    const res = await $fetch("/api/admin/pending-parents", {
+    const requestFetch = useRequestFetch();
+    const res = await requestFetch("/api/admin/pending-parents", {
       params: { id: pendingParentId },
     });
     if (Array.isArray(res) && res.length > 0) {
@@ -122,9 +121,9 @@ const unlinkParent = async (parentId: string) => {
         </div>
       </div>
 
-      <!-- Pending Parent Card (only when pendingParentId present) -->
+      <!-- Pending Parent Card (only when pendingParentId present and not yet linked) -->
       <div
-        v-if="pendingParentInfo"
+        v-if="pendingParentInfo && pendingParentInfo.status !== 'linked'"
         class="card bg-base-100 shadow-xl mb-6 border border-base-300"
       >
         <div class="card-body">
