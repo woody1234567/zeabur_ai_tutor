@@ -1,5 +1,10 @@
 import { db } from "../../../../../db";
-import { homeworks, homeworkCompletions } from "../../../../../db/schema";
+import {
+  homeworks,
+  homeworkCompletions,
+  homeworkClassrooms,
+  classroomStudents,
+} from "../../../../../db/schema";
 import { auth } from "../../../../../server/utils/auth";
 import { eq, and } from "drizzle-orm";
 
@@ -8,10 +13,10 @@ export default defineEventHandler(async (event) => {
     headers: event.headers,
   });
 
-  if (!session) {
+  if (!session || (session.user.role !== "student" && session.user.role !== "admin")) {
     throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
+      statusCode: 403,
+      statusMessage: "Forbidden",
     });
   }
 
@@ -35,6 +40,48 @@ export default defineEventHandler(async (event) => {
       statusCode: 404,
       statusMessage: "Homework not found",
     });
+  }
+
+  // Verify student is enrolled in a classroom that owns this homework
+  if (session.user.role === "student") {
+    const directEnrollment = await db
+      .select({ id: classroomStudents.id })
+      .from(classroomStudents)
+      .where(
+        and(
+          eq(classroomStudents.studentId, session.user.id),
+          eq(classroomStudents.classroomId, homework.classroomId!)
+        )
+      )
+      .limit(1);
+
+    let isEnrolled = directEnrollment.length > 0;
+
+    if (!isEnrolled) {
+      const indirectEnrollment = await db
+        .select({ id: classroomStudents.id })
+        .from(classroomStudents)
+        .innerJoin(
+          homeworkClassrooms,
+          eq(classroomStudents.classroomId, homeworkClassrooms.classroomId)
+        )
+        .where(
+          and(
+            eq(classroomStudents.studentId, session.user.id),
+            eq(homeworkClassrooms.homeworkId, homeworkId)
+          )
+        )
+        .limit(1);
+
+      isEnrolled = indirectEnrollment.length > 0;
+    }
+
+    if (!isEnrolled) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: "Forbidden",
+      });
+    }
   }
 
   // Check if already completed
