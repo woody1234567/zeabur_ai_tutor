@@ -996,6 +996,8 @@
         "event_title_label": "行程標題",
         "event_title_placeholder": "準備數學考試",
         "all_day_label": "整天",
+        "start_date_label": "開始日期",
+        "end_date_label": "結束日期",
         "start_time_label": "開始時間",
         "end_time_label": "結束時間",
         "delete": "刪除",

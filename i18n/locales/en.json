@@ -996,6 +996,8 @@
         "event_title_label": "Event Title",
         "event_title_placeholder": "Study for math test",
         "all_day_label": "All Day",
+        "start_date_label": "Start Date",
+        "end_date_label": "End Date",
         "start_time_label": "Start Time",
         "end_time_label": "End Time",
         "delete": "Delete",

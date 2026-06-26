@@ -16,21 +16,16 @@ const { t } = useI18n();
 const { data: events, refresh } = await useFetch("/api/common/calendar-events");
 
 const eventModal = ref<HTMLDialogElement | null>(null);
-const newEventTitle = ref("");
 const selectedDateInfo = ref<any>(null);
-const isAllDay = ref(true);
-const startTime = ref("09:00");
-const endTime = ref("10:00");
 const editingEventId = ref<string | null>(null);
 
-// Form state for better handling
 const eventForm = ref({
   title: "",
   allDay: true,
+  startDate: "",
+  endDate: "",
   startTime: "09:00",
   endTime: "10:00",
-  startStr: "",
-  endStr: "",
 });
 const errors = ref({
   title: false,
@@ -39,36 +34,49 @@ const showModal = ref(false);
 const isEditing = computed(() => !!editingEventId.value);
 const selectedEventId = ref<string | null>(null);
 
+function toLocalDateStr(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 const handleDateSelect = (selectInfo: DateSelectArg) => {
   selectedDateInfo.value = selectInfo;
   selectedEventId.value = null;
   editingEventId.value = null;
 
-  // Reset form
+  const startDate = toLocalDateStr(selectInfo.start);
+  let endDate: string;
+  if (selectInfo.allDay) {
+    // FullCalendar all-day end is exclusive, subtract 1 day for display
+    const endExclusive = new Date(selectInfo.end);
+    endExclusive.setDate(endExclusive.getDate() - 1);
+    endDate = toLocalDateStr(endExclusive);
+  } else {
+    endDate = toLocalDateStr(selectInfo.end);
+  }
+
   eventForm.value = {
     title: "",
     allDay: selectInfo.allDay,
+    startDate,
+    endDate,
     startTime: "09:00",
     endTime: "10:00",
-    startStr: selectInfo.startStr,
-    endStr: selectInfo.endStr,
   };
 
-  if (!selectInfo.allDay && selectInfo.startStr.includes("T")) {
-    const start = new Date(selectInfo.start);
-    const end = new Date(selectInfo.end);
-    eventForm.value.startTime = start.toTimeString().slice(0, 5);
-    eventForm.value.endTime = end.toTimeString().slice(0, 5);
+  if (!selectInfo.allDay) {
+    eventForm.value.startTime = selectInfo.start.toTimeString().slice(0, 5);
+    eventForm.value.endTime = selectInfo.end.toTimeString().slice(0, 5);
   }
 
   showModal.value = true;
-  // eventModal.value?.showModal()
 };
 
 const handleEventClick = (clickInfo: EventClickArg) => {
   const { event } = clickInfo;
 
-  // Only allow editing personal events
   if (event.extendedProps.type !== "personal") {
     return;
   }
@@ -76,28 +84,35 @@ const handleEventClick = (clickInfo: EventClickArg) => {
   selectedEventId.value = event.id;
   editingEventId.value = event.id;
 
+  const startDate = event.start ? toLocalDateStr(event.start) : "";
+  let endDate = startDate;
+  if (event.allDay && event.end) {
+    // For all-day events, end is exclusive — subtract 1 day for display
+    const endExclusive = new Date(event.end);
+    endExclusive.setDate(endExclusive.getDate() - 1);
+    endDate = toLocalDateStr(endExclusive);
+  } else if (!event.allDay && event.end) {
+    endDate = toLocalDateStr(event.end);
+  }
+
   eventForm.value = {
     title: event.title,
     allDay: event.allDay,
-    startTime: "09:00",
+    startDate,
+    endDate,
+    startTime: event.start ? event.start.toTimeString().slice(0, 5) : "09:00",
     endTime: "10:00",
-    startStr: event.startStr,
-    endStr: event.endStr || event.startStr,
   };
 
-  if (event.start) {
-    eventForm.value.startTime = event.start.toTimeString().slice(0, 5);
-  }
-  if (event.end) {
+  if (event.end && !event.allDay) {
     eventForm.value.endTime = event.end.toTimeString().slice(0, 5);
-  } else if (event.start) {
+  } else if (event.start && !event.allDay) {
     const end = new Date(event.start);
     end.setHours(end.getHours() + 1);
     eventForm.value.endTime = end.toTimeString().slice(0, 5);
   }
 
   showModal.value = true;
-  // eventModal.value?.showModal()
 };
 
 const closeModal = () => {
@@ -141,26 +156,29 @@ const saveEvent = async () => {
   }
 
   try {
+    let start: string;
+    let end: string;
+
+    if (eventForm.value.allDay) {
+      start = eventForm.value.startDate;
+      // FullCalendar expects exclusive end for all-day events
+      const endDate = new Date(eventForm.value.endDate + "T00:00:00");
+      endDate.setDate(endDate.getDate() + 1);
+      end = toLocalDateStr(endDate);
+    } else {
+      start = `${eventForm.value.startDate}T${eventForm.value.startTime}`;
+      end = `${eventForm.value.endDate}T${eventForm.value.endTime}`;
+    }
+
     const eventData = {
       title: eventForm.value.title,
-      start: eventForm.value.startStr,
-      end: eventForm.value.endStr,
+      start,
+      end,
       allDay: eventForm.value.allDay,
       extendedProps: {
         type: "personal",
       },
     };
-
-    // Adjust times if not all day
-    if (
-      !eventForm.value.allDay &&
-      eventForm.value.startTime &&
-      eventForm.value.endTime
-    ) {
-      const baseDate = eventForm.value.startStr.split("T")[0];
-      eventData.start = `${baseDate}T${eventForm.value.startTime}`;
-      eventData.end = `${baseDate}T${eventForm.value.endTime}`;
-    }
 
     if (isEditing.value && selectedEventId.value) {
       // Update existing event
@@ -253,25 +271,34 @@ const handleEventResize = async (info: EventResizeDoneArg) => {
 };
 
 const handleDateClick = (info: any) => {
-  // Adapt dateClick info to selectInfo format
-  let endStr = info.dateStr;
-  if (info.allDay) {
-    const endDate = new Date(info.date);
-    endDate.setDate(endDate.getDate() + 1);
-    endStr = endDate.toISOString().split("T")[0];
-  }
+  selectedDateInfo.value = null;
+  selectedEventId.value = null;
+  editingEventId.value = null;
+  errors.value.title = false;
 
-  const selectInfo = {
-    start: info.date,
-    end: info.date, // Approximation
-    startStr: info.dateStr,
-    endStr: endStr,
+  const dateStr = toLocalDateStr(info.date);
+  const startTime = info.allDay ? "09:00" : info.date.toTimeString().slice(0, 5);
+  const endDate = info.allDay ? dateStr : (() => {
+    const end = new Date(info.date);
+    end.setHours(end.getHours() + 1);
+    return toLocalDateStr(end);
+  })();
+  const endTime = info.allDay ? "10:00" : (() => {
+    const end = new Date(info.date);
+    end.setHours(end.getHours() + 1);
+    return end.toTimeString().slice(0, 5);
+  })();
+
+  eventForm.value = {
+    title: "",
     allDay: info.allDay,
-    view: info.view,
-    jsEvent: info.jsEvent,
-  } as unknown as DateSelectArg;
+    startDate: dateStr,
+    endDate,
+    startTime,
+    endTime,
+  };
 
-  handleDateSelect(selectInfo);
+  showModal.value = true;
 };
 
 const calendarOptions = ref<CalendarOptions>({
@@ -366,6 +393,34 @@ onUnmounted(() => {
               class="checkbox"
             />
           </label>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{{
+                $t("components.common.calendar.start_date_label")
+              }}</span>
+            </label>
+            <input
+              v-model="eventForm.startDate"
+              type="date"
+              class="input input-bordered w-full"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{{
+                $t("components.common.calendar.end_date_label")
+              }}</span>
+            </label>
+            <input
+              v-model="eventForm.endDate"
+              type="date"
+              :min="eventForm.startDate"
+              class="input input-bordered w-full"
+            />
+          </div>
         </div>
 
         <div v-if="!eventForm.allDay" class="grid grid-cols-2 gap-4 mb-4">
