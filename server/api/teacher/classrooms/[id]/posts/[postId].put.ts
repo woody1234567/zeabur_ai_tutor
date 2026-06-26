@@ -34,6 +34,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const whereClause =
+    session.user.role === "admin"
+      ? and(eq(posts.id, postId), eq(posts.classroomId, classroomId))
+      : and(eq(posts.id, postId), eq(posts.classroomId, classroomId), eq(posts.teacherId, session.user.id));
+
   const updatedPost = await db
     .update(posts)
     .set({
@@ -49,7 +54,7 @@ export default defineEventHandler(async (event) => {
       attendees: body.attendees || [],
       updatedAt: new Date(),
     })
-    .where(and(eq(posts.id, postId), eq(posts.classroomId, classroomId)))
+    .where(whereClause)
     .returning();
 
   return updatedPost[0];
