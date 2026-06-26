@@ -335,7 +335,6 @@
       "name_placeholder": "Your full name",
       "gender_label": "Gender",
       "gender_options": {
-        "": "Prefer not to say",
         "male": "Male",
         "female": "Female",
         "other": "Other"

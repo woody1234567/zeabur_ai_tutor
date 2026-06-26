@@ -117,7 +117,6 @@ async function handleSave() {
 }
 
 const genderOptions = computed(() => [
-  { value: "", label: t("teacher.profile.gender_options.") },
   { value: "male", label: t("teacher.profile.gender_options.male") },
   { value: "female", label: t("teacher.profile.gender_options.female") },
   { value: "other", label: t("teacher.profile.gender_options.other") },

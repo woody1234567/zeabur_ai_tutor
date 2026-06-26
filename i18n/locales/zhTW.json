@@ -335,7 +335,6 @@
       "name_placeholder": "你的姓名",
       "gender_label": "性別",
       "gender_options": {
-        "": "不透露",
         "male": "男",
         "female": "女",
         "other": "其他"
