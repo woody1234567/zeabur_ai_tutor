@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const isOpen = ref(true);
+
 const filters = reactive({
   keyword: "",
   subject: "",
@@ -54,10 +56,20 @@ const clearFilters = () => {
 <template>
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title text-2xl mb-6">
-        {{ $t("components.common.search.title") }}
-      </h2>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="card-title text-2xl">
+          {{ $t("components.common.search.title") }}
+        </h2>
+        <button class="btn btn-ghost btn-sm btn-circle" @click="isOpen = !isOpen">
+          <Icon
+            name="heroicons:chevron-up"
+            class="w-5 h-5 transition-transform duration-200"
+            :class="{ 'rotate-180': !isOpen }"
+          />
+        </button>
+      </div>
 
+      <div v-show="isOpen">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Keyword Search -->
         <div class="form-control">
@@ -217,6 +229,7 @@ const clearFilters = () => {
             {{ $t("components.common.search.search") }}
           </button>
         </div>
+      </div>
       </div>
     </div>
   </div>
