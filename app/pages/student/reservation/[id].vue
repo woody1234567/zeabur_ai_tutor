@@ -75,7 +75,7 @@ async function confirmBooking() {
 <template>
   <div class="container mx-auto p-4 md:p-6">
     <NuxtLink
-      :to="localePath('/student/teachers')"
+      :to="localePath('/student/reservation')"
       class="btn btn-ghost btn-sm mb-6"
     >
       <Icon name="heroicons-outline:arrow-left" class="h-4 w-4" />

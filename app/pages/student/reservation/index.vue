@@ -237,7 +237,7 @@ async function cancelBooking(id: string) {
 
           <div class="card-actions justify-end mt-4">
             <NuxtLink
-              :to="localePath(`/student/teachers/${teacher.id}`)"
+              :to="localePath(`/student/reservation/${teacher.id}`)"
               class="btn btn-primary btn-sm"
             >
               {{ t("student.teachers.view_availability") }}

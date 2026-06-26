@@ -108,7 +108,7 @@ const closeDrawer = () => {
               }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="localePath('/student/teachers')">{{
+              <NuxtLink :to="localePath('/student/reservation')">{{
                 $t("student.layout.teachers")
               }}</NuxtLink>
             </li>
@@ -190,7 +190,7 @@ const closeDrawer = () => {
         </li>
         <li>
           <NuxtLink
-            :to="localePath('/student/teachers')"
+            :to="localePath('/student/reservation')"
             @click="closeDrawer"
             >{{ $t("student.layout.teachers") }}</NuxtLink
           >
