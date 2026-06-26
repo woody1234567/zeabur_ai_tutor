@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "parent_students_parent_student_unique" ON "parent_students" USING btree ("parent_id","student_id");

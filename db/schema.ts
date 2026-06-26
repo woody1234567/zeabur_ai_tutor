@@ -258,18 +258,22 @@ export const roleRequests = pgTable("role_requests", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const parentStudents = pgTable("parent_students", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  parentId: text("parent_id")
-    .notNull()
-    .references(() => user.id),
-  studentId: text("student_id")
-    .notNull()
-    .references(() => user.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const parentStudents = pgTable(
+  "parent_students",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    parentId: text("parent_id")
+      .notNull()
+      .references(() => user.id),
+    studentId: text("student_id")
+      .notNull()
+      .references(() => user.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("parent_students_parent_student_unique").on(t.parentId, t.studentId)]
+);
 
 export const chatProjects = pgTable("chat_projects", {
   id: text("id")
