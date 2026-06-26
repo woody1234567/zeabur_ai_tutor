@@ -6,6 +6,16 @@
   >
     <canvas ref="canvasEl" class="absolute inset-0 w-full h-full"></canvas>
 
+    <!-- Loading overlay -->
+    <Transition name="fade">
+      <div
+        v-if="!isLoaded"
+        class="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-sky-100 to-sky-200"
+      >
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    </Transition>
+
     <!-- Optional headline overlay -->
     <div class="relative z-10 px-6 text-center">
       <h1 class="text-3xl md:text-6xl font-extrabold tracking-tight">
@@ -24,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch, computed } from "vue";
+import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from "vue";
 
 const props = withDefaults(defineProps<{ theme?: "light" | "dark" }>(), {
   theme: "light",
@@ -35,6 +45,7 @@ const textColorClass = computed(() => {
 });
 
 const canvasEl = ref<HTMLCanvasElement | null>(null);
+const isLoaded = ref(false);
 
 // THREE module reference — set after dynamic import
 let THREE: typeof import("three");
@@ -59,6 +70,7 @@ let hitPoint: any;
 
 // Track state
 let isPointerActive = false;
+let resizeObserver: ResizeObserver | null = null;
 let idleTime = 0;
 
 const EYE_RADIUS = 0.6;
@@ -324,6 +336,8 @@ function createScene(canvas: HTMLCanvasElement, GLTFLoader: any) {
       leftEye.position.set(-0.7, 4.7, 1.5);
       rightEye.position.set(0.7, 4.7, 1.5);
     }
+
+    isLoaded.value = true;
   });
 
   const floorGeo = new THREE.CircleGeometry(6, 64);
@@ -385,24 +399,24 @@ function animate() {
     );
   }
 
-  if (!leftEye || !rightEye) return;
+  if (leftEye && rightEye) {
+    let target: any;
+    if (isPointerActive) {
+      raycaster.setFromCamera(mouseNDC, camera);
+      raycaster.ray.intersectPlane(planeZ, hitPoint);
+      target = hitPoint;
+      idleTime = 0;
+    } else {
+      idleTime += 0.016;
+      const r = 0.6;
+      const x = Math.cos(idleTime * 0.6) * r;
+      const y = Math.sin(idleTime * 0.9) * r * 0.6;
+      target = new THREE.Vector3(x, y, 0);
+    }
 
-  let target: any;
-  if (isPointerActive) {
-    raycaster.setFromCamera(mouseNDC, camera);
-    raycaster.ray.intersectPlane(planeZ, hitPoint);
-    target = hitPoint;
-    idleTime = 0;
-  } else {
-    idleTime += 0.016;
-    const r = 0.6;
-    const x = Math.cos(idleTime * 0.6) * r;
-    const y = Math.sin(idleTime * 0.9) * r * 0.6;
-    target = new THREE.Vector3(x, y, 0);
+    lookAtPointForEye(leftEye, leftPupil, target);
+    lookAtPointForEye(rightEye, rightPupil, target);
   }
-
-  lookAtPointForEye(leftEye, leftPupil, target);
-  lookAtPointForEye(rightEye, rightPupil, target);
 
   renderer.render(scene, camera);
 }
@@ -433,8 +447,10 @@ onMounted(async () => {
 
   createScene(canvasEl.value, gltfModule.GLTFLoader);
 
-  // Events
-  window.addEventListener("resize", onResize, { passive: true });
+  // Use ResizeObserver on the canvas for accurate sizing
+  resizeObserver = new ResizeObserver(() => onResize());
+  resizeObserver.observe(canvasEl.value);
+
   renderer.domElement.addEventListener("pointermove", onPointerMove);
   renderer.domElement.addEventListener("pointerenter", onPointerMove);
   renderer.domElement.addEventListener("pointerleave", onPointerLeave);
@@ -445,7 +461,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   cancelAnimationFrame(animationId);
-  window.removeEventListener("resize", onResize);
+  resizeObserver?.disconnect();
   if (renderer) {
     const el = renderer.domElement;
     el.removeEventListener("pointermove", onPointerMove);
@@ -471,5 +487,11 @@ section {
 }
 canvas {
   display: block;
+}
+.fade-leave-active {
+  transition: opacity 0.6s ease;
+}
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
