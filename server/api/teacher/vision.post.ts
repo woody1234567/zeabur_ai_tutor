@@ -27,6 +27,14 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // ~6.8M chars ≈ 5MB raw image after base64 encoding
+  if (image.length > 6_800_000) {
+    throw createError({
+      statusCode: 413,
+      message: "Image too large (max 5MB)",
+    });
+  }
+
   try {
     const response = await $fetch(
       `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
