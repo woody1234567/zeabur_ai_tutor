@@ -2,6 +2,7 @@
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import type {
   CalendarOptions,
@@ -302,12 +303,12 @@ const handleDateClick = (info: any) => {
 };
 
 const calendarOptions = ref<CalendarOptions>({
-  plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+  plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
   initialView: "dayGridMonth",
   headerToolbar: {
     left: "prev,next today",
     center: "title",
-    right: "dayGridMonth,timeGridWeek,timeGridDay",
+    right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
   },
   events: events.value as any, // Pass the ref directly so it updates on refresh
   editable: true, // Enable drag and drop
@@ -331,12 +332,12 @@ const updateCalendarOptions = () => {
     ? {
         left: "prev,next",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
+        right: "dayGridMonth,timeGridWeek,listMonth",
       }
     : {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
+        right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
       };
 };
 
@@ -512,6 +513,19 @@ onUnmounted(() => {
 /* Remove default shadows/outlines if needed */
 .fc-daisy .fc-button:focus {
   box-shadow: none;
+}
+
+/* List view styling */
+.fc-daisy .fc-list {
+  border-color: oklch(var(--b3));
+}
+
+.fc-daisy .fc-list-day-cushion {
+  background-color: oklch(var(--b2));
+}
+
+.fc-daisy .fc-list-event:hover td {
+  background-color: oklch(var(--b2));
 }
 
 /* Mobile Responsiveness */
