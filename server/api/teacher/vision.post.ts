@@ -1,4 +1,12 @@
 export default defineEventHandler(async (event) => {
+  const session = await requireAuthSession(event);
+  if (!session?.user || (session.user.role !== "teacher" && session.user.role !== "admin")) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+    });
+  }
+
   const config = useRuntimeConfig();
   const apiKey = config.googleVisionApiKey || process.env.GOOGLE_VISION_API_KEY;
 
