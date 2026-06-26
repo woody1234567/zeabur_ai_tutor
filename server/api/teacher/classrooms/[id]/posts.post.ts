@@ -2,13 +2,16 @@ import { db } from "../../../../../server/utils/db";
 import { posts } from "../../../../../db/schema";
 
 export default defineEventHandler(async (event) => {
+  const session = await requireAuthSession(event);
+  if (!session?.user || (session.user.role !== "teacher" && session.user.role !== "admin")) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+    });
+  }
+
   const { id: classroomId } = getRouterParams(event);
   const body = await readBody(event);
-  const session = await requireAuthSession(event);
-
-  console.log("Creating post. Body:", body);
-  console.log("Classroom ID:", classroomId);
-  console.log("Session User:", session?.user);
 
   if (!classroomId) {
     throw createError({

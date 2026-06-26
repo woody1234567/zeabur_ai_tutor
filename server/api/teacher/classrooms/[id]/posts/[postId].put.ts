@@ -3,9 +3,16 @@ import { posts } from "../../../../../../db/schema";
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
+  const session = await requireAuthSession(event);
+  if (!session?.user || (session.user.role !== "teacher" && session.user.role !== "admin")) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+    });
+  }
+
   const { id: classroomId, postId } = getRouterParams(event);
   const body = await readBody(event);
-  const session = await requireAuthSession(event);
 
   if (!classroomId || !postId) {
     throw createError({
