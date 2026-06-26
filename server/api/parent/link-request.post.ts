@@ -5,6 +5,11 @@ import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
+
+  if (session.user.role !== "parent") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+
   const body = await readBody(event);
   const { studentName, studentEmail } = body;
 

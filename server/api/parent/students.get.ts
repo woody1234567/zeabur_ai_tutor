@@ -7,6 +7,10 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
 
+  if (session.user.role !== "parent") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+
   console.log("Fetching students for parent:", session.user.id);
 
   const students = await db
