@@ -2,6 +2,7 @@
 const props = defineProps<{
   modelValue?: string;
   roleFilter?: string;
+  lockRole?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -46,7 +47,7 @@ const handleSearch = () => {
           </div>
         </div>
 
-        <div class="form-control w-full md:w-48">
+        <div v-if="!lockRole" class="form-control w-full md:w-48">
           <label class="label">
             <span class="label-text">{{
               $t("components.admin.search.role_label")
