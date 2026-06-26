@@ -136,7 +136,7 @@ const viewStudent = (studentId: string) => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in pendingParents" :key="item.id">
+              <tr v-for="item in pendingParents.filter(p => p.status === 'pending')" :key="item.id">
                 <td>
                   <div class="font-bold">{{ item.parentName || "Unknown" }}</div>
                   <div class="text-sm opacity-50">
