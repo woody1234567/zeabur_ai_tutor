@@ -179,10 +179,10 @@ const genderOptions = computed(() => [
 
       <!-- Form -->
       <form @submit.prevent="handleSave" class="space-y-5">
-        <!-- Name -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.name_label") }}</span>
+        <div class="grid grid-cols-[8rem_1fr] gap-x-6 gap-y-4">
+          <!-- Name -->
+          <label class="text-right font-medium text-sm self-center">
+            {{ t("teacher.profile.name_label") }} <span class="text-error">*</span>
           </label>
           <input
             v-model="form.name"
@@ -192,12 +192,10 @@ const genderOptions = computed(() => [
             required
             maxlength="100"
           />
-        </div>
 
-        <!-- Gender -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.gender_label") }}</span>
+          <!-- Gender -->
+          <label class="text-right font-medium text-sm self-center">
+            {{ t("teacher.profile.gender_label") }}
           </label>
           <select v-model="form.gender" class="select select-bordered">
             <option
@@ -208,12 +206,10 @@ const genderOptions = computed(() => [
               {{ opt.label }}
             </option>
           </select>
-        </div>
 
-        <!-- Interests -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.interests_label") }}</span>
+          <!-- Interests -->
+          <label class="text-right font-medium text-sm self-center">
+            {{ t("teacher.profile.interests_label") }}
           </label>
           <input
             v-model="form.interests"
@@ -221,12 +217,10 @@ const genderOptions = computed(() => [
             class="input input-bordered"
             :placeholder="t('teacher.profile.interests_placeholder')"
           />
-        </div>
 
-        <!-- Teaching Areas -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.teaching_areas_label") }}</span>
+          <!-- Teaching Areas -->
+          <label class="text-right font-medium text-sm self-center">
+            {{ t("teacher.profile.teaching_areas_label") }}
           </label>
           <input
             v-model="form.teachingAreas"
@@ -234,12 +228,10 @@ const genderOptions = computed(() => [
             class="input input-bordered"
             :placeholder="t('teacher.profile.teaching_areas_placeholder')"
           />
-        </div>
 
-        <!-- Bio -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.bio_label") }}</span>
+          <!-- Bio -->
+          <label class="text-right font-medium text-sm pt-3">
+            {{ t("teacher.profile.bio_label") }}
           </label>
           <textarea
             v-model="form.bio"
@@ -247,12 +239,10 @@ const genderOptions = computed(() => [
             :placeholder="t('teacher.profile.bio_placeholder')"
             maxlength="2000"
           ></textarea>
-        </div>
 
-        <!-- Teaching Experience -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">{{ t("teacher.profile.teaching_experience_label") }}</span>
+          <!-- Teaching Experience -->
+          <label class="text-right font-medium text-sm pt-3">
+            {{ t("teacher.profile.teaching_experience_label") }}
           </label>
           <textarea
             v-model="form.teachingExperience"
