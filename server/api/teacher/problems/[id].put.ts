@@ -34,6 +34,29 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // Verify ownership (admins can update any problem)
+  if (session.user.role !== "admin") {
+    const [problem] = await useDrizzle()
+      .select({ createdBy: problems.createdBy })
+      .from(problems)
+      .where(eq(problems.id, id))
+      .limit(1);
+
+    if (!problem) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Problem not found",
+      });
+    }
+
+    if (problem.createdBy !== session.user.id) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: "You can only update problems you created",
+      });
+    }
+  }
+
   const body = await readBody(event);
   const validation = updateProblemSchema.safeParse(body);
 
