@@ -199,7 +199,8 @@
       "cancel": "取消預約",
       "cancel_confirm": "確定要取消這個預約嗎？",
       "teacher_note": "老師留言",
-      "with_teacher": "與 {name}"
+      "with_teacher": "與 {name}",
+      "load_more": "載入更早的預約"
     },
     "classrooms": {
       "title": "我的教室",

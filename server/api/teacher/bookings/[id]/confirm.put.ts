@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
 
   const studentName = student?.name || "Student";
   const teacherName = teacher?.name || "Teacher";
-  const slotTitle = slot?.title || "Class";
+  const slotTitle = slot?.description || "Class";
   const slotDescription = slot?.description || null;
 
   const teacherEventTitle = `Class: ${slotTitle} with ${studentName}`;

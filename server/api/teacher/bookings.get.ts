@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
       studentId: bookings.studentId,
       studentName: user.name,
       studentEmail: user.email,
-      slotTitle: teacherAvailability.title,
+      slotTitle: teacherAvailability.description,
       slotDescription: teacherAvailability.description,
       slotStartTime: teacherAvailability.startTime,
       slotEndTime: teacherAvailability.endTime,

@@ -199,7 +199,8 @@
       "cancel": "Cancel Booking",
       "cancel_confirm": "Are you sure you want to cancel this booking?",
       "teacher_note": "Teacher's note",
-      "with_teacher": "with {name}"
+      "with_teacher": "with {name}",
+      "load_more": "Load older bookings"
     },
     "classrooms": {
       "title": "My Classrooms",
