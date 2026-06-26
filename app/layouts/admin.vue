@@ -72,13 +72,6 @@ const closeDrawer = () => {
             <li>
               <NuxtLink
                 class="btn btn-ghost"
-                :to="localePath('/admin/pending-parents')"
-                >{{ $t("admin.layout.linking") }}</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink
-                class="btn btn-ghost"
                 :to="localePath('/admin/link-student-parent')"
                 >{{ $t("admin.layout.link_student_parent") }}</NuxtLink
               >
@@ -124,13 +117,6 @@ const closeDrawer = () => {
           <NuxtLink :to="localePath('/admin/users')" @click="closeDrawer">{{
             $t("admin.layout.users")
           }}</NuxtLink>
-        </li>
-        <li>
-          <NuxtLink
-            :to="localePath('/admin/pending-parents')"
-            @click="closeDrawer"
-            >{{ $t("admin.layout.linking") }}</NuxtLink
-          >
         </li>
         <li>
           <NuxtLink

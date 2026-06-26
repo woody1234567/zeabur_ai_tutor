@@ -10,7 +10,7 @@ const pendingParentId = route.query.pendingParentId as string | undefined;
 const backPath = computed(() =>
   pendingParentId
     ? localePath({ path: "/admin/link-student-parent", query: { id: pendingParentId } })
-    : localePath("/admin/pending-parents")
+    : localePath("/admin/link-student-parent")
 );
 
 const {
@@ -44,7 +44,7 @@ const linkStudent = async () => {
       body: { pendingParentId, studentId },
     });
     alert(t("admin.link_student.success_link"));
-    navigateTo(localePath("/admin/pending-parents"));
+    navigateTo(localePath("/admin/link-student-parent"));
   } catch {
     alert(t("admin.link_student.failed_link"));
   } finally {

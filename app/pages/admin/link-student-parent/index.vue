@@ -5,21 +5,59 @@ definePageMeta({
   layout: "admin",
 });
 const localePath = useLocalePath();
-
 const route = useRoute();
-const pendingParentId = route.query.id as string;
 
-const searchQuery = ref("");
-const roleFilter = ref("student"); // Default to searching students
-const searchResults = ref<any[]>([]);
-const loading = ref(false);
+// --- Pending parents list ---
+interface PendingParent {
+  id: string;
+  parentId: string;
+  studentName: string;
+  studentEmail: string;
+  status: string;
+  createdAt: string;
+  parentName: string | null;
+  parentEmail: string | null;
+}
+
+const pendingParents = ref<PendingParent[]>([]);
+const listLoading = ref(true);
+const listSearch = ref("");
+
+let debounceTimer: ReturnType<typeof setTimeout>;
+
+const fetchPendingParents = async () => {
+  listLoading.value = true;
+  try {
+    const res = await $fetch("/api/admin/pending-parents", {
+      query: { search: listSearch.value },
+    });
+    pendingParents.value = res as PendingParent[];
+  } catch (error) {
+    console.error("Failed to fetch pending parents", error);
+  } finally {
+    listLoading.value = false;
+  }
+};
+
+watch(listSearch, () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(fetchPendingParents, 300);
+});
+
+onMounted(fetchPendingParents);
+
+// --- Pending parent info (reactive to ?id= query param) ---
+const pendingParentId = computed(() => route.query.id as string | undefined);
 const pendingParentInfo = ref<any>(null);
 
 const fetchPendingParentInfo = async () => {
-  if (!pendingParentId) return;
+  if (!pendingParentId.value) {
+    pendingParentInfo.value = null;
+    return;
+  }
   try {
     const res = await $fetch("/api/admin/pending-parents", {
-      params: { id: pendingParentId },
+      params: { id: pendingParentId.value },
     });
     if (Array.isArray(res) && res.length > 0) {
       pendingParentInfo.value = res[0];
@@ -29,9 +67,13 @@ const fetchPendingParentInfo = async () => {
   }
 };
 
-onMounted(() => {
-  fetchPendingParentInfo();
-});
+watch(pendingParentId, fetchPendingParentInfo, { immediate: true });
+
+// --- Student search ---
+const searchQuery = ref("");
+const roleFilter = ref("student");
+const searchResults = ref<any[]>([]);
+const loading = ref(false);
 
 const handleSearch = async () => {
   loading.value = true;
@@ -54,7 +96,7 @@ const viewStudent = (studentId: string) => {
   navigateTo(
     localePath({
       path: `/admin/link-student-parent/${studentId}`,
-      query: pendingParentId ? { pendingParentId } : {},
+      query: pendingParentId.value ? { pendingParentId: pendingParentId.value } : {},
     })
   );
 };
@@ -62,29 +104,82 @@ const viewStudent = (studentId: string) => {
 
 <template>
   <div class="p-8">
-    <div class="flex items-center gap-4 mb-6">
-      <NuxtLink
-        :to="localePath('/admin/pending-parents')"
-        class="btn btn-circle btn-ghost"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
+    <h1 class="text-2xl font-bold mb-6">
+      {{ $t("admin.pending_parents.title") }}
+    </h1>
+
+    <!-- Pending Parent Requests List -->
+    <div class="card bg-base-100 shadow-xl mb-8">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title">{{ $t("admin.pending_parents.title") }}</h2>
+          <input
+            v-model="listSearch"
+            type="text"
+            :placeholder="$t('admin.pending_parents.search_placeholder')"
+            class="input input-bordered w-full max-w-xs"
           />
-        </svg>
-      </NuxtLink>
-      <h1 class="text-2xl font-bold">{{ $t("admin.link_student.title") }}</h1>
+        </div>
+
+        <div v-if="listLoading" class="flex justify-center py-4">
+          <span class="loading loading-spinner loading-lg"></span>
+        </div>
+
+        <div v-else class="overflow-x-auto">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th>{{ $t("admin.pending_parents.table.parent") }}</th>
+                <th>{{ $t("admin.pending_parents.table.student_info") }}</th>
+                <th>{{ $t("admin.pending_parents.table.status") }}</th>
+                <th>{{ $t("admin.pending_parents.table.actions") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in pendingParents" :key="item.id">
+                <td>
+                  <div class="font-bold">{{ item.parentName || "Unknown" }}</div>
+                  <div class="text-sm opacity-50">
+                    {{ item.parentEmail || "Unknown" }}
+                  </div>
+                </td>
+                <td>
+                  <div class="font-bold">{{ item.studentName }}</div>
+                  <div class="text-sm opacity-50">{{ item.studentEmail }}</div>
+                </td>
+                <td>
+                  <span
+                    :class="{
+                      badge: true,
+                      'badge-warning': item.status === 'pending',
+                      'badge-success': item.status === 'approved',
+                      'badge-error': item.status === 'rejected',
+                    }"
+                    >{{ item.status }}</span
+                  >
+                </td>
+                <td>
+                  <NuxtLink
+                    v-if="item.status === 'pending'"
+                    class="btn btn-xs btn-success text-white"
+                    :to="
+                      localePath({
+                        path: '/admin/link-student-parent',
+                        query: { id: item.id },
+                      })
+                    "
+                  >
+                    {{ $t("admin.pending_parents.table.link") }}
+                  </NuxtLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
+    <!-- Pending Parent Info Card (shown when ?id= in query) -->
     <div
       v-if="pendingParentInfo"
       class="card bg-base-100 shadow-xl mb-8 border border-base-300"
@@ -139,6 +234,7 @@ const viewStudent = (studentId: string) => {
       </div>
     </div>
 
+    <!-- Student Search -->
     <div class="card bg-base-100 shadow-xl mb-8">
       <div class="card-body">
         <h2 class="card-title">
