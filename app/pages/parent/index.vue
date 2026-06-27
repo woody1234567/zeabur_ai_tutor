@@ -5,7 +5,7 @@ definePageMeta({
 const localePath = useLocalePath();
 
 const { data: status, pending } = await useFetch("/api/parent/status");
-const { data: students } = await useFetch("/api/parent/students");
+const { data: students } = await useFetch("/api/parent/my-students");
 
 if (status.value) {
   if (status.value.isPending) {
