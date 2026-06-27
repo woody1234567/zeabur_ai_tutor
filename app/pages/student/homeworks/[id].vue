@@ -194,6 +194,8 @@ const finishHomework = async () => {
         :problem="currentProblem"
         :current-index="currentProblemIndex"
         :total-problems="data.problems.length"
+        :problem-id="String(currentProblem.id)"
+        :is-favorite="currentProblem.isFavorite ?? false"
         @prev="prevProblem"
         @next="nextProblem"
       >

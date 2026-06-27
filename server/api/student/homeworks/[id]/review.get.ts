@@ -6,6 +6,7 @@ import {
   hwRecords,
   homeworkCompletions,
   errorProblems,
+  favorites,
 } from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
@@ -65,9 +66,17 @@ export default defineEventHandler(async (event) => {
       imageUrl: problems.imageUrl,
       correctAnswer: problems.correctAnswer,
       explanation: problems.explanation,
+      isFavorite: favorites.id,
     })
     .from(homeworkProblems)
     .innerJoin(problems, eq(homeworkProblems.problemId, problems.id))
+    .leftJoin(
+      favorites,
+      and(
+        eq(favorites.problemId, problems.id),
+        eq(favorites.userId, session.user.id)
+      )
+    )
     .where(eq(homeworkProblems.homeworkId, homeworkId))
     .orderBy(asc(homeworkProblems.order));
 
@@ -102,6 +111,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       ...problem,
+      isFavorite: problem.isFavorite != null,
       submissionStatus: record
         ? {
             submitted: record.submitted,

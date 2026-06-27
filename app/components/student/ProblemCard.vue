@@ -76,6 +76,7 @@ defineEmits<{
           {{ problem.title }}
         </h2>
         <StudentFavoriteButton v-if="problemId" :problem-id="problemId" :is-favorite="isFavorite" />
+        <StudentAddToListDropdown v-if="problemId" :problem-id="problemId" />
       </div>
       <MarkdownRenderer :content="problem.content" class="py-4 text-lg" />
 

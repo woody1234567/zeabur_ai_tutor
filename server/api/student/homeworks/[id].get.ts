@@ -6,6 +6,7 @@ import {
   classroomStudents,
   problems,
   hwRecords,
+  favorites,
 } from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
@@ -95,27 +96,17 @@ export default defineEventHandler(async (event) => {
       grade: problems.grade,
       source: problems.source,
       imageUrl: problems.imageUrl,
-      // We don't select correctAnswer or explanation here to prevent cheating?
-      // Actually, the existing problem view fetches everything including correctAnswer (but maybe hides it?).
-      // Let's check the existing API `server/api/problems/[id].get.ts`.
-      // The existing API returns everything. The frontend handles hiding it until submission.
-      // However, for a secure homework system, we might want to hide it.
-      // But for this MVP, let's stick to the pattern.
-      // Wait, the existing `server/api/problems/[id].get.ts` returns `correctAnswer`?
-      // Let's assume we should return enough to render the problem.
-      // If we want to validate on server, we use `/api/submissions`.
-      // So we can omit `correctAnswer` and `explanation` here if we want to be secure.
-      // But the frontend `problems/[id].vue` expects `problem` object.
-      // Let's check `app/pages/student/problems/[id].vue` again.
-      // It uses `submissionResult` to show correct/incorrect.
-      // It DOES NOT use `problem.correctAnswer` directly in the template to show the answer.
-      // So it is safe-ish to not send it, OR send it but frontend doesn't show it.
-      // BUT, if I send it, a smart student can see it in network tab.
-      // For now, I will NOT send `correctAnswer` and `explanation` in this list.
-      // The submission API will handle validation.
+      isFavorite: favorites.id,
     })
     .from(homeworkProblems)
     .innerJoin(problems, eq(homeworkProblems.problemId, problems.id))
+    .leftJoin(
+      favorites,
+      and(
+        eq(favorites.problemId, problems.id),
+        eq(favorites.userId, session.user.id)
+      )
+    )
     .where(eq(homeworkProblems.homeworkId, homeworkId))
     //.orderBy(asc(homeworkProblems.order)) // If we had an order column. Schema has it as text?
     // Let's check schema again. `order: text("order")`.
@@ -138,6 +129,7 @@ export default defineEventHandler(async (event) => {
     const record = records.find((r) => r.problemId === problem.id);
     return {
       ...problem,
+      isFavorite: problem.isFavorite != null,
       submissionStatus: record
         ? {
             submitted: record.submitted,
