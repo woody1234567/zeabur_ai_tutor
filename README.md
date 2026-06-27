@@ -53,7 +53,10 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
 ```text
 app/                    # Nuxt app (pages/components/layouts/middleware)
 server/                 # API routes, utils, MCP tools/resources
+  utils/db.ts           # useDrizzle() — Nitro auto-imported drizzle client accessor
 db/                     # Drizzle schema and DB client
+  schema.ts             # Single source of truth for all table definitions
+  index.ts              # createDb() — lazy singleton drizzle instance
 drizzle/                # Generated migrations and snapshots
 packages/ai-service/    # (Legacy) Python FastAPI + LangGraph AI microservice
 i18n/locales/           # Translation files (en.json, zhTW.json)

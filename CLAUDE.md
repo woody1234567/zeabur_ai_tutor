@@ -31,11 +31,12 @@ app/                        # Nuxt 4 app directory
   middleware/auth.global.ts # Global role-based route guard
 db/
   schema.ts                 # All Drizzle ORM table definitions (single source of truth)
-  index.ts                  # Drizzle db instance (server-only, uses useRuntimeConfig())
+  index.ts                  # createDb() — lazy singleton drizzle client (used by server/utils/db.ts)
 server/
   api/                      # API routes mirroring role namespacing (teacher/, student/, etc.)
   utils/                    # Server utilities auto-imported by Nitro
     auth.ts                 # better-auth server instance + requireAuthSession()
+    db.ts                   # useDrizzle() — thin wrapper around createDb(), Nitro auto-imported
     r2.ts                   # Two Cloudflare R2 S3 clients
 lib/
   auth-client.ts            # better-auth Vue client (signIn, signOut, useSession)
