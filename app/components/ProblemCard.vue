@@ -50,6 +50,7 @@ const difficultyColor = (difficulty: string) => {
       </div>
       <p class="text-xs text-base-content/70">Source: {{ problem.source }}</p>
       <div class="card-actions justify-end mt-2">
+        <StudentAddToListDropdown :problem-id="String(problem.id)" />
         <NuxtLink
           :to="localePath(`/student/problems/${problem.id}`)"
           class="btn btn-primary btn-sm"
