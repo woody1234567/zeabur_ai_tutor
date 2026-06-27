@@ -83,10 +83,11 @@ const removeItem = async (problemId: string) => {
 // Sharing
 const isTogglingShare = ref(false);
 const copied = ref(false);
+const requestUrl = useRequestURL();
 
 const shareUrl = computed(() => {
   if (!list.value?.shareToken) return null;
-  return `${window.location.origin}/shared/problem-lists/${list.value.shareToken}`;
+  return `${requestUrl.origin}/shared/problem-lists/${list.value.shareToken}`;
 });
 
 const enableShare = async () => {

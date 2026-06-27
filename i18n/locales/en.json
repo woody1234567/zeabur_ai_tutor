@@ -1284,7 +1284,10 @@
       "restricted": "Restricted",
       "restricted_desc": "You don't have access to this problem.",
       "not_found": "This list is not available or sharing has been disabled.",
-      "sign_in_prompt": "Sign in to access more problems in this list"
+      "sign_in_prompt": "Sign in to access more problems in this list",
+      "accessible_count": "{accessible} / {total} problems accessible",
+      "login": "Sign In",
+      "practice": "Practice"
     }
   }
 }

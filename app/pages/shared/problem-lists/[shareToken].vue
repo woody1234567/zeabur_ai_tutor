@@ -58,7 +58,7 @@ const totalCount = computed(() => data.value?.items.length ?? 0);
         <p class="text-base-content/60 text-sm">{{ $t("shared.problem_lists.by", { name: data.list.ownerName }) }}</p>
         <p v-if="data.list.description" class="text-base-content/70 mt-2">{{ data.list.description }}</p>
         <p class="mt-3 text-sm text-base-content/60">
-          {{ accessibleCount }} / {{ totalCount }} 題可存取
+          {{ $t("shared.problem_lists.accessible_count", { accessible: accessibleCount, total: totalCount }) }}
         </p>
       </div>
 
@@ -71,7 +71,7 @@ const totalCount = computed(() => data.value?.items.length ?? 0);
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span>{{ $t("shared.problem_lists.sign_in_prompt") }}</span>
-        <NuxtLink :to="localePath('/login')" class="btn btn-sm btn-primary">登入</NuxtLink>
+        <NuxtLink :to="localePath('/login')" class="btn btn-sm btn-primary">{{ $t("shared.problem_lists.login") }}</NuxtLink>
       </div>
 
       <!-- Problem list -->
@@ -91,7 +91,7 @@ const totalCount = computed(() => data.value?.items.length ?? 0);
                   :to="localePath(`/student/problems/${item.problem.id}`)"
                   class="btn btn-sm btn-outline btn-primary"
                 >
-                  練習
+                  {{ $t("shared.problem_lists.practice") }}
                 </NuxtLink>
               </div>
             </div>
