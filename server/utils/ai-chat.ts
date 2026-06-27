@@ -4,7 +4,6 @@ import { getAIModel } from "./ai-provider";
 import { getTools } from "./ai-tools";
 import type { AiToolContext } from "./ai-tools/types";
 import { recordAiToolCall } from "./ai-tool-recorder";
-import { db } from "../../db";
 import { chatProjects } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
@@ -68,7 +67,7 @@ export async function createChatStream(options: StreamChatOptions) {
     : buildStudentSystemPrompt(options.userId, options.classroomId);
 
   if (options.projectId) {
-    const project = await db.query.chatProjects.findFirst({
+    const project = await useDrizzle().query.chatProjects.findFirst({
       where: eq(chatProjects.id, options.projectId),
     });
     if (project?.systemPrompt) {

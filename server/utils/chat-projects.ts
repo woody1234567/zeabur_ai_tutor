@@ -1,4 +1,3 @@
-import { db } from "../../db";
 import {
   chatProjects,
   chatHistory,
@@ -19,7 +18,7 @@ function getOwnerColumn(role: string) {
 }
 
 export async function listProjects(userId: string, role: string) {
-  return db
+  return useDrizzle()
     .select()
     .from(chatProjects)
     .where(
@@ -49,7 +48,7 @@ export async function createProject(
     });
   }
 
-  const [project] = await db
+  const [project] = await useDrizzle()
     .insert(chatProjects)
     .values({
       userId,
@@ -85,7 +84,7 @@ export async function updateProject(
     });
   }
 
-  const existing = await db.query.chatProjects.findFirst({
+  const existing = await useDrizzle().query.chatProjects.findFirst({
     where: and(
       eq(chatProjects.id, projectId),
       eq(chatProjects.userId, userId),
@@ -103,7 +102,7 @@ export async function updateProject(
   if (data.systemPrompt !== undefined)
     updates.systemPrompt = data.systemPrompt?.trim() || null;
 
-  const [updated] = await db
+  const [updated] = await useDrizzle()
     .update(chatProjects)
     .set(updates)
     .where(eq(chatProjects.id, projectId))
@@ -117,7 +116,7 @@ export async function deleteProject(
   userId: string,
   role: string
 ) {
-  const existing = await db.query.chatProjects.findFirst({
+  const existing = await useDrizzle().query.chatProjects.findFirst({
     where: and(
       eq(chatProjects.id, projectId),
       eq(chatProjects.userId, userId),
@@ -128,7 +127,7 @@ export async function deleteProject(
     throw createError({ statusCode: 404, statusMessage: "Project not found" });
   }
 
-  await db.delete(chatProjects).where(eq(chatProjects.id, projectId));
+  await useDrizzle().delete(chatProjects).where(eq(chatProjects.id, projectId));
   return { success: true };
 }
 
@@ -141,7 +140,7 @@ export async function moveChatToProject(
   const table = getChatTable(role);
   const ownerCol = getOwnerColumn(role);
 
-  const queryTable = role === "teacher" ? db.query.teacherChatHistory : db.query.chatHistory;
+  const queryTable = role === "teacher" ? useDrizzle().query.teacherChatHistory : useDrizzle().query.chatHistory;
   const chat = await queryTable.findFirst({
     where: and(eq(table.id, chatId), eq(ownerCol, userId)),
   });
@@ -150,7 +149,7 @@ export async function moveChatToProject(
   }
 
   if (projectId) {
-    const project = await db.query.chatProjects.findFirst({
+    const project = await useDrizzle().query.chatProjects.findFirst({
       where: and(
         eq(chatProjects.id, projectId),
         eq(chatProjects.userId, userId),
@@ -165,7 +164,7 @@ export async function moveChatToProject(
     }
   }
 
-  await db
+  await useDrizzle()
     .update(table)
     .set({ projectId: projectId ?? null })
     .where(eq(table.id, chatId));
@@ -189,7 +188,7 @@ export async function listChats(
     conditions.push(eq(table.projectId, filters.projectId));
   }
 
-  return db
+  return useDrizzle()
     .select({
       id: table.id,
       title: table.title,

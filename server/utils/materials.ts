@@ -1,4 +1,3 @@
-import { db } from "./db";
 import {
   classMaterials,
   classroomMaterials,
@@ -13,7 +12,7 @@ export const recommendMaterials = async (args: {
   limit?: number;
 }) => {
   // 1. Find all classrooms the student is enrolled in
-  const enrolledClassrooms = await db
+  const enrolledClassrooms = await useDrizzle()
     .select({ id: classroomStudents.classroomId })
     .from(classroomStudents)
     .where(eq(classroomStudents.studentId, args.studentId));
@@ -42,7 +41,7 @@ export const recommendMaterials = async (args: {
     whereClause = and(whereClause, keywordCondition);
   }
 
-  const materials = await db
+  const materials = await useDrizzle()
     .select({
       id: classMaterials.id,
       name: classMaterials.name,
@@ -80,7 +79,7 @@ export const getClassMaterialsMetadata = async (args: {
   }
 
   if (args.studentId) {
-    const enrolledClassrooms = await db
+    const enrolledClassrooms = await useDrizzle()
       .select({ id: classroomStudents.classroomId })
       .from(classroomStudents)
       .where(eq(classroomStudents.studentId, args.studentId));
@@ -91,7 +90,7 @@ export const getClassMaterialsMetadata = async (args: {
 
     const classroomIds = enrolledClassrooms.map((c) => c.id);
 
-    return await db
+    return await useDrizzle()
       .selectDistinct({
         id: classMaterials.id,
         name: classMaterials.name,
@@ -109,7 +108,7 @@ export const getClassMaterialsMetadata = async (args: {
   }
 
   if (args.teacherId) {
-    return await db
+    return await useDrizzle()
       .select({
         id: classMaterials.id,
         name: classMaterials.name,

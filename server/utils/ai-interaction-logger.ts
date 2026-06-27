@@ -1,5 +1,4 @@
 import type { FileUIPart, UIMessage } from "ai";
-import { db } from "../../db";
 import {
   aiInteractionLogs,
   type AiInteractionAttachment,
@@ -101,7 +100,7 @@ export async function logAiInteraction(
   };
 
   try {
-    const insert = db.insert(aiInteractionLogs).values(values);
+    const insert = useDrizzle().insert(aiInteractionLogs).values(values);
 
     if (options.onConflict === "ignore") {
       await insert.onConflictDoNothing({ target: aiInteractionLogs.eventKey });

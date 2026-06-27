@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { db } from "../../db";
 import { problems } from "../../db/schema";
 import { eq, sql } from "drizzle-orm";
 
@@ -72,7 +71,7 @@ export async function generateAndStoreEmbedding(
   try {
     const text = buildEmbeddingText(problemData);
     const embedding = await generateEmbedding(text);
-    await db
+    await useDrizzle()
       .update(problems)
       .set({ embedding })
       .where(eq(problems.id, problemId));

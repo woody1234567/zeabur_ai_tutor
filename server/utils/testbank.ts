@@ -1,8 +1,7 @@
-import { db } from "../../db";
 import { problems } from "../../db/schema";
 
 export async function getTestbankMetadata(limit = 100) {
-  return await db
+  return await useDrizzle()
     .select({
       title: problems.title,
       source: problems.source,

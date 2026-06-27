@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { problems } from "../../../db/schema";
-import { db } from "../../utils/db";
 import { getMcpPrincipal } from "../../utils/mcp-auth";
 import { generateAndStoreEmbedding } from "../../utils/embedding";
 
@@ -81,7 +80,7 @@ export default defineMcpTool({
       });
     }
 
-    const [problem] = await db
+    const [problem] = await useDrizzle()
       .insert(problems)
       .values({
         title: args.title,

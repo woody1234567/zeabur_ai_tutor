@@ -1,4 +1,3 @@
-import { db } from "../../db";
 import { favorites, errorProblems, problemsStatus } from "../../db/schema";
 import { sql, and, or, eq } from "drizzle-orm";
 
@@ -8,7 +7,7 @@ export async function updateProblemStatus(userId: string) {
   // is_wrong: true if exists in error_problems
   // understood: value from error_problems (default false if not present, but logic handles presence)
 
-  const query = db
+  const query = useDrizzle()
     .select({
       id: sql<string>`gen_random_uuid()`.as("id"),
       userId: sql<string>`${userId}`.as("userId"),
@@ -40,7 +39,7 @@ export async function updateProblemStatus(userId: string) {
     )
     .where(or(eq(favorites.userId, userId), eq(errorProblems.userId, userId)));
 
-  await db
+  await useDrizzle()
     .insert(problemsStatus)
     .select(query)
     .onConflictDoUpdate({

@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth";
 import type { H3Event } from "h3";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "../../db";
 import * as schema from "../../db/schema";
 import { eq, sql } from "drizzle-orm";
 
@@ -12,7 +11,7 @@ const baseURL =
 
 export const auth = betterAuth({
   baseURL,
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(useDrizzle(), {
     provider: "pg",
     schema: schema,
   }),
@@ -34,11 +33,11 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (newUser) => {
-          const result = await db
+          const result = await useDrizzle()
             .select({ count: sql<number>`count(*)::int` })
             .from(schema.user);
           if (result[0]?.count === 1) {
-            await db
+            await useDrizzle()
               .update(schema.user)
               .set({ role: "admin" })
               .where(eq(schema.user.id, newUser.id));
@@ -49,7 +48,7 @@ export const auth = betterAuth({
     session: {
       create: {
         after: async (session) => {
-          await db
+          await useDrizzle()
             .update(schema.user)
             .set({ lastLogin: new Date() })
             .where(eq(schema.user.id, session.userId));

@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { tool } from "ai";
-import { db } from "../../../db";
 import { problems, testbanks, testbankProblems } from "../../../db/schema";
 import { and, eq } from "drizzle-orm";
 import type { AiToolContext } from "./types";
@@ -55,7 +54,7 @@ export const createProblemTool = tool({
     }
 
     // Validate testbank ownership
-    const [tb] = await db
+    const [tb] = await useDrizzle()
       .select({ id: testbanks.id })
       .from(testbanks)
       .where(and(eq(testbanks.id, input.testbankId), eq(testbanks.ownerId, context.userId)));
@@ -64,7 +63,7 @@ export const createProblemTool = tool({
       return JSON.stringify({ error: "找不到該題庫或您沒有權限" });
     }
 
-    const [problem] = await db
+    const [problem] = await useDrizzle()
       .insert(problems)
       .values({
         title: input.title,
@@ -89,7 +88,7 @@ export const createProblemTool = tool({
       });
 
     // Link problem to testbank
-    await db.insert(testbankProblems).values({
+    await useDrizzle().insert(testbankProblems).values({
       testbankId: input.testbankId,
       problemId: problem!.id,
     });

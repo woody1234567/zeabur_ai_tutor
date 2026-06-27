@@ -1,4 +1,3 @@
-import { db } from "../../db";
 import { problems } from "../../db/schema";
 import { and, or, eq, ilike, sql, cosineDistance, isNotNull } from "drizzle-orm";
 import { generateEmbedding } from "./embedding";
@@ -94,7 +93,7 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
 
       filters.push(isNotNull(problems.embedding));
 
-      const results = await db
+      const results = await useDrizzle()
         .select({
           id: problems.id,
           title: problems.title,
@@ -118,7 +117,7 @@ export async function searchProblems(criteria: SearchProblemsCriteria) {
       return results;
     }
 
-    const results = await db
+    const results = await useDrizzle()
       .select({
         id: problems.id,
         title: problems.title,

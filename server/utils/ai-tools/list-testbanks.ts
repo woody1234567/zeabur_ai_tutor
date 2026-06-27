@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { tool } from "ai";
-import { db } from "../../../db";
 import { testbanks } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import type { AiToolContext } from "./types";
@@ -12,7 +11,7 @@ export const listTestbanksTool = tool({
   execute: async (_input, { experimental_context }) => {
     const context = experimental_context as AiToolContext;
 
-    const result = await db
+    const result = await useDrizzle()
       .select({
         id: testbanks.id,
         name: testbanks.name,
