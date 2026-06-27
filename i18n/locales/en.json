@@ -1283,7 +1283,6 @@
       "connect": "Connect",
       "active_hint": "Active tools will be available to AI"
     }
-    "toggle_sidebar": "Toggle sidebar"
   },
   "shared": {
     "problem_lists": {

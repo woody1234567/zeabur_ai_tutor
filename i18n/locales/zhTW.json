@@ -1276,7 +1276,13 @@
     "cancel": "取消",
     "save": "儲存",
     "confirm": "確認",
-    "toggle_sidebar": "切換側邊欄"
+    "toggle_sidebar": "切換側邊欄",
+    "composio": {
+      "title": "外部工具",
+      "refresh": "重新整理連接狀態",
+      "connect": "連接",
+      "active_hint": "已啟用的工具將可供 AI 使用"
+    }
   },
   "shared": {
     "problem_lists": {
@@ -1288,13 +1294,6 @@
       "accessible_count": "{accessible} / {total} 題可存取",
       "login": "登入",
       "practice": "練習"
-    }
-    "toggle_sidebar": "切換側邊欄",
-    "composio": {
-      "title": "外部工具",
-      "refresh": "重新整理連接狀態",
-      "connect": "連接",
-      "active_hint": "已啟用的工具將可供 AI 使用"
     }
   }
 }
