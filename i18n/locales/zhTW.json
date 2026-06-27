@@ -170,7 +170,8 @@
       "dashboard": "儀表板",
       "materials": "教材",
       "teachers": "預約",
-      "profile": "個人資料"
+      "profile": "個人資料",
+      "problem_lists": "題目清單"
     },
     "profile": {
       "title": "個人資料",
@@ -347,6 +348,32 @@
       "error_response": "抱歉，發生錯誤。請再試一次。",
       "tool_running": "使用工具中",
       "web_search": "網路搜尋"
+    },
+    "problem_lists": {
+      "title": "我的題目清單",
+      "create": "新增清單",
+      "create_name_label": "清單名稱",
+      "create_desc_label": "描述（選填）",
+      "create_submit": "建立",
+      "empty": "您還沒有任何題目清單。",
+      "items": "{count} 題",
+      "view": "檢視清單",
+      "delete": "刪除",
+      "delete_confirm": "確定要刪除此清單？",
+      "sharing_enabled": "分享已開啟",
+      "sharing_disabled": "分享已關閉",
+      "enable_share": "開啟分享",
+      "disable_share": "關閉分享",
+      "copy_link": "複製連結",
+      "copied": "已複製！",
+      "remove_problem": "移除",
+      "back": "返回清單",
+      "edit": "編輯",
+      "save": "儲存",
+      "add_to_list": "加入清單",
+      "create_new_list": "新增清單...",
+      "add_success": "已加入清單",
+      "already_in_list": "已在清單中"
     }
   },
   "calendar_help": {
@@ -1250,5 +1277,14 @@
     "save": "儲存",
     "confirm": "確認",
     "toggle_sidebar": "切換側邊欄"
+  },
+  "shared": {
+    "problem_lists": {
+      "by": "by {name}",
+      "restricted": "無存取權限",
+      "restricted_desc": "您沒有瀏覽此題目的權限。",
+      "not_found": "此清單不存在或分享功能已關閉。",
+      "sign_in_prompt": "登入以存取此清單中更多題目"
+    }
   }
 }

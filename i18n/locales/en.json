@@ -170,7 +170,8 @@
       "dashboard": "Dashboard",
       "materials": "Materials",
       "teachers": "Reservation",
-      "profile": "Profile"
+      "profile": "Profile",
+      "problem_lists": "Problem Lists"
     },
     "profile": {
       "title": "My Profile",
@@ -347,6 +348,32 @@
       "error_response": "Sorry, I encountered an error. Please try again.",
       "tool_running": "Using tool",
       "web_search": "Web Search"
+    },
+    "problem_lists": {
+      "title": "My Problem Lists",
+      "create": "Create List",
+      "create_name_label": "List Name",
+      "create_desc_label": "Description (optional)",
+      "create_submit": "Create",
+      "empty": "You have no problem lists yet.",
+      "items": "{count} problems",
+      "view": "View List",
+      "delete": "Delete",
+      "delete_confirm": "Delete this list?",
+      "sharing_enabled": "Sharing On",
+      "sharing_disabled": "Sharing Off",
+      "enable_share": "Enable Sharing",
+      "disable_share": "Disable Sharing",
+      "copy_link": "Copy Link",
+      "copied": "Copied!",
+      "remove_problem": "Remove",
+      "back": "Back to Lists",
+      "edit": "Edit",
+      "save": "Save",
+      "add_to_list": "Add to List",
+      "create_new_list": "New list...",
+      "add_success": "Added to list",
+      "already_in_list": "Already in list"
     }
   },
   "calendar_help": {
@@ -1250,5 +1277,14 @@
     "save": "Save",
     "confirm": "Confirm",
     "toggle_sidebar": "Toggle sidebar"
+  },
+  "shared": {
+    "problem_lists": {
+      "by": "by {name}",
+      "restricted": "Restricted",
+      "restricted_desc": "You don't have access to this problem.",
+      "not_found": "This list is not available or sharing has been disabled.",
+      "sign_in_prompt": "Sign in to access more problems in this list"
+    }
   }
 }
