@@ -3,7 +3,7 @@ import { VercelProvider } from "@composio/vercel";
 import type { ToolSet } from "ai";
 
 // Confirmed Composio toolkit slugs
-export const COMPOSIO_TOOLKITS = ["gmail", "googlecalendar", "google_drive"] as const;
+export const COMPOSIO_TOOLKITS = ["gmail", "googlecalendar", "googledrive"] as const;
 export type ComposioToolkit = (typeof COMPOSIO_TOOLKITS)[number];
 
 let _composio: Composio<VercelProvider> | null = null;

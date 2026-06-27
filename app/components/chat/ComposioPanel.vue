@@ -12,7 +12,7 @@ const { t } = useI18n();
 const TOOLKITS = [
   { slug: "gmail", label: "Gmail" },
   { slug: "googlecalendar", label: "Google Calendar" },
-  { slug: "google_drive", label: "Google Drive" },
+  { slug: "googledrive", label: "Google Drive" },
 ] as const;
 
 const isConnecting = ref<string | null>(null);
