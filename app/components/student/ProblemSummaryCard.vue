@@ -17,31 +17,6 @@ const props = defineProps<{
 }>();
 
 const localePath = useLocalePath();
-const loading = ref(false);
-
-const toggleFavorite = async () => {
-  if (loading.value) return;
-  loading.value = true;
-  try {
-    if (props.problem.isFavorite) {
-      await $fetch("/api/favorite", {
-        method: "DELETE",
-        body: { problemId: props.problem.id },
-      });
-      props.problem.isFavorite = false;
-    } else {
-      await $fetch("/api/favorite", {
-        method: "POST",
-        body: { problemId: props.problem.id },
-      });
-      props.problem.isFavorite = true;
-    }
-  } catch (error) {
-    console.error("Failed to toggle favorite", error);
-  } finally {
-    loading.value = false;
-  }
-};
 </script>
 
 <template>
@@ -117,24 +92,7 @@ const toggleFavorite = async () => {
           />
         </div>
         <div class="flex gap-2 items-center">
-          <button
-            class="btn btn-ghost btn-circle btn-sm"
-            @click="toggleFavorite"
-            :disabled="loading"
-          >
-            <span
-              v-if="loading"
-              class="loading loading-spinner loading-xs"
-            ></span>
-            <Icon
-              v-else
-              :name="
-                problem.isFavorite ? 'heroicons:heart-solid' : 'heroicons:heart'
-              "
-              class="w-5 h-5"
-              :class="{ 'text-red-500': problem.isFavorite }"
-            />
-          </button>
+          <StudentFavoriteButton :problem-id="String(problem.id)" :is-favorite="problem.isFavorite ?? false" />
           <NuxtLink
             :to="localePath(`/student/problems/${problem.id}`)"
             class="btn btn-ghost btn-sm"
