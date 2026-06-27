@@ -213,15 +213,11 @@ const toggleUnderstood = async () => {
             }}</span>
           </div>
 
-          <!-- Understood Button -->
-          <div
-            v-if="
-              currentProblem.submissionStatus &&
-              !currentProblem.submissionStatus.correct
-            "
-            class="flex justify-end"
-          >
+          <!-- Actions Row: Add to List + Understood -->
+          <div class="flex justify-between items-center">
+            <StudentAddToListDropdown :problem-id="String(currentProblem.id)" />
             <button
+              v-if="currentProblem.submissionStatus && !currentProblem.submissionStatus.correct"
               class="btn gap-2 transition-all duration-300"
               :class="
                 currentProblem.understood
