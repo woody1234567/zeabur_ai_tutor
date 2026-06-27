@@ -1,4 +1,3 @@
-import { db } from "../../../../../../server/utils/db";
 import { posts } from "../../../../../../db/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -13,7 +12,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const post = await db.query.posts.findFirst({
+  const post = await useDrizzle().query.posts.findFirst({
     where: and(eq(posts.id, postId), eq(posts.classroomId, classroomId)),
   });
 

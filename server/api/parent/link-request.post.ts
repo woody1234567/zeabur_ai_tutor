@@ -1,7 +1,4 @@
-import { defineEventHandler, readBody } from "h3";
-import { db } from "../../../db";
 import { pendingParent } from "../../../db/schema";
-import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -21,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if request already exists
-  const existingRequest = await db.query.pendingParent.findFirst({
+  const existingRequest = await useDrizzle().query.pendingParent.findFirst({
     where: (pendingParent, { eq, and }) =>
       and(
         eq(pendingParent.parentId, session.user.id),
@@ -36,7 +33,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  await db.insert(pendingParent).values({
+  await useDrizzle().insert(pendingParent).values({
     parentId: session.user.id,
     studentName,
     studentEmail,

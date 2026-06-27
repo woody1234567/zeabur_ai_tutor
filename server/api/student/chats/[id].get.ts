@@ -1,4 +1,3 @@
-import { db } from "../../../../db";
 import { chatHistory } from "../../../../db/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -14,7 +13,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const chat = await db.query.chatHistory.findFirst({
+  const chat = await useDrizzle().query.chatHistory.findFirst({
     where: and(eq(chatHistory.id, id), eq(chatHistory.studentId, user.id)),
   });
 

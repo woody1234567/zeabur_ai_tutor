@@ -1,6 +1,5 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { classMaterials } from "../../../../db/schema";
-import { db } from "../../../../server/utils/db";
 import { classMaterialsR2 } from "../../../../server/utils/r2";
 
 export default defineEventHandler(async (event) => {
@@ -33,7 +32,7 @@ export default defineEventHandler(async (event) => {
   // Find parent path
   let parentPath = "";
   if (parentId) {
-    const parent = await db.query.classMaterials.findFirst({
+    const parent = await useDrizzle().query.classMaterials.findFirst({
       where: (cm, { eq }) => eq(cm.id, parentId),
     });
     if (parent) {
@@ -46,7 +45,6 @@ export default defineEventHandler(async (event) => {
 
   for (const file of files) {
     const filename = file.filename!;
-    // Sanitize filename if needed, but keeping original for now
     const key = parentPath ? `${parentPath}${filename}` : filename;
 
     // Upload to R2
@@ -65,7 +63,7 @@ export default defineEventHandler(async (event) => {
         ? `${classMaterialsR2PublicDomain}/${key}`
         : undefined;
 
-      const [record] = await db
+      const [record] = await useDrizzle()
         .insert(classMaterials)
         .values({
           teacherId: session.user.id,

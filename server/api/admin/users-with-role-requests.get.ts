@@ -1,7 +1,5 @@
-import { db } from "../../../db";
 import { user, roleRequests } from "../../../db/schema";
 import { eq, desc, ilike, or, and } from "drizzle-orm";
-import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -30,7 +28,7 @@ export default defineEventHandler(async (event) => {
     conditions.push(eq(user.role, role as any));
   }
 
-  const usersWithRequests = await db
+  const usersWithRequests = await useDrizzle()
     .select({
       userData: user,
       requestedRole: roleRequests.role,
@@ -39,11 +37,6 @@ export default defineEventHandler(async (event) => {
     .leftJoin(roleRequests, eq(user.id, roleRequests.userId))
     .where(and(...conditions))
     .orderBy(desc(user.createdAt));
-
-  console.log("Fetched users count:", usersWithRequests.length);
-  if (usersWithRequests.length > 0) {
-    console.log("First user sample:", usersWithRequests[0]);
-  }
 
   return {
     users: usersWithRequests.map((row) => ({

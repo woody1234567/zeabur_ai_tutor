@@ -1,13 +1,10 @@
 import { user, parentStudents } from "../../../db/schema";
 import { eq } from "drizzle-orm";
-import { auth } from "../../../server/utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+  const session = await requireAuthSession(event);
 
-  if (!session || session.user.role !== "parent") {
+  if (session.user.role !== "parent") {
     throw createError({
       statusCode: 403,
       statusMessage: "Unauthorized",

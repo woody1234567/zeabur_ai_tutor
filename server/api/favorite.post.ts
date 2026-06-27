@@ -1,6 +1,4 @@
-import { db } from "../../db";
 import { favorites } from "../../db/schema";
-import { requireAuthSession } from "../../server/utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -13,7 +11,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  await db.insert(favorites).values({
+  await useDrizzle().insert(favorites).values({
     userId: session.user.id,
     problemId: problemId,
   });

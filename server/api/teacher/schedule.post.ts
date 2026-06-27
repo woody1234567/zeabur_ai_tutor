@@ -8,8 +8,8 @@ interface CreateScheduleBody {
 }
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({ headers: event.headers });
-  if (!session || session.user.role !== "teacher") {
+  const session = await requireAuthSession(event);
+  if (session.user.role !== "teacher") {
     throw createError({ statusCode: 403, statusMessage: "Unauthorized" });
   }
 

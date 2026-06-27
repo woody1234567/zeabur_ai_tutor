@@ -1,7 +1,5 @@
-import { db } from "../../../../db";
 import { user } from "../../../../db/schema";
 import { ilike, or, and, eq } from "drizzle-orm";
-import { requireAuthSession } from "../../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -32,7 +30,7 @@ export default defineEventHandler(async (event) => {
     conditions.push(eq(user.role, role));
   }
 
-  const results = await db
+  const results = await useDrizzle()
     .select({
       id: user.id,
       name: user.name,

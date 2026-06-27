@@ -1,12 +1,11 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-// @ts-ignore
 import { r2 } from "../../../utils/r2";
 import { user } from "../../../../db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({ headers: event.headers });
-  if (!session || (session.user.role !== "parent" && session.user.role !== "admin")) {
+  const session = await requireAuthSession(event);
+  if (session.user.role !== "parent" && session.user.role !== "admin") {
     throw createError({ statusCode: 403, statusMessage: "Unauthorized" });
   }
 

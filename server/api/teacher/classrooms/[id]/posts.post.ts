@@ -1,10 +1,9 @@
-import { db } from "../../../../../server/utils/db";
 import { posts, classrooms } from "../../../../../db/schema";
 import { and, eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
-  if (!session?.user || (session.user.role !== "teacher" && session.user.role !== "admin")) {
+  if (session.user.role !== "teacher" && session.user.role !== "admin") {
     throw createError({
       statusCode: 403,
       statusMessage: "Forbidden",
@@ -23,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   // Verify the classroom belongs to the requesting teacher (admins bypass this)
   if (session.user.role !== "admin") {
-    const classroom = await db.query.classrooms.findFirst({
+    const classroom = await useDrizzle().query.classrooms.findFirst({
       where: and(eq(classrooms.id, classroomId), eq(classrooms.teacherId, session.user.id)),
     });
     if (!classroom) {
@@ -44,7 +43,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const newPost = await db
+  const newPost = await useDrizzle()
     .insert(posts)
     .values({
       classroomId,

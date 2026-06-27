@@ -1,7 +1,5 @@
 import { z } from "zod";
-import { db } from "../../../db";
 import { roleRequests } from "../../../db/schema";
-import { requireAuthSession } from "../../utils/auth";
 
 const roleRequestSchema = z.object({
   role: z.enum(["teacher", "student", "parent"]),
@@ -22,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const { role } = result.data;
 
   try {
-    const existingRequest = await db.query.roleRequests.findFirst({
+    const existingRequest = await useDrizzle().query.roleRequests.findFirst({
       where: (roleRequests, { eq }) => eq(roleRequests.userId, session.user.id),
     });
 
@@ -30,7 +28,7 @@ export default defineEventHandler(async (event) => {
       return { success: true };
     }
 
-    await db.insert(roleRequests).values({
+    await useDrizzle().insert(roleRequests).values({
       userId: session.user.id,
       role,
     });

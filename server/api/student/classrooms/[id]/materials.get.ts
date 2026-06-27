@@ -4,7 +4,6 @@ import {
   classMaterials,
   classroomMaterials,
 } from "../../../../../db/schema";
-import { db } from "../../../../../server/utils/db";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -18,7 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Verify student is in classroom
-  const [enrolment] = await db
+  const [enrolment] = await useDrizzle()
     .select()
     .from(classroomStudents)
     .where(
@@ -42,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
   if (parentId) {
     // 1. Fetch parent folder details to get its path
-    const [parentFolder] = await db
+    const [parentFolder] = await useDrizzle()
       .select()
       .from(classMaterials)
       .where(eq(classMaterials.id, parentId))
@@ -53,7 +52,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // 2. Fetch all shared roots for this classroom to verify access
-    const sharedRoots = await db
+    const sharedRoots = await useDrizzle()
       .select({
         path: classMaterials.path,
       })
@@ -77,7 +76,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // 4. Fetch children
-    materials = await db
+    materials = await useDrizzle()
       .select({
         id: classMaterials.id,
         name: classMaterials.name,
@@ -91,7 +90,7 @@ export default defineEventHandler(async (event) => {
       .orderBy(classMaterials.isFolder, classMaterials.createdAt);
   } else {
     // Fetch shared roots
-    materials = await db
+    materials = await useDrizzle()
       .select({
         id: classMaterials.id,
         name: classMaterials.name,

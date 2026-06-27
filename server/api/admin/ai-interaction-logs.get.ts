@@ -1,5 +1,4 @@
 import { and, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
-import { db } from "../../../db";
 import { aiInteractionLogs, user } from "../../../db/schema";
 
 export default defineEventHandler(async (event) => {
@@ -44,7 +43,7 @@ export default defineEventHandler(async (event) => {
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   const [logs, countResult] = await Promise.all([
-    db
+    useDrizzle()
       .select({
         id: aiInteractionLogs.id,
         eventKey: aiInteractionLogs.eventKey,
@@ -77,7 +76,7 @@ export default defineEventHandler(async (event) => {
       .orderBy(desc(aiInteractionLogs.createdAt))
       .limit(limit)
       .offset(offset),
-    db
+    useDrizzle()
       .select({ count: sql<number>`count(*)::int` })
       .from(aiInteractionLogs)
       .where(whereClause),

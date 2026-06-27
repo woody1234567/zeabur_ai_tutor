@@ -1,6 +1,4 @@
-import { db } from "../../../db";
 import { problems, favorites, problemsStatus } from "../../../db/schema";
-import { requireAuthSession } from "../../utils/auth";
 import { and, eq, ilike, sql, desc } from "drizzle-orm";
 import { updateProblemStatus } from "../../../server/utils/problemStatus";
 
@@ -23,7 +21,7 @@ export default defineEventHandler(async (event) => {
   // Sync status first
   await updateProblemStatus(session.user.id);
 
-  const favoriteProblems = await db
+  const favoriteProblems = await useDrizzle()
     .select({
       id: problems.id,
       title: problems.title,
@@ -55,6 +53,4 @@ export default defineEventHandler(async (event) => {
     isWrong: p.isWrong ?? false,
     understood: p.understood ?? false,
   }));
-
-  return favoriteProblems;
 });

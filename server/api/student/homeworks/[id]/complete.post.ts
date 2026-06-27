@@ -1,19 +1,15 @@
-import { db } from "../../../../../db";
 import {
   homeworks,
   homeworkCompletions,
   homeworkClassrooms,
   classroomStudents,
 } from "../../../../../db/schema";
-import { auth } from "../../../../../server/utils/auth";
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+  const session = await requireAuthSession(event);
 
-  if (!session || (session.user.role !== "student" && session.user.role !== "admin")) {
+  if (session.user.role !== "student" && session.user.role !== "admin") {
     throw createError({
       statusCode: 403,
       statusMessage: "Forbidden",
@@ -30,7 +26,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Fetch homework to get classroomId
-  const [homework] = await db
+  const [homework] = await useDrizzle()
     .select()
     .from(homeworks)
     .where(eq(homeworks.id, homeworkId));
@@ -44,7 +40,7 @@ export default defineEventHandler(async (event) => {
 
   // Verify student is enrolled in a classroom that owns this homework
   if (session.user.role === "student") {
-    const directEnrollment = await db
+    const directEnrollment = await useDrizzle()
       .select({ id: classroomStudents.id })
       .from(classroomStudents)
       .where(
@@ -58,7 +54,7 @@ export default defineEventHandler(async (event) => {
     let isEnrolled = directEnrollment.length > 0;
 
     if (!isEnrolled) {
-      const indirectEnrollment = await db
+      const indirectEnrollment = await useDrizzle()
         .select({ id: classroomStudents.id })
         .from(classroomStudents)
         .innerJoin(
@@ -85,7 +81,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if already completed
-  const [existing] = await db
+  const [existing] = await useDrizzle()
     .select()
     .from(homeworkCompletions)
     .where(
@@ -100,7 +96,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Record completion
-  await db.insert(homeworkCompletions).values({
+  await useDrizzle().insert(homeworkCompletions).values({
     homeworkId: homeworkId,
     classroomId: homework.classroomId!,
     userId: session.user.id,

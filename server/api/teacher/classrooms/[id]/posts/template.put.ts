@@ -1,10 +1,9 @@
 import { eq, and } from "drizzle-orm";
 import { postsTemplate } from "../../../../../../db/schema";
-import { db } from "../../../../../../server/utils/db";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
-  if (!session || !session.user || session.user.role !== "teacher") {
+  if (session.user.role !== "teacher") {
     throw createError({
       statusCode: 401,
       statusMessage: "Unauthorized",
@@ -30,7 +29,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if template exists
-  const existing = await db.query.postsTemplate.findFirst({
+  const existing = await useDrizzle().query.postsTemplate.findFirst({
     where: and(
       eq(postsTemplate.classroomId, classroomId),
       eq(postsTemplate.userId, session.user.id)
@@ -38,7 +37,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (existing) {
-    await db
+    await useDrizzle()
       .update(postsTemplate)
       .set({
         template,
@@ -46,7 +45,7 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(postsTemplate.id, existing.id));
   } else {
-    await db.insert(postsTemplate).values({
+    await useDrizzle().insert(postsTemplate).values({
       userId: session.user.id,
       classroomId,
       template,

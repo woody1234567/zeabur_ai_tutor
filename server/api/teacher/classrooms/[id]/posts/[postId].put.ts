@@ -1,10 +1,9 @@
-import { db } from "../../../../../../server/utils/db";
 import { posts } from "../../../../../../db/schema";
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
-  if (!session?.user || (session.user.role !== "teacher" && session.user.role !== "admin")) {
+  if (session.user.role !== "teacher" && session.user.role !== "admin") {
     throw createError({
       statusCode: 403,
       statusMessage: "Forbidden",
@@ -39,7 +38,7 @@ export default defineEventHandler(async (event) => {
       ? and(eq(posts.id, postId), eq(posts.classroomId, classroomId))
       : and(eq(posts.id, postId), eq(posts.classroomId, classroomId), eq(posts.teacherId, session.user.id));
 
-  const updatedPost = await db
+  const updatedPost = await useDrizzle()
     .update(posts)
     .set({
       content: body.content,

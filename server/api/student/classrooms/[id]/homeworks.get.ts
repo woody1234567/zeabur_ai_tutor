@@ -5,14 +5,11 @@ import {
   homeworkCompletions,
 } from "../../../../../db/schema";
 import { eq, and, desc, or } from "drizzle-orm";
-import { auth } from "../../../../../server/utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+  const session = await requireAuthSession(event);
 
-  if (!session || session.user.role !== "student") {
+  if (session.user.role !== "student") {
     throw createError({
       statusCode: 403,
       statusMessage: "Unauthorized",

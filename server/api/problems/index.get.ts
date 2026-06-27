@@ -1,20 +1,9 @@
-import { db } from "../../../db";
 import { problems, problemsStatus } from "../../../db/schema";
-import { auth } from "../../../server/utils/auth";
 import { and, eq, ilike, sql } from "drizzle-orm";
 import { updateProblemStatus } from "../../../server/utils/problemStatus";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
-  }
+  const session = await requireAuthSession(event);
 
   const userId = session.user.id;
   const userRole = session.user.role as string;
@@ -169,11 +158,11 @@ export default defineEventHandler(async (event) => {
   await updateProblemStatus(userId);
 
   const [countResult, allProblems] = await Promise.all([
-    db
+    useDrizzle()
       .select({ count: sql<number>`count(*)` })
       .from(problems)
       .where(whereClause),
-    db
+    useDrizzle()
       .select({
         id: problems.id,
         title: problems.title,

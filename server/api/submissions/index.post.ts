@@ -1,4 +1,3 @@
-import { db } from "../../../db";
 import {
   problems,
   submissions,
@@ -6,20 +5,10 @@ import {
   hwRecords,
   errorProblems,
 } from "../../../db/schema";
-import { auth } from "../../../server/utils/auth";
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
-  }
+  const session = await requireAuthSession(event);
 
   const body = await readBody(event);
   const { problemId, userAnswer, homeworkId } = body;
@@ -32,7 +21,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Fetch the problem to check the answer
-  const problem = await db
+  const problem = await useDrizzle()
     .select()
     .from(problems)
     .where(eq(problems.id, problemId))
@@ -48,7 +37,7 @@ export default defineEventHandler(async (event) => {
   const isCorrect = problem[0]!.correctAnswer === userAnswer;
 
   // Record the submission
-  await db.insert(submissions).values({
+  await useDrizzle().insert(submissions).values({
     userId: session.user.id,
     problemId: problemId,
     userAnswer: userAnswer,
@@ -57,7 +46,7 @@ export default defineEventHandler(async (event) => {
 
   // Record in error_problems if incorrect
   if (!isCorrect) {
-    const existingError = await db
+    const existingError = await useDrizzle()
       .select()
       .from(errorProblems)
       .where(
@@ -69,7 +58,7 @@ export default defineEventHandler(async (event) => {
       .limit(1);
 
     if (existingError.length > 0) {
-      await db
+      await useDrizzle()
         .update(errorProblems)
         .set({
           understood: false,
@@ -77,7 +66,7 @@ export default defineEventHandler(async (event) => {
         })
         .where(eq(errorProblems.id, existingError[0]!.id));
     } else {
-      await db.insert(errorProblems).values({
+      await useDrizzle().insert(errorProblems).values({
         userId: session.user.id,
         problemId: problemId,
         understood: false,
@@ -88,17 +77,12 @@ export default defineEventHandler(async (event) => {
   // If homeworkId is provided, record it in hwRecords
   if (homeworkId) {
     // Fetch homework to get classroomId
-    const homework = await db.query.homeworks.findFirst({
+    const homework = await useDrizzle().query.homeworks.findFirst({
       where: (homeworks, { eq }) => eq(homeworks.id, homeworkId),
     });
 
     if (homework) {
-      // Check if a record already exists for this problem in this homework for this user
-      // Actually, user might resubmit. Let's just insert a new record or update existing?
-      // The requirement says "record student completion status".
-      // Usually we want the *latest* status or *best* status.
-      // Let's check if there's an existing record.
-      const existingRecord = await db.query.hwRecords.findFirst({
+      const existingRecord = await useDrizzle().query.hwRecords.findFirst({
         where: (hwRecords, { eq, and }) =>
           and(
             eq(hwRecords.homeworkId, homeworkId),
@@ -109,7 +93,7 @@ export default defineEventHandler(async (event) => {
 
       if (existingRecord) {
         // Update existing record
-        await db
+        await useDrizzle()
           .update(hwRecords)
           .set({
             correctness: isCorrect,
@@ -120,7 +104,7 @@ export default defineEventHandler(async (event) => {
           .where(eq(hwRecords.id, existingRecord.id));
       } else {
         // Insert new record
-        await db.insert(hwRecords).values({
+        await useDrizzle().insert(hwRecords).values({
           homeworkId: homeworkId,
           classroomId: homework!.classroomId!,
           userId: session.user.id,

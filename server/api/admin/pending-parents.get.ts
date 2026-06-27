@@ -1,7 +1,5 @@
 import { eq, or, ilike, and } from "drizzle-orm";
 import { pendingParent, user } from "../../../db/schema";
-import { db } from "../../../db";
-import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -35,7 +33,7 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const results = await db
+  const results = await useDrizzle()
     .select({
       id: pendingParent.id,
       parentId: pendingParent.parentId,

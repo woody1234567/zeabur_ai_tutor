@@ -1,5 +1,4 @@
-import { eq, desc, and, sql } from "drizzle-orm";
-import { db } from "../../../../../server/utils/db";
+import { eq, desc, sql } from "drizzle-orm";
 import { posts } from "../../../../../db/schema";
 
 export default defineEventHandler(async (event) => {
@@ -12,7 +11,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const postsList = await db
+  const postsList = await useDrizzle()
     .select({
       id: posts.id,
       content: posts.content,

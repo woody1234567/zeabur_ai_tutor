@@ -1,15 +1,11 @@
 import OpenAI from "openai";
-import { auth } from "../../../../../utils/auth";
-import { defineEventHandler, readBody, createError } from "h3";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+  const session = await requireAuthSession(event);
 
   if (!session) {
     throw createError({
@@ -31,7 +27,7 @@ export default defineEventHandler(async (event) => {
   const systemPrompt = `
     You are a helpful assistant that formats educational content.
     Your task is to take a "Summary" of a class and rewrite it to fit a specific "Template".
-    
+
     The user will provide:
     1. A Summary of what happened in class.
     2. A Template structure to fill.

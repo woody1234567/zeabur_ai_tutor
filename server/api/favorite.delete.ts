@@ -1,6 +1,4 @@
-import { db } from "../../db";
 import { favorites } from "../../db/schema";
-import { requireAuthSession } from "../../server/utils/auth";
 import { and, eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
@@ -14,7 +12,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  await db
+  await useDrizzle()
     .delete(favorites)
     .where(
       and(

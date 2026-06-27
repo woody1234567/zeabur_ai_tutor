@@ -1,7 +1,5 @@
 import { eq } from "drizzle-orm";
 import { pendingParent } from "../../../db/schema";
-import { db } from "../../../db";
-import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -22,7 +20,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  await db
+  await useDrizzle()
     .update(pendingParent)
     .set({ status })
     .where(eq(pendingParent.id, id));

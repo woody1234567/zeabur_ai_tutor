@@ -1,14 +1,10 @@
 import { eq, and } from "drizzle-orm";
 import { classrooms } from "~~/db/schema";
-import { auth } from "~~/server/utils/auth";
-import { useDrizzle } from "~~/server/utils/db";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+  const session = await requireAuthSession(event);
 
-  if (!session || session.user.role !== "teacher") {
+  if (session.user.role !== "teacher") {
     throw createError({
       statusCode: 403,
       message: "Unauthorized",

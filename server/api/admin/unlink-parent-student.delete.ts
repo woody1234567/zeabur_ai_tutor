@@ -1,7 +1,5 @@
 import { and, eq } from "drizzle-orm";
 import { parentStudents } from "../../../db/schema";
-import { db } from "../../../db";
-import { requireAuthSession } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -16,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Missing parentId or studentId" });
   }
 
-  const deleted = await db
+  const deleted = await useDrizzle()
     .delete(parentStudents)
     .where(
       and(eq(parentStudents.parentId, parentId), eq(parentStudents.studentId, studentId))

@@ -1,19 +1,8 @@
-import { db } from "../../../../db";
 import { errorProblems } from "../../../../db/schema";
-// Auto-import auth from server/utils/auth
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
-  }
+  const session = await requireAuthSession(event);
 
   const body = await readBody(event);
   const { problemId } = body;
@@ -26,7 +15,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Find the error problem record
-  const existingError = await db
+  const existingError = await useDrizzle()
     .select()
     .from(errorProblems)
     .where(
@@ -40,7 +29,7 @@ export default defineEventHandler(async (event) => {
   if (existingError.length === 0) {
     // If no record exists, simpler to just insert one as "understood" (assuming user clicked the button)
     // or maybe they clicked "Mark as Understood" so they want it to be true.
-    await db.insert(errorProblems).values({
+    await useDrizzle().insert(errorProblems).values({
       userId: session.user.id,
       problemId: problemId,
       understood: true,
@@ -56,7 +45,7 @@ export default defineEventHandler(async (event) => {
   const currentStatus = errorRecord.understood;
   const newStatus = !currentStatus;
 
-  await db
+  await useDrizzle()
     .update(errorProblems)
     .set({
       understood: newStatus,

@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { auth } from "../../../server/utils/auth";
 import { z } from "zod";
 
 const openai = new OpenAI({
@@ -17,16 +16,7 @@ const ResponseSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
-  }
+  const session = await requireAuthSession(event);
 
   const body = await readBody(event);
   const { content } = body;

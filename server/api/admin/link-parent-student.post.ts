@@ -1,7 +1,5 @@
 import { eq, and } from "drizzle-orm";
 import { pendingParent, parentStudents } from "../../../db/schema";
-import { db } from "../../../db";
-import { requireAuthSession } from "../../../server/utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -23,7 +21,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    await db.transaction(async (tx) => {
+    await useDrizzle().transaction(async (tx) => {
       // 1. Get parentId from pending_parent
       const [pendingRecord] = await tx
         .select()

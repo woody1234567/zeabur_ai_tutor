@@ -1,20 +1,9 @@
-import { db } from "../../../db";
 import { problems, problemsStatus } from "../../../db/schema";
-import { auth } from "../../../server/utils/auth";
 import { eq, and } from "drizzle-orm";
 import { updateProblemStatus } from "../../../server/utils/problemStatus";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    });
-  }
+  const session = await requireAuthSession(event);
 
   const id = getRouterParam(event, "id");
   if (!id) {
@@ -27,7 +16,7 @@ export default defineEventHandler(async (event) => {
   // Sync status first
   await updateProblemStatus(session.user.id);
 
-  const problem = await db
+  const problem = await useDrizzle()
     .select({
       id: problems.id,
       title: problems.title,

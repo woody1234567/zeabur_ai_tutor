@@ -4,7 +4,6 @@ import {
   classMaterials,
   classroomMaterials,
 } from "../../../../../db/schema";
-import { db } from "../../../../../server/utils/db";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -18,7 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Verify ownership of classroom
-  const [classroom] = await db
+  const [classroom] = await useDrizzle()
     .select()
     .from(classrooms)
     .where(
@@ -43,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
   if (parentId) {
     // 1. Fetch parent folder details to get its path
-    const [parentFolder] = await db
+    const [parentFolder] = await useDrizzle()
       .select()
       .from(classMaterials)
       .where(eq(classMaterials.id, parentId))
@@ -54,7 +53,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // 2. Fetch all shared roots for this classroom to verify access
-    const sharedRoots = await db
+    const sharedRoots = await useDrizzle()
       .select({
         path: classMaterials.path,
       })
@@ -71,9 +70,6 @@ export default defineEventHandler(async (event) => {
     );
 
     if (!isAccessible) {
-      // Also check if the parentId IS one of the shared roots (direct match handled by startsWith if paths match exactly, but let's be safe)
-      // Actually startsWith includes exact match usually if not checking slash.
-      // But let's check validation strictly.
       throw createError({
         statusCode: 403,
         message: "Unauthorized access to material",
@@ -81,21 +77,21 @@ export default defineEventHandler(async (event) => {
     }
 
     // 4. Fetch children
-    materials = await db
+    materials = await useDrizzle()
       .select({
         id: classMaterials.id,
         name: classMaterials.name,
         type: classMaterials.type,
         isFolder: classMaterials.isFolder,
         url: classMaterials.url,
-        sharedAt: classMaterials.createdAt, // Just use createdAt for sorting
+        sharedAt: classMaterials.createdAt,
       })
       .from(classMaterials)
       .where(eq(classMaterials.parentId, parentId))
       .orderBy(classMaterials.isFolder, classMaterials.createdAt);
   } else {
     // Fetch shared roots
-    materials = await db
+    materials = await useDrizzle()
       .select({
         id: classMaterials.id,
         name: classMaterials.name,
@@ -115,8 +111,7 @@ export default defineEventHandler(async (event) => {
 
   // Sort: Folders first
   return materials.sort((a, b) => {
-    // Basic sorting if db doesn't handle mixed types well
-    if (a.isFolder === b.isFolder) return 0; // Keep DB order
+    if (a.isFolder === b.isFolder) return 0;
     return a.isFolder ? -1 : 1;
   });
 });

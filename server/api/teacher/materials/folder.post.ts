@@ -1,5 +1,4 @@
 import { classMaterials } from "../../../../db/schema";
-import { db } from "../../../utils/db";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -17,7 +16,7 @@ export default defineEventHandler(async (event) => {
   // Calculate path
   let parentPath = "";
   if (parentId) {
-    const parent = await db.query.classMaterials.findFirst({
+    const parent = await useDrizzle().query.classMaterials.findFirst({
       where: (cm, { eq }) => eq(cm.id, parentId),
     });
     if (parent) {
@@ -27,12 +26,12 @@ export default defineEventHandler(async (event) => {
 
   const path = parentPath ? `${parentPath}${name}/` : `${name}/`;
 
-  const [newFolder] = await db
+  const [newFolder] = await useDrizzle()
     .insert(classMaterials)
     .values({
       teacherId: session.user.id,
       name,
-      path, // Logical path, maybe suffix with / for folders
+      path,
       isFolder: true,
       parentId: parentId || null,
       type: "folder",

@@ -1,4 +1,3 @@
-import { db } from "../../../db";
 import { teacherChatHistory } from "../../../db/schema";
 import { eq, and } from "drizzle-orm";
 import { createChatStream } from "../../utils/ai-chat";
@@ -56,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
   await logUserChatMessage(interactionContext, latestUserMessage);
 
-  const existingChat = await db.query.teacherChatHistory.findFirst({
+  const existingChat = await useDrizzle().query.teacherChatHistory.findFirst({
     where: and(
       eq(teacherChatHistory.id, chatId),
       eq(teacherChatHistory.teacherId, user.id),
@@ -106,11 +105,11 @@ export default defineEventHandler(async (event) => {
       const title = existingChat?.title || firstUserText.substring(0, 50) + (firstUserText.length > 50 ? "..." : "");
 
       const persistHistory = existingChat
-        ? db
+        ? useDrizzle()
             .update(teacherChatHistory)
             .set({ messages: finalMessages as any, updatedAt: new Date() })
             .where(eq(teacherChatHistory.id, chatId))
-        : db.insert(teacherChatHistory).values({
+        : useDrizzle().insert(teacherChatHistory).values({
             id: chatId,
             teacherId: user.id,
             projectId: projectId ?? null,

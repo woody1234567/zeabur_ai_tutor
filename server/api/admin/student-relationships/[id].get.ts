@@ -1,7 +1,5 @@
 import { eq } from "drizzle-orm";
 import { parentStudents, user } from "../../../../db/schema";
-import { db } from "../../../../db";
-import { requireAuthSession } from "../../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -14,7 +12,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Missing student id" });
   }
 
-  const [student] = await db
+  const [student] = await useDrizzle()
     .select({ id: user.id, name: user.name, email: user.email, image: user.image })
     .from(user)
     .where(eq(user.id, studentId))
@@ -24,7 +22,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Student not found" });
   }
 
-  const parents = await db
+  const parents = await useDrizzle()
     .select({
       id: user.id,
       name: user.name,

@@ -4,7 +4,6 @@ import {
   classMaterials,
   classroomMaterials,
 } from "../../../../db/schema";
-import { db } from "../../../../server/utils/db";
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -19,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Verify ownership of classroom
-  const [classroom] = await db
+  const [classroom] = await useDrizzle()
     .select()
     .from(classrooms)
     .where(
@@ -37,7 +36,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Verify ownership of material
-  const [material] = await db
+  const [material] = await useDrizzle()
     .select()
     .from(classMaterials)
     .where(
@@ -55,7 +54,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if already shared
-  const [existing] = await db
+  const [existing] = await useDrizzle()
     .select()
     .from(classroomMaterials)
     .where(
@@ -70,7 +69,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Create share record
-  await db.insert(classroomMaterials).values({
+  await useDrizzle().insert(classroomMaterials).values({
     classroomId,
     materialId,
   });

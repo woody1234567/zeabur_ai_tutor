@@ -2,8 +2,8 @@ import { bookings, teacherAvailability, user } from "~~/db/schema";
 import { eq, desc } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({ headers: event.headers });
-  if (!session || session.user.role !== "student") {
+  const session = await requireAuthSession(event);
+  if (session.user.role !== "student") {
     throw createError({ statusCode: 403, statusMessage: "Unauthorized" });
   }
 
