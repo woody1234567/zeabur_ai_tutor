@@ -53,13 +53,32 @@ export function getMessageAttachments(
     }));
 }
 
+const MAX_JSONB_CHARS = 65536; // 64KB limit for tool input/output logs
+
 export function serializeInteractionValue(value: unknown): unknown {
-  if (typeof value !== "string") return value ?? null;
+  if (typeof value !== "string") {
+    if (value == null) return null;
+    try {
+      const serialized = JSON.stringify(value);
+      if (serialized.length > MAX_JSONB_CHARS) {
+        return { _truncated: true, _size: serialized.length, preview: serialized.slice(0, 500) };
+      }
+      return value;
+    } catch {
+      return { _error: "not serializable" };
+    }
+  }
 
   try {
-    return JSON.parse(value);
+    const parsed = JSON.parse(value);
+    if (value.length > MAX_JSONB_CHARS) {
+      return { _truncated: true, _size: value.length, preview: value.slice(0, 500) };
+    }
+    return parsed;
   } catch {
-    return value;
+    return value.length > MAX_JSONB_CHARS
+      ? { _truncated: true, _size: value.length, preview: value.slice(0, 500) }
+      : value;
   }
 }
 
@@ -112,11 +131,13 @@ export async function logAiInteraction(
     }
     return true;
   } catch (error) {
+    const cause = error instanceof Error ? (error.cause as Error | undefined) : undefined;
     console.error("AI interaction log write failed", {
       eventKey: entry.eventKey,
       chatId: entry.chatId,
       eventType: entry.eventType,
       error: getInteractionError(error),
+      cause: cause ? getInteractionError(cause) : undefined,
     });
     return false;
   }
