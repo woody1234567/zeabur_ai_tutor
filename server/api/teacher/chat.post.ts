@@ -27,11 +27,13 @@ export default defineEventHandler(async (event) => {
     chatId,
     projectId,
     useWebSearch,
+    toolkits,
   } = body as {
     messages: UIMessage[];
     chatId: string;
     projectId?: string;
     useWebSearch?: boolean;
+    toolkits?: string[];
   };
 
   if (!clientMessages?.length) {
@@ -72,6 +74,7 @@ export default defineEventHandler(async (event) => {
       role: "teacher",
       projectId: projectId ?? null,
       useWebSearch: !!useWebSearch,
+      toolkits: Array.isArray(toolkits) ? toolkits : [],
     });
   } catch (error) {
     await logAssistantChatError(

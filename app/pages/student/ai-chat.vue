@@ -5,10 +5,14 @@ definePageMeta({
 
 const { t } = useI18n();
 const useWebSearch = ref(false);
+const enabledToolkits = ref<string[]>([]);
 </script>
 
 <template>
-  <ChatView role="student" :extra-body="() => ({ useWebSearch })">
+  <ChatView role="student" :extra-body="() => ({ useWebSearch, toolkits: enabledToolkits })">
+    <template #sidebar-bottom>
+      <ChatComposioPanel role="student" v-model="enabledToolkits" />
+    </template>
     <template #toolbar-start="{ isLoading }">
       <button
         class="btn btn-ghost btn-square"

@@ -1211,6 +1211,12 @@
     "cancel": "Cancel",
     "save": "Save",
     "confirm": "Confirm",
-    "toggle_sidebar": "Toggle sidebar"
+    "toggle_sidebar": "Toggle sidebar",
+    "composio": {
+      "title": "External Tools",
+      "refresh": "Refresh connection status",
+      "connect": "Connect",
+      "active_hint": "Active tools will be available to AI"
+    }
   }
 }

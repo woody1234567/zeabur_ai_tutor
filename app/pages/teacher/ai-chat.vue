@@ -7,6 +7,7 @@ definePageMeta({
 
 const { t } = useI18n();
 const useWebSearch = ref(false);
+const enabledToolkits = ref<string[]>([]);
 
 // Image upload state
 const pendingImage = ref<File | null>(null);
@@ -88,7 +89,7 @@ async function prepareMessage(payload: {
 <template>
   <ChatView
     role="teacher"
-    :extra-body="() => ({ useWebSearch })"
+    :extra-body="() => ({ useWebSearch, toolkits: enabledToolkits })"
     :prepare-message="prepareMessage"
     :allow-empty-text="!!pendingImage"
     :send-disabled="isUploading"
@@ -187,6 +188,11 @@ async function prepareMessage(payload: {
     <template #send-label>
       <span v-if="isUploading">{{ t("teacher.chat.uploading") }}</span>
       <span v-else>{{ t("teacher.chat.send") }}</span>
+    </template>
+
+    <!-- Composio external tools panel -->
+    <template #sidebar-bottom>
+      <ChatComposioPanel role="teacher" v-model="enabledToolkits" />
     </template>
   </ChatView>
 </template>

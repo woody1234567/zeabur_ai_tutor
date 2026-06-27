@@ -2,6 +2,7 @@ import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import type { UIMessage } from "ai";
 import { getAIModel } from "./ai-provider";
 import { getTools } from "./ai-tools";
+import { getComposioTools } from "./composio";
 import type { AiToolContext } from "./ai-tools/types";
 import { recordAiToolCall } from "./ai-tool-recorder";
 import { chatProjects } from "../../db/schema";
@@ -48,12 +49,25 @@ export type StreamChatOptions = {
   role?: "student" | "teacher";
   projectId?: string | null;
   useWebSearch?: boolean;
+  toolkits?: string[];
 };
 
 export async function createChatStream(options: StreamChatOptions) {
   const model = await getAIModel();
   const role = options.role ?? "student";
-  const tools = getTools(role);
+  const customTools = getTools(role);
+
+  let composioTools = {} as ReturnType<typeof getTools>;
+  if (options.toolkits?.length) {
+    try {
+      const ct = await getComposioTools(options.userId, options.toolkits);
+      composioTools = ct as unknown as ReturnType<typeof getTools>;
+    } catch (error) {
+      console.warn("[AI Chat] Composio tools unavailable, falling back to custom tools only", error);
+    }
+  }
+
+  const tools = { ...customTools, ...composioTools };
   const toolContext: AiToolContext = {
     chatId: options.chatId,
     userId: options.userId,

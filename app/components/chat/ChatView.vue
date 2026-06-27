@@ -256,6 +256,7 @@ async function sendMessage() {
         @move-chat="openMoveChat"
         @select-project="selectProject"
       />
+      <slot name="sidebar-bottom" />
     </div>
 
     <!-- Main Chat Area -->

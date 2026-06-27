@@ -122,6 +122,7 @@ export default defineNuxtConfig({
     tavilyApiKey: process.env.TAVILY_API_KEY,
     mcpStudentGatewayToken: "",
     mcpTeacherGatewayToken: "",
+    composioApiKey: process.env.COMPOSIO_API_KEY,
   },
   mcp: {
     name: "Study With Woody",
