@@ -645,3 +645,26 @@ export const parentProfiles = pgTable("parent_profiles", {
   bio: text("bio"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const problemLists = pgTable("problem_lists", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  ownerId: text("owner_id").notNull().references(() => user.id),
+  name: text("name").notNull(),
+  description: text("description"),
+  shareToken: text("share_token").unique(), // null = sharing disabled
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const problemListItems = pgTable(
+  "problem_list_items",
+  {
+    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    listId: text("list_id").notNull().references(() => problemLists.id, { onDelete: "cascade" }),
+    problemId: text("problem_id").notNull().references(() => problems.id, { onDelete: "cascade" }),
+    addedAt: timestamp("added_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    listProblemUnique: uniqueIndex("problem_list_items_unique").on(t.listId, t.problemId),
+  })
+);
