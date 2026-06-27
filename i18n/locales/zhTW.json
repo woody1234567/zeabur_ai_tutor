@@ -21,6 +21,44 @@
       "instant_feedback": {
         "title": "即時回饋",
         "description": "立即獲得答案的回饋。透過 AI 驅動的解析，從錯誤中即時學習。"
+      },
+      "ai_tutor_chat": {
+        "title": "AI 家教對話",
+        "description": "針對任何題目獲得即時、個人化的解析。AI 在對話過程中推薦相關題目與學習資料。"
+      },
+      "class_materials": {
+        "title": "課程資料",
+        "description": "老師將學習資料上傳至資料夾並整理。學生可在同一地方存取班級分享的所有內容。"
+      },
+      "scheduling": {
+        "title": "老師預約",
+        "description": "老師發佈可預約的時段。學生瀏覽老師資料，直接在平台上預約課程。"
+      }
+    },
+    "roles": {
+      "title": "為每位使用者打造",
+      "student": {
+        "title": "學生",
+        "feature_1": "從題庫練習各科題目",
+        "feature_2": "追蹤錯題並收藏常用題目",
+        "feature_3": "完成並檢視作業",
+        "feature_4": "存取老師分享的課程資料",
+        "feature_5": "瀏覽老師資料並預約課程"
+      },
+      "teacher": {
+        "title": "老師",
+        "feature_1": "借助 AI 建立題目庫",
+        "feature_2": "管理班級與學生名單",
+        "feature_3": "派發作業並追蹤完成成績",
+        "feature_4": "上傳並分享課程資料",
+        "feature_5": "發佈時間表並管理學生預約"
+      },
+      "parent": {
+        "title": "家長",
+        "feature_1": "將帳號與孩子的學生帳號連結",
+        "feature_2": "檢視孩子的班級",
+        "feature_3": "監控作業成績與完成情況",
+        "feature_4": "追蹤多個班級的學習進度"
       }
     }
   },
