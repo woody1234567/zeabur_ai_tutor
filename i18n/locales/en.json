@@ -326,7 +326,9 @@
       "subject_label": "Subject",
       "chapter_label": "Chapter",
       "grade_label": "Grade",
-      "source_label": "Source"
+      "source_label": "Source",
+      "add_to_favorites": "Add to favorites",
+      "remove_from_favorites": "Remove from favorites"
     },
     "testbanks": {
       "title": "Testbanks",

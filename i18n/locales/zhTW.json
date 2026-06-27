@@ -326,7 +326,9 @@
       "subject_label": "科目",
       "chapter_label": "章節",
       "grade_label": "年級",
-      "source_label": "來源"
+      "source_label": "來源",
+      "add_to_favorites": "加入收藏",
+      "remove_from_favorites": "取消收藏"
     },
     "testbanks": {
       "title": "題庫",
