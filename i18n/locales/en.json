@@ -21,6 +21,44 @@
       "instant_feedback": {
         "title": "Instant Feedback",
         "description": "Get immediate feedback on your answers. Learn from mistakes instantly with AI-powered explanations."
+      },
+      "ai_tutor_chat": {
+        "title": "AI Tutor Chat",
+        "description": "Get streaming, personalized explanations for any problem. The AI recommends relevant problems and materials during your conversation."
+      },
+      "class_materials": {
+        "title": "Class Materials",
+        "description": "Teachers upload and organize learning materials in folders. Students access everything shared to their classrooms in one place."
+      },
+      "scheduling": {
+        "title": "Teacher Scheduling",
+        "description": "Teachers publish available time slots. Students browse teacher profiles and book sessions directly from the platform."
+      }
+    },
+    "roles": {
+      "title": "Built for Everyone",
+      "student": {
+        "title": "Student",
+        "feature_1": "Practice problems from the testbank",
+        "feature_2": "Track wrong answers and save favorites",
+        "feature_3": "Complete and review homework assignments",
+        "feature_4": "Access class materials shared by teachers",
+        "feature_5": "Browse teacher profiles and book sessions"
+      },
+      "teacher": {
+        "title": "Teacher",
+        "feature_1": "Build a problem bank with AI assistance",
+        "feature_2": "Manage classrooms and enrolled students",
+        "feature_3": "Assign homework and track completion scores",
+        "feature_4": "Upload and share class materials",
+        "feature_5": "Publish schedules and manage student bookings"
+      },
+      "parent": {
+        "title": "Parent",
+        "feature_1": "Link your account to your child's student account",
+        "feature_2": "View your child's classroom enrollments",
+        "feature_3": "Monitor homework performance and scores",
+        "feature_4": "Track progress across multiple classrooms"
       }
     }
   },
