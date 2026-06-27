@@ -122,13 +122,14 @@ const askAI = async () => {
 
     <div v-if="problem" class="card bg-base-100 shadow-xl">
       <div class="card-body p-4 md:p-8">
-        <div class="flex justify-between items-start">
+        <div class="flex justify-between items-start gap-2">
           <h1 class="card-title text-2xl">{{ problem.title }}</h1>
-          <div class="flex gap-2">
+          <div class="flex items-center gap-2 flex-wrap justify-end">
             <div class="badge badge-outline">{{ problem.difficulty }}</div>
             <div v-if="problem.source" class="badge badge-ghost">
               {{ problem.source }}
             </div>
+            <StudentAddToListDropdown :problem-id="problemId" />
           </div>
         </div>
 

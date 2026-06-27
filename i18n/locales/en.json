@@ -21,6 +21,44 @@
       "instant_feedback": {
         "title": "Instant Feedback",
         "description": "Get immediate feedback on your answers. Learn from mistakes instantly with AI-powered explanations."
+      },
+      "ai_tutor_chat": {
+        "title": "AI Tutor Chat",
+        "description": "Get streaming, personalized explanations for any problem. The AI recommends relevant problems and materials during your conversation."
+      },
+      "class_materials": {
+        "title": "Class Materials",
+        "description": "Teachers upload and organize learning materials in folders. Students access everything shared to their classrooms in one place."
+      },
+      "scheduling": {
+        "title": "Teacher Scheduling",
+        "description": "Teachers publish available time slots. Students browse teacher profiles and book sessions directly from the platform."
+      }
+    },
+    "roles": {
+      "title": "Built for Everyone",
+      "student": {
+        "title": "Student",
+        "feature_1": "Practice problems from the testbank",
+        "feature_2": "Track wrong answers and save favorites",
+        "feature_3": "Complete and review homework assignments",
+        "feature_4": "Access class materials shared by teachers",
+        "feature_5": "Browse teacher profiles and book sessions"
+      },
+      "teacher": {
+        "title": "Teacher",
+        "feature_1": "Build a problem bank with AI assistance",
+        "feature_2": "Manage classrooms and enrolled students",
+        "feature_3": "Assign homework and track completion scores",
+        "feature_4": "Upload and share class materials",
+        "feature_5": "Publish schedules and manage student bookings"
+      },
+      "parent": {
+        "title": "Parent",
+        "feature_1": "Link your account to your child's student account",
+        "feature_2": "View your child's classroom enrollments",
+        "feature_3": "Monitor homework performance and scores",
+        "feature_4": "Track progress across multiple classrooms"
       }
     }
   },
@@ -132,7 +170,8 @@
       "dashboard": "Dashboard",
       "materials": "Materials",
       "teachers": "Reservation",
-      "profile": "Profile"
+      "profile": "Profile",
+      "problem_lists": "Problem Lists"
     },
     "profile": {
       "title": "My Profile",
@@ -309,6 +348,32 @@
       "error_response": "Sorry, I encountered an error. Please try again.",
       "tool_running": "Using tool",
       "web_search": "Web Search"
+    },
+    "problem_lists": {
+      "title": "My Problem Lists",
+      "create": "Create List",
+      "create_name_label": "List Name",
+      "create_desc_label": "Description (optional)",
+      "create_submit": "Create",
+      "empty": "You have no problem lists yet.",
+      "items": "{count} problems",
+      "view": "View List",
+      "delete": "Delete",
+      "delete_confirm": "Delete this list?",
+      "sharing_enabled": "Sharing On",
+      "sharing_disabled": "Sharing Off",
+      "enable_share": "Enable Sharing",
+      "disable_share": "Disable Sharing",
+      "copy_link": "Copy Link",
+      "copied": "Copied!",
+      "remove_problem": "Remove",
+      "back": "Back to Lists",
+      "edit": "Edit",
+      "save": "Save",
+      "add_to_list": "Add to List",
+      "create_new_list": "New list...",
+      "add_success": "Added to list",
+      "already_in_list": "Already in list"
     }
   },
   "calendar_help": {
@@ -1217,6 +1282,19 @@
       "refresh": "Refresh connection status",
       "connect": "Connect",
       "active_hint": "Active tools will be available to AI"
+    }
+    "toggle_sidebar": "Toggle sidebar"
+  },
+  "shared": {
+    "problem_lists": {
+      "by": "by {name}",
+      "restricted": "Restricted",
+      "restricted_desc": "You don't have access to this problem.",
+      "not_found": "This list is not available or sharing has been disabled.",
+      "sign_in_prompt": "Sign in to access more problems in this list",
+      "accessible_count": "{accessible} / {total} problems accessible",
+      "login": "Sign In",
+      "practice": "Practice"
     }
   }
 }
