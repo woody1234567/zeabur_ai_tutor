@@ -99,6 +99,20 @@ Two separate R2 buckets accessed via `server/utils/r2.ts`:
 - `server/utils/ai-tools/` — TypeScript tool definitions (search-problems, recommend-materials, create-problem, web-search)
 - Student chat: `server/api/student/chat.post.ts`; Teacher chat: `server/api/teacher/chat.post.ts`
 
+### Composio External Tools
+
+Teachers and students can connect Gmail, Google Calendar, and Google Drive via OAuth. Connected toolkits are passed as `toolkits: string[]` in the chat request body and merged into `streamText` alongside the built-in tools.
+
+Key files:
+- `server/utils/composio.ts` — Composio singleton; `getComposioTools(userId, toolkits)` returns a Vercel AI SDK-compatible `ToolSet`
+- `server/api/{teacher,student}/composio/connect.post.ts` — OAuth initiation, returns `redirectUrl`
+- `server/api/{teacher,student}/composio/status.get.ts` — returns `{ [slug]: boolean }` for all three toolkits
+- `app/components/chat/ComposioPanel.vue` — sidebar UI (connect + per-toolkit toggle), used via `#sidebar-bottom` slot in `ChatView`
+
+Toolkit slugs (confirmed): `gmail`, `googlecalendar`, `googledrive` (no underscore).
+
+Tool I/O in `ai_interaction_logs` is truncated to 64 KB via `serializeInteractionValue` in `server/utils/ai-interaction-logger.ts` — Composio responses can be 40 k+ characters.
+
 ### Environment Variables
 
 Required in `.env` or `.env.local` (`.env.local` takes precedence):
@@ -113,3 +127,4 @@ Required in `.env` or `.env.local` (`.env.local` takes precedence):
 - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN`
 - `CLASS_MATERIALS_R2_*` — same set for the class materials bucket
 - `NUXT_PUBLIC_BASE_URL` — app base URL (used by auth server, auth client SSR, email templates)
+- `COMPOSIO_API_KEY` — Composio API key (from dashboard.composio.dev/settings); required for Gmail/Calendar/Drive integration

@@ -18,6 +18,7 @@ AI Tutor platform built with **Nuxt 4 + PostgreSQL (Drizzle) + better-auth + Clo
   - problems, homework, favorites, wrong-problem tracking
   - AI tutor chat (streaming SSE)
 - Unified AI interaction logging for user messages, assistant responses, and tool calls
+- **Composio external tool integration** — teachers and students can connect Gmail, Google Calendar, and Google Drive via OAuth and enable them per chat session
 - Parent/admin workflows:
   - parent-student linking
   - pending approvals & user management
@@ -88,6 +89,9 @@ Create `.env.local` (recommended) or `.env` in repo root.
 ### AI
 - `OPENAI_API_KEY`
 - `GOOGLE_VISION_API_KEY` (used by teacher vision feature)
+
+### Composio (external tool integration)
+- `COMPOSIO_API_KEY` — from dashboard.composio.dev/settings; enables Gmail, Google Calendar, Google Drive tools in AI chat
 
 ### Cloudflare R2 (problem images)
 - `R2_ACCOUNT_ID`
@@ -173,6 +177,39 @@ pnpm db:studio    # Open Drizzle Studio
 4. Completed tool executions are recorded through `experimental_onToolCallFinish`.
 5. When the stream finishes, the assistant response and chat history are persisted.
 6. Tool parts in the final UI message are reconciled as a fallback in case the direct callback did not write a record.
+
+---
+
+## Composio External Tool Integration
+
+Teachers and students can connect external Google services (Gmail, Google Calendar, Google Drive) to the AI chat via Composio OAuth. Connected tools become available to the AI model for the duration of a chat session.
+
+### Architecture
+
+- **`server/utils/composio.ts`** — Composio singleton factory; exposes `getComposioTools()`, `authorizeComposioToolkit()`, and `getComposioToolkitStatus()`
+- **`server/api/{teacher,student}/composio/connect.post.ts`** — initiates OAuth flow; returns `redirectUrl` opened in a new tab
+- **`server/api/{teacher,student}/composio/status.get.ts`** — returns connection status for all toolkits (`{ gmail: true, googlecalendar: false, googledrive: false }`)
+- **`app/components/chat/ComposioPanel.vue`** — sidebar panel; shows connection status (green dot = connected), connect button, and per-toolkit toggle to enable/disable for the current session
+
+### Toolkit slugs
+
+| Service | Slug |
+|---|---|
+| Gmail | `gmail` |
+| Google Calendar | `googlecalendar` |
+| Google Drive | `googledrive` |
+
+### User flow
+
+1. Open AI chat → expand the **Composio** panel in the left sidebar
+2. Click **Connect** next to a service → Google OAuth opens in a new tab
+3. After authorizing, click the refresh button → status dot turns green
+4. Toggle the service on → it is included in the next chat request
+5. The AI can now call Gmail/Calendar/Drive tools mid-conversation
+
+### Tool payload truncation
+
+Composio tool responses can be very large (schema dumps, calendar data). Tool inputs and outputs are truncated to 64 KB before being written to `ai_interaction_logs`. Truncated entries are stored as `{ _truncated: true, _size: <bytes>, preview: "..." }`.
 
 ---
 
